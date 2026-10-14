@@ -185,7 +185,8 @@ dialog.wide[open]{display:flex;flex-direction:column}
 #pinIn{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-bottom:12px}
 #adminPin{width:150px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-right:6px}
 </style>
-<script src="config.js"></script>
+<!-- config.js and export-excel.js are loaded with a time stamp so a browser never keeps an old copy after an update -->
+<script>window.SEATPLAN_BUST=Date.now();document.write('<script src="config.js?v='+window.SEATPLAN_BUST+'"><\/script>')</script>
 </head>
 <body>
 
@@ -773,7 +774,7 @@ function exportXlsx(){
   if(busy)return;busy=true;toast('กำลังสร้าง Excel…'+exportNote());
   /* history comes from the Google Sheet; an older Apps Script without it still exports the other sheets */
   var hist=API?apiPost({action:'history',pin:accessPin}).then(function(r){return r&&r.ok?r.rows:null},function(){return null}):Promise.resolve(null);
-  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'),loadLib('export-excel.js'),hist]).then(function(res){
+  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'),loadLib('export-excel.js?v='+window.SEATPLAN_BUST),hist]).then(function(res){
     var st={};Object.keys(ITEMS).forEach(function(id){st[id]=norm(saved[id])});
     var wb=window.buildSeatWorkbook(window.ExcelJS,{state:st,lastSave:lastSave,inspector:who.value.trim(),history:res[2]});
     return wb.xlsx.writeBuffer();
