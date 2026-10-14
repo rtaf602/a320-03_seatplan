@@ -16,17 +16,20 @@ img{max-width:100%}
   --accent:#1f5fa8; --accent-ink:#ffffff; --rowno:#35547c;
   --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7;
   --on-status:#10202b;
+  --ovh-ok:rgba(46,157,87,.5); --ovh-warn:rgba(226,164,0,.6); --ovh-bad:rgba(210,59,51,.6);
   --sans:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0e151c; --panel:#17212b; --cabin:#1c2a38; --ink:#e6edf4; --muted:#9aa9b8; --line:#33455a;
   --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6;
   --ok:#3fb56c; --ok-soft:#173a26; --warn:#e9b422; --warn-soft:#40330d; --bad:#ea5a52; --bad-soft:#451b19;
+  --ovh-ok:rgba(63,181,108,.5); --ovh-warn:rgba(233,180,34,.6); --ovh-bad:rgba(234,90,82,.6);
   --on-status:#08131f; color-scheme:dark } }
 :root[data-theme="dark"]{
   --bg:#0e151c; --panel:#17212b; --cabin:#1c2a38; --ink:#e6edf4; --muted:#9aa9b8; --line:#33455a;
   --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6;
   --ok:#3fb56c; --ok-soft:#173a26; --warn:#e9b422; --warn-soft:#40330d; --bad:#ea5a52; --bad-soft:#451b19;
+  --ovh-ok:rgba(63,181,108,.5); --ovh-warn:rgba(233,180,34,.6); --ovh-bad:rgba(234,90,82,.6);
   --on-status:#08131f; color-scheme:dark }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
@@ -89,6 +92,11 @@ table.mt{min-width:420px}
 .report .ovh::after{display:none}
 .ovh:hover{box-shadow:0 0 0 1px var(--ink)}
 .ovh[data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);border-radius:0 0 3px 3px;pointer-events:none}
+/* OVHD Monitor: a light full-width pill over its seat row, so the overhead screens do not crowd the plan */
+.ovh.bin{width:calc(3 * var(--sw) + 2 * var(--sg));padding:1px 0;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.14em;background:var(--ovh-ok);color:var(--ink)}
+.ovh.bin[data-m="1"]{background:var(--ovh-warn)}
+.ovh.bin[data-m="2"]{background:var(--ovh-bad)}
+.ovh.bin[data-note]::before{left:14px;right:14px}
 .ro .seat,.ro .ovh{cursor:default}
 .stack{display:flex;flex-direction:column;gap:20px}
 .sofa,.tbl{border-radius:10px;border:2px dashed var(--muted);background:var(--panel);color:var(--muted);font-weight:700;font-size:12px;letter-spacing:.08em;display:flex;align-items:center;justify-content:center}
@@ -154,7 +162,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
 /* report used by PREVIEW and PDF: always light, fixed A4-ish width */
 .report{
   --bg:#ffffff; --panel:#ffffff; --cabin:#eef4fa; --ink:#14212e; --muted:#566575; --line:#c5d0dc;
-  --accent:#1f5fa8; --accent-ink:#ffffff; --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7; --on-status:#10202b;
+  --accent:#1f5fa8; --accent-ink:#ffffff; --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7; --on-status:#10202b; --ovh-ok:rgba(46,157,87,.5); --ovh-warn:rgba(226,164,0,.6); --ovh-bad:rgba(210,59,51,.6);
   background:#fff;color:var(--ink);width:794px;max-width:none;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:14px;font-family:var(--sans)}
 .report .blk{background:#fff}
 .report h1{font-size:20px;margin:0 0 6px}
@@ -219,7 +227,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
     <span><i class="sw" style="background:var(--ok)"></i>ใช้งานได้ปกติ</span>
     <span><i class="sw" style="background:var(--warn)"></i>ขัดข้องแต่ใช้ได้ / Manual ได้ (!)</span>
     <span><i class="sw" style="background:var(--bad)"></i>ใช้งานไม่ได้ (×)</span>
-    <span><i class="sw mon" style="background:var(--ok)"></i>ป้าย Monitor = จอติดผนัง · OVHD Monitor = จอพับเหนือที่นั่ง<span class="nopdf">&nbsp;(ชี้เมาส์ที่ป้ายเพื่อดูชนิดจอ)</span></span>
+    <span><i class="sw mon" style="background:var(--ok)"></i>ป้าย Monitor = จอติดผนัง · แถบ OVHD = จอพับเหนือที่นั่ง (OVHD Monitor)<span class="nopdf">&nbsp;(ชี้เมาส์ที่ป้ายเพื่อดูชนิดจอ)</span></span>
     <span><i class="sw" style="background:var(--ok);border-bottom:4px solid var(--ink);box-sizing:border-box"></i>ขีดล่าง = มีหมายเหตุ</span>
     <span class="nopdf"><i class="sw" style="background:var(--ok);outline:2px dashed var(--accent);outline-offset:2px"></i>เส้นประ = แก้ไขแล้ว ยังไม่ SAVE</span>
   </div>
@@ -358,7 +366,7 @@ function seatBtn(id){
   b.appendChild(el('span','s',named?SEAT_NAME[id]:id));return b;
 }
 function monLabel(id,v){MTYPE[id]=v[0];return MT[v[0]].name+' · '+v[1]}
-function monBtn(id){var b=el('button','ovh',MTYPE[id].charAt(0)==='b'?'OVHD Monitor':'Monitor');b.type='button';b.dataset.id=id;return b}
+function monBtn(id){var bin=MTYPE[id].charAt(0)==='b',b=el('button','ovh'+(bin?' bin':''),bin?'OVHD':'Monitor');b.type='button';b.dataset.id=id;return b}
 
 function build(){
   var host=$('zones');host.style.display='flex';host.style.flexDirection='column';host.style.gap='16px';
