@@ -1,0 +1,839 @@
+<!doctype html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>STATUS SEAT PLAN A320(03)</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
+<style>
+:root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0}
+img{max-width:100%}
+[hidden]{display:none!important}
+/* Layout: sticky status bar, summary tables, then the A320(03) cabin drawn nose-to-tail as five zone panels of tappable seats and Monitors. */
+:root{
+  --bg:#eef2f6; --panel:#ffffff; --cabin:#dfeaf5; --ink:#14212e; --muted:#566575; --line:#c5d0dc;
+  --accent:#1f5fa8; --accent-ink:#ffffff; --rowno:#35547c;
+  --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7;
+  --on-status:#10202b;
+  --sans:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
+  --bg:#0e151c; --panel:#17212b; --cabin:#1c2a38; --ink:#e6edf4; --muted:#9aa9b8; --line:#33455a;
+  --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6;
+  --ok:#3fb56c; --ok-soft:#173a26; --warn:#e9b422; --warn-soft:#40330d; --bad:#ea5a52; --bad-soft:#451b19;
+  --on-status:#08131f; color-scheme:dark } }
+:root[data-theme="dark"]{
+  --bg:#0e151c; --panel:#17212b; --cabin:#1c2a38; --ink:#e6edf4; --muted:#9aa9b8; --line:#33455a;
+  --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6;
+  --ok:#3fb56c; --ok-soft:#173a26; --warn:#e9b422; --warn-soft:#40330d; --bad:#ea5a52; --bad-soft:#451b19;
+  --on-status:#08131f; color-scheme:dark }
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
+.wrap{max-width:1040px;margin:0 auto;padding-inline:16px;padding-block:0 48px;display:flex;flex-direction:column;gap:20px}
+button,input,textarea{font:inherit;color:inherit}
+:focus-visible{outline:3px solid var(--accent);outline-offset:2px}
+
+.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.bar h1{font-size:20px;font-weight:700;margin:0;letter-spacing:.01em}
+.bar h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
+.who{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:0}
+.who label{font-size:12px;color:var(--muted);white-space:nowrap}
+.who input{width:170px;max-width:46vw;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
+.sync{font-size:12px;color:var(--muted);width:100%}
+.sync b{color:var(--ink);font-weight:600}
+.notice{background:var(--warn-soft);border:1px solid var(--warn);border-radius:6px;padding:10px 12px;font-size:14px}
+
+h2{font-size:15px;font-weight:700;margin:0 0 8px;text-wrap:balance}
+.tablebox{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table{border-collapse:collapse;width:100%;min-width:640px;font-variant-numeric:tabular-nums}
+th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line);font-size:14px}
+th{font-size:12px;font-weight:600;color:var(--muted);line-height:1.3}
+th:first-child,td:first-child{text-align:left;font-weight:600}
+tr:last-child td{border-bottom:0;font-weight:700}
+td.n{font-family:var(--mono)}
+td.w.nz{background:var(--warn-soft)} td.b.nz{background:var(--bad-soft)}
+th i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:5px;vertical-align:-1px}
+.sep{border-left:2px solid var(--line)}
+
+.legend{display:flex;flex-wrap:wrap;gap:6px 18px;font-size:13px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:16px;height:16px;border-radius:3px;display:inline-block}
+.sw.mon{width:28px;height:12px;border-radius:3px}
+table.mt{min-width:420px}
+
+.zone{background:var(--cabin);border:1px solid var(--line);border-radius:8px;padding:14px 12px 16px}
+.zone header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px}
+.zone header h2{margin:0}
+.zone header span{font-family:var(--mono);font-size:12px;font-weight:600;background:var(--accent);color:var(--accent-ink);padding:2px 8px;border-radius:4px;white-space:nowrap}
+.rows{--sg:clamp(3px,1vw,8px);--sw:clamp(34px,calc((100vw - 120px)/7),54px);display:flex;flex-direction:column;gap:8px;align-items:center}
+.row{display:flex;align-items:flex-end;justify-content:center;width:100%}
+.aisle{width:clamp(18px,6vw,56px);flex:none}
+.side{flex:none;display:flex;align-items:flex-end;justify-content:center;gap:var(--sg);width:calc(3 * var(--sw) + 2 * var(--sg));position:relative}
+.seat{flex:none;width:var(--sw);padding:0;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:stretch;position:relative}
+.seat.wide{width:calc(2 * var(--sw) + var(--sg))}
+.seat .s{height:40px;border-radius:6px 6px 3px 3px;background:var(--ok);color:var(--on-status);font-family:var(--mono);font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;white-space:nowrap}
+.seat.txt .s{font-family:var(--sans);font-size:11px;line-height:1.1;white-space:normal;text-align:center;padding:0 2px}
+.seat:hover .s{border-color:var(--ink)}
+.seat[data-s="1"] .s,.ovh[data-m="1"]{background:var(--warn)}
+.seat[data-s="2"] .s,.ovh[data-m="2"]{background:var(--bad)}
+.seat[data-s="1"] .s::after{content:"!";margin-left:1px}
+.seat[data-s="2"] .s::after{content:"×";margin-left:1px}
+/* note marker: a real element (not inset box-shadow) so the PDF capture draws it the same as the page */
+.seat .s{position:relative}
+.seat[data-note] .s::before{content:"";position:absolute;left:-1px;right:-1px;bottom:-1px;height:4px;background:var(--ink);border-radius:0 0 3px 3px;pointer-events:none}
+.ovhrow{align-items:center;min-height:24px}
+.ovh{border:0;cursor:pointer;background:var(--ok);color:var(--on-status);font-size:11px;font-weight:600;border-radius:3px;padding:3px 12px;white-space:nowrap;position:relative}
+/* hover / keyboard-focus tooltip naming the monitor type */
+.ovh[data-tip]:hover::after,.ovh[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);z-index:20;background:var(--ink);color:var(--bg);font-size:12px;font-weight:500;line-height:1.35;padding:6px 9px;border-radius:6px;white-space:pre;text-align:left;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
+.report .ovh::after{display:none}
+.ovh:hover{box-shadow:0 0 0 1px var(--ink)}
+.ovh[data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);border-radius:0 0 3px 3px;pointer-events:none}
+.ro .seat,.ro .ovh{cursor:default}
+.stack{display:flex;flex-direction:column;gap:20px}
+.sofa,.tbl{border-radius:10px;border:2px dashed var(--muted);background:var(--panel);color:var(--muted);font-weight:700;font-size:12px;letter-spacing:.08em;display:flex;align-items:center;justify-content:center}
+.sofa{width:calc(2 * var(--sw) + var(--sg));align-self:stretch}
+.room{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid var(--rowno);border-radius:8px;padding:6px 6px 8px;background:var(--room)}
+.roomname{font-size:11px;font-weight:600;color:var(--rowno);line-height:1.2;text-align:center}
+.side.col{flex-direction:column;align-items:center;gap:8px}
+.seatrow{display:flex;gap:var(--sg)}
+.tbl{height:48px;border-radius:6px;font-size:10px;letter-spacing:.02em;overflow:hidden}
+
+.defects{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
+.defects ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
+.defects li{display:grid;grid-template-columns:64px 1fr;gap:4px 12px;padding:9px 0;border-top:1px solid var(--line);cursor:pointer}
+.defects li:first-child{border-top:0}
+.defects .id{font-family:var(--mono);font-weight:600}
+.defects .tags{display:flex;flex-wrap:wrap;gap:6px}
+.tag{font-size:12px;font-weight:600;padding:1px 8px;border-radius:999px;color:var(--ink)}
+.tag.w{background:var(--warn-soft);border:1px solid var(--warn)} .tag.b{background:var(--bad-soft);border:1px solid var(--bad)}
+.defects .txt{min-width:0;overflow-wrap:anywhere}
+.defects .meta{font-size:12px;color:var(--muted)}
+.empty{color:var(--muted);font-size:14px;margin:0}
+
+dialog{border:1px solid var(--line);border-radius:10px;background:var(--panel);color:var(--ink);padding:18px;width:min(440px,calc(100vw - 32px));max-height:calc(100vh - 32px)}
+dialog::backdrop{background:rgba(8,16,24,.55)}
+dialog h3{margin:0 0 2px;font-size:18px}
+dialog .sub{font-size:13px;color:var(--muted);margin:0 0 14px}
+fieldset{border:0;padding:0;margin:0 0 14px}
+legend{font-size:13px;font-weight:600;margin-bottom:6px;padding:0}
+.opts{display:flex;flex-direction:column;gap:6px}
+.opt{display:flex;align-items:center;gap:10px;text-align:left;padding:9px 12px;border:1px solid var(--line);border-radius:6px;background:var(--panel);cursor:pointer}
+.opt[aria-pressed="true"]{border-color:var(--ink);box-shadow:inset 0 0 0 1px var(--ink);font-weight:600}
+textarea{width:100%;min-height:76px;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);resize:vertical}
+.acts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap}
+.btn{padding:9px 16px;border-radius:6px;border:1px solid var(--line);background:var(--panel);cursor:pointer;font-weight:600}
+.btn.pri{background:var(--accent);color:var(--accent-ink);border-color:var(--accent)}
+.btn.danger{border-color:var(--bad);color:var(--bad)}
+.btn:disabled{opacity:.5;cursor:default}
+.err{color:var(--bad);font-size:13px;margin:0 0 10px}
+.foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+.tools{width:100%;display:flex;flex-wrap:wrap;gap:6px}
+.tools .btn{padding:7px 12px;font-size:13px;letter-spacing:.02em}
+.status{width:100%;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
+.pend.on{color:var(--ink);font-weight:700;background:var(--warn-soft);border:1px solid var(--warn);border-radius:4px;padding:0 6px}
+.seat[data-pending] .s,.ovh[data-pending]{outline:2px dashed var(--accent);outline-offset:2px}
+.tag.p{background:transparent;border:1px dashed var(--accent);color:var(--accent)}
+.hint{font-size:12px;color:var(--muted);margin:10px 0 0;text-align:right}
+dialog.small{width:min(420px,calc(100vw - 32px))}
+#cfList{display:flex;flex-direction:column;gap:14px;margin:12px 0;max-height:60vh;overflow:auto}
+.cfh{font-weight:700;margin-bottom:6px}
+.cft{display:flex;flex-direction:column;gap:2px}
+.cfk{font-size:12px;color:var(--muted)} .cfm{font-size:12px;color:var(--muted)}
+#warn h3{color:var(--bad)}
+#warn .sub{color:var(--ink);font-size:14px}
+dialog.wide{width:min(900px,calc(100vw - 24px));padding:0;max-height:calc(100vh - 24px);overflow:hidden}
+dialog.wide[open]{display:flex;flex-direction:column}
+.pvbar{display:flex;flex-wrap:wrap;gap:10px;justify-content:space-between;align-items:center;padding:12px 14px;border-bottom:1px solid var(--line)}
+.pvbar h3{margin:0}
+.pvbody{overflow:auto;padding:14px;background:#d9dee4}
+.toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px;max-width:calc(100vw - 32px);transition:opacity .2s,transform .2s;z-index:50}
+.toast.show{opacity:1;transform:translate(-50%,0)}
+.toast.bad{background:var(--bad);color:#fff}
+
+/* report used by PREVIEW and PDF: always light, fixed A4-ish width */
+.report{
+  --bg:#ffffff; --panel:#ffffff; --cabin:#eef4fa; --ink:#14212e; --muted:#566575; --line:#c5d0dc;
+  --accent:#1f5fa8; --accent-ink:#ffffff; --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7; --on-status:#10202b;
+  background:#fff;color:var(--ink);width:794px;max-width:none;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:14px;font-family:var(--sans)}
+.report .blk{background:#fff}
+.report h1{font-size:20px;margin:0 0 6px}
+.report h2{font-size:15px;margin:10px 0 6px}
+.report .rmeta{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:13px;color:var(--muted)}
+.report .rwarn{margin-top:8px;font-size:13px;font-weight:600;background:var(--warn-soft);border:1px solid var(--warn);border-radius:4px;padding:4px 8px}
+.report table{min-width:0;border:1px solid var(--line)}
+.report .legend{margin-top:10px}
+.report .nopdf{display:none}
+.report .rows{--sw:50px;--sg:6px}
+.report .aisle{width:48px}
+.report .seat[data-pending] .s,.report .ovh[data-pending]{outline:0}
+.report .ovh::after{display:none}
+.report .rdef th,.report .rdef td{text-align:left;vertical-align:top;font-size:12px;padding:6px 8px;font-weight:400;border:1px solid var(--line)}
+.report .rdef th{font-weight:700;color:var(--ink);background:#f2f5f8}
+.report .rdef td.w{background:var(--warn-soft)} .report .rdef td.b{background:var(--bad-soft)}
+.report .rdef tr:last-child td{font-weight:400}
+.report .rnote{font-size:12px;color:var(--muted);margin:6px 0 0}
+.offscreen{position:fixed;left:-10000px;top:0}
+@media (max-width:600px){.bar{padding-block:8px;gap:6px 10px}.bar .sync{display:none}.tools .btn{padding:6px 9px;font-size:12px}.who input{width:130px}}
+@media print{.bar,.foot,.notice{display:none}}
+.sheetlink{color:var(--accent);font-weight:600;text-decoration:none}
+.sheetlink:hover{text-decoration:underline}
+.gate{position:fixed;inset:0;z-index:100;background:var(--bg);display:flex;align-items:center;justify-content:center;padding:16px}
+.gatebox{width:min(360px,100%);background:var(--panel);border:1px solid var(--line);border-radius:10px;padding:22px;display:flex;flex-direction:column;gap:10px}
+.gatebox h2{margin:0;font-size:20px}.gatebox p{margin:0;color:var(--muted)}
+#gatePin{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:16px}
+#pinIn{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-bottom:12px}
+#adminPin{width:150px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-right:6px}
+</style>
+<script src="config.js"></script>
+</head>
+<body>
+
+<div class="wrap" id="app">
+  <div class="bar">
+    <h1>STATUS SEAT PLAN A320(03)<small>บันทึกสภาพที่นั่งและ Monitor · ฝ่ายการช่าง / ฝ่ายสื่อสาร</small></h1>
+    <div class="who"><label for="inspector">ชื่อผู้ตรวจ</label><input id="inspector" maxlength="60" placeholder="พิมพ์ชื่อของคุณ" autocomplete="off"></div>
+    <div class="tools">
+      <button class="btn" id="bClear" type="button">CLEAR</button>
+      <button class="btn" id="bPreview" type="button">PREVIEW</button>
+      <button class="btn pri" id="bSave" type="button">SAVE</button>
+      <button class="btn" id="bPdf" type="button">EXPORT TO PDF</button>
+      <button class="btn" id="bXls" type="button">EXPORT TO EXCEL</button>
+    </div>
+    <div class="status"><span class="pend" id="pend"></span><span id="lastSave"></span></div>
+    <div class="sync" id="sync">กำลังโหลดข้อมูล…</div>
+  </div>
+  <div class="notice" id="notice" hidden></div>
+
+  <section>
+    <h2>สรุปตามโซน</h2>
+    <div class="tablebox"><table id="summary"></table></div>
+  </section>
+  <section>
+    <h2>สรุปตามชนิด Monitor</h2>
+    <div class="tablebox"><table id="mtsum" class="mt"></table></div>
+  </section>
+
+  <div class="legend" id="legend">
+    <span><i class="sw" style="background:var(--ok)"></i>ใช้งานได้ปกติ</span>
+    <span><i class="sw" style="background:var(--warn)"></i>ขัดข้องแต่ใช้ได้ / Manual ได้ (!)</span>
+    <span><i class="sw" style="background:var(--bad)"></i>ใช้งานไม่ได้ (×)</span>
+    <span><i class="sw mon" style="background:var(--ok)"></i>ป้าย Monitor = จอติดผนัง · OVHD Monitor = จอพับเหนือที่นั่ง<span class="nopdf">&nbsp;(ชี้เมาส์ที่ป้ายเพื่อดูชนิดจอ)</span></span>
+    <span><i class="sw" style="background:var(--ok);border-bottom:4px solid var(--ink);box-sizing:border-box"></i>ขีดล่าง = มีหมายเหตุ</span>
+    <span class="nopdf"><i class="sw" style="background:var(--ok);outline:2px dashed var(--accent);outline-offset:2px"></i>เส้นประ = แก้ไขแล้ว ยังไม่ SAVE</span>
+  </div>
+
+  <div id="zones"></div>
+
+  <section class="defects">
+    <h2>รวมข้อขัดข้องคงค้าง <span id="dcount"></span></h2>
+    <ul id="dlist"></ul>
+    <p class="empty" id="dempty">ยังไม่มีรายการ แตะที่นั่งหรือ Monitor ในผังเพื่อบันทึกข้อขัดข้อง</p>
+  </section>
+
+  <div class="foot" id="foot" hidden>
+    <button class="btn danger" id="resetBtn" type="button">ล้างข้อมูลทั้งหมดเพื่อเริ่มรอบตรวจใหม่</button>
+    <span id="resetAsk" hidden>ตั้งทุกที่นั่งกลับเป็นปกติและล้างหมายเหตุ (ประวัติยังอยู่) <input id="adminPin" type="password" placeholder="รหัส Admin" autocomplete="off"> <button class="btn danger" id="resetYes" type="button">ยืนยันลบ</button> <button class="btn" id="resetNo" type="button">ยกเลิก</button></span>
+  </div>
+</div>
+
+<dialog id="dlg">
+  <h3 id="dTitle"></h3>
+  <p class="sub" id="dSub"></p>
+  <fieldset id="fsSeat"><legend>สภาพที่นั่ง</legend><div class="opts" id="optS"></div></fieldset>
+  <fieldset id="fsMon"><legend>สภาพ Monitor</legend><div class="opts" id="optM"></div></fieldset>
+  <fieldset><legend><label for="note">หมายเหตุ / รายละเอียดข้อขัดข้อง</label></legend>
+    <textarea id="note" maxlength="500" placeholder="เช่น Backrest ใช้งานไม่ได้, Travel Seat INOP, รออะไหล่ P/N …"></textarea></fieldset>
+  <p class="err" id="dErr" hidden></p>
+  <div class="acts"><button class="btn" id="dCancel" type="button">ยกเลิก</button><button class="btn pri" id="dSave" type="button">ตกลง</button></div>
+  <p class="hint">กดตกลงแล้ว อย่าลืมกด SAVE ด้านบนเพื่อบันทึกเข้าระบบ</p>
+</dialog>
+
+<dialog id="ask" class="small">
+  <h3 id="aTitle"></h3>
+  <p class="sub" id="aMsg"></p>
+  <div class="acts"><button class="btn" id="aNo" type="button">ยกเลิก</button><button class="btn danger" id="aYes" type="button"></button></div>
+</dialog>
+
+<dialog id="warn" class="small">
+  <h3>⚠ ยังไม่ได้ SAVE</h3>
+  <p class="sub" id="wMsg"></p>
+  <div class="acts"><button class="btn" id="wNo" type="button">ยกเลิก</button><button class="btn pri" id="wSave" type="button">SAVE ก่อน แล้วทำต่อ</button><button class="btn" id="wGo" type="button"></button></div>
+</dialog>
+
+<dialog id="cfDlg" class="small">
+  <h3>มีคนแก้ที่นั่งนี้ไปก่อนคุณ</h3>
+  <p class="sub">ระหว่างที่คุณกรอก มีคน SAVE ช่องเดียวกันไปแล้ว ช่องเหล่านี้ยังไม่ถูกบันทึก เลือกค่าที่จะใช้ทีละช่อง (รายการอื่น SAVE เรียบร้อยแล้ว)</p>
+  <div id="cfList"></div>
+  <div class="acts"><button class="btn pri" id="cfOk" type="button" disabled>ยืนยัน</button></div>
+</dialog>
+
+<dialog id="pv" class="wide">
+  <div class="pvbar">
+    <h3>PREVIEW รายงาน</h3>
+    <div class="acts"><button class="btn" id="pvClose" type="button">ปิด</button><button class="btn" id="pvPdf" type="button">EXPORT TO PDF</button><button class="btn" id="pvXls" type="button">EXPORT TO EXCEL</button><button class="btn pri" id="pvSave" type="button">SAVE</button></div>
+  </div>
+  <div class="pvbody" id="pvBody"></div>
+</dialog>
+
+<div class="gate" id="gate" hidden>
+  <div class="gatebox" role="dialog" aria-modal="true" aria-labelledby="gateT">
+    <h2 id="gateT">STATUS SEAT PLAN A320(03)</h2>
+    <p>ใส่รหัสเพื่อเข้าใช้งาน</p>
+    <input id="gatePin" type="password" autocomplete="off" placeholder="รหัส">
+    <p class="err" id="gateErr" hidden></p>
+    <button class="btn pri" id="gateBtn" type="button">เข้าใช้งาน</button>
+  </div>
+</div>
+
+<dialog id="pinDlg" class="small">
+  <h3>ใส่รหัสก่อน SAVE</h3>
+  <p class="sub" id="pinMsg">ใส่รหัสเพื่อยืนยันการบันทึก</p>
+  <input id="pinIn" type="password" autocomplete="off" placeholder="รหัส">
+  <div class="acts"><button class="btn" id="pinNo" type="button">ยกเลิก</button><button class="btn pri" id="pinYes" type="button">SAVE</button></div>
+</dialog>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+(function(){
+var $=function(id){return document.getElementById(id)};
+var S_LABEL=['ใช้งานได้ปกติ','มีข้อขัดข้องแต่ใช้งานได้ / Manual ได้','ใช้งานไม่ได้'];
+var M_LABEL=['Monitor ใช้งานได้','Monitor เสื่อมสภาพ','Monitor เสีย'];
+var COL=['var(--ok)','var(--warn)','var(--bad)'];
+/* A320(03) cabin from the Excel seat plan "32003 SEAT". Each line: L = left seats, R = right seats,
+   mon = [left monitor, right monitor], L2 + sofa = left seats stacked beside the sofa, tables = [left width, right width]. */
+/* Monitor types: w21 = wall mounted, b97 = bin mounted retractable (overhead, in front of the row it serves). */
+var MT={w21:{name:'Wall Mounted Monitor 21.5 Inch',short:'Wall Monitor 21.5"'},b97:{name:'Bin Mounted Retractable Monitors (OVHD Monitor) 9.7 Inch',short:'OVHD Monitor 9.7"'}};
+var MT_ORDER=['w21','b97'];
+var BIN_ROWS=[10,12,15,17];
+var MTYPE={}; // monitor id -> type key
+var ZONES=[
+ {key:'F',name:'FRONT CREW ZONE',title:'Front Crew Zone (3 Seats)',tag:'CREW',
+  mons:{'MON-F1':['w21','หน้าที่นั่ง CC 1A'],'MON-F2':['w21','หน้าที่นั่ง 1D, 1F']},
+  lines:[{room:{name:'ห้อง Commander Center',mon:'MON-F1',seats:['CC1A']},R:{mon:'MON-F2',seats:['1D','1F']}}]},
+ {key:'A',name:'VVIP OA',title:'VVIP OA (2 Seats)',tag:'VVIP OA',
+  mons:{'MON-A1':['w21','หน้าที่นั่ง 2A'],'MON-A2':['w21','หลังที่นั่ง 3A'],'MON-A3':['w21','หลังโซฟา']},
+  lines:[{mon:['MON-A1',null]},
+         {L2:['2A','3A'],sofa:'SOFA'},
+         {mon:['MON-A2','MON-A3']}]},
+ {key:'B',name:'VVIP OB',title:'VVIP OB · Meeting Area (6 Seats)',tag:'VVIP OB',
+  mons:{'MON-B1':['w21','หน้าที่นั่ง 5B'],'MON-B2':['w21','หน้าที่นั่ง 5D, 5F'],'MON-B3':['w21','หลังที่นั่ง 6B'],'MON-B4':['w21','หลังที่นั่ง 6D, 6F']},
+  lines:[{mon:['MON-B1','MON-B2']},
+         {L:['5B'],R:['5D','5F']},
+         {tables:[1,2]},
+         {L:['6B'],R:['6D','6F']},
+         {mon:['MON-B3','MON-B4']}]},
+ {key:'C',name:'VVIP OC',title:'VVIP OC · Business Class (8 Seats)',tag:'VVIP OC',
+  mons:{'MON-C1':['w21','หน้าที่นั่ง 7B, 7C'],'MON-C2':['w21','หน้าที่นั่ง 7D, 7F'],'MON-C3':['w21','หลังที่นั่ง 8B, 8C'],'MON-C4':['w21','หลังที่นั่ง 8D, 8F']},
+  lines:[{mon:['MON-C1','MON-C2']},
+         {L:['7B','7C'],R:['7D','7F']},
+         {L:['8B','8C'],R:['8D','8F']},
+         {mon:['MON-C3','MON-C4']}]},
+ {key:'D',name:'PASSENGER OD',title:'Passenger OD · Economy Class (54 Seats)',tag:'ECONOMY',
+  mons:(function(){var m={'MON-D1':['w21','หน้าที่นั่ง 9A, 9B, 9C'],'MON-D2':['w21','หน้าที่นั่ง 9D, 9E, 9F']};
+    BIN_ROWS.forEach(function(n){m['MON-D'+n+'L']=['b97','หน้าที่นั่ง '+n+'A, '+n+'B, '+n+'C'];m['MON-D'+n+'R']=['b97','หน้าที่นั่ง '+n+'D, '+n+'E, '+n+'F']});return m})(),
+  lines:[{mon:['MON-D1','MON-D2']}].concat([].concat.apply([],[9,10,11,12,14,15,16,17,18].map(function(n){
+    var row={L:[n+'A',n+'B',n+'C'],R:[n+'D',n+'E',n+'F']};
+    return BIN_ROWS.indexOf(n)>=0?[{mon:['MON-D'+n+'L','MON-D'+n+'R']},row]:[row]})))}
+];
+var SEAT_NAME={CC1A:'Commander Center 1A'};
+var WIDE={CC1A:1};
+var ITEMS={}; // id -> {zone, seat:bool, mon:bool, label}
+var CFG=window.SEATPLAN_CONFIG||{}, API=String(CFG.API_URL||'').trim();
+var db=null, canWrite=true, cur=null, pick={s:0,m:0}, resetEnabled=false;
+var pinRequired=null; /* from the server; the PIN is asked on every SAVE and never stored */
+try{localStorage.removeItem('seat-a320-03-pin')}catch(e){}
+var accessPin=''; /* PIN typed at the entry screen, kept in memory only: reloading the page asks again */
+function apiGet(){return apiPost({action:'load',pin:accessPin})}
+function apiPost(body){return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(function(r){return r.json()})}
+
+function reg(id,zone,seat,mon,label){ITEMS[id]={zone:zone,seat:seat,mon:mon,label:label}}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
+
+function seatLabel(id){return SEAT_NAME[id]||('ที่นั่ง '+id)}
+function seatBtn(id){
+  var named=!!SEAT_NAME[id],b=el('button','seat'+(named?' txt':'')+(WIDE[id]?' wide':''));b.type='button';b.dataset.id=id;
+  b.appendChild(el('span','s',named?SEAT_NAME[id]:id));return b;
+}
+function monLabel(id,v){MTYPE[id]=v[0];return MT[v[0]].name+' · '+v[1]}
+function monBtn(id){var b=el('button','ovh',MTYPE[id].charAt(0)==='b'?'OVHD Monitor':'Monitor');b.type='button';b.dataset.id=id;return b}
+
+function build(){
+  var host=$('zones');host.style.display='flex';host.style.flexDirection='column';host.style.gap='16px';
+  ZONES.forEach(function(z){
+    var sec=el('section','zone'),h=el('header');h.appendChild(el('h2',null,z.title));h.appendChild(el('span',null,z.tag));sec.appendChild(h);
+    var box=el('div','rows');
+    z.lines.forEach(function(ln){
+      if(ln.tables){
+        var rt=el('div','row');
+        ln.tables.forEach(function(w,i){
+          if(i)rt.appendChild(el('div','aisle'));
+          var side=el('div','side'),t=el('div','tbl','TABLE');t.setAttribute('aria-hidden','true');
+          t.style.width='calc('+w+' * var(--sw) + '+(w-1)+' * var(--sg))';side.appendChild(t);rt.appendChild(side);
+        });
+        box.appendChild(rt);return;
+      }
+      if(ln.room){
+        var rr=el('div','row'),ls=el('div','side'),room=el('div','room');
+        room.appendChild(el('div','roomname',ln.room.name));
+        reg(ln.room.mon,z.key,false,true,monLabel(ln.room.mon,z.mons[ln.room.mon]));room.appendChild(monBtn(ln.room.mon));
+        ln.room.seats.forEach(function(id){reg(id,z.key,true,false,seatLabel(id));room.appendChild(seatBtn(id))});
+        ls.appendChild(room);rr.appendChild(ls);rr.appendChild(el('div','aisle'));
+        var rs=el('div','side col');
+        reg(ln.R.mon,z.key,false,true,monLabel(ln.R.mon,z.mons[ln.R.mon]));rs.appendChild(monBtn(ln.R.mon));
+        var sr=el('div','seatrow');ln.R.seats.forEach(function(id){reg(id,z.key,true,false,seatLabel(id));sr.appendChild(seatBtn(id))});
+        rs.appendChild(sr);rr.appendChild(rs);box.appendChild(rr);return;
+      }
+      if(ln.L2){
+        var r2=el('div','row'),left=el('div','side'),col=el('div','stack');
+        ln.L2.forEach(function(id){if(id==='#TABLE'){var tb=el('div','tbl','TABLE');tb.setAttribute('aria-hidden','true');tb.style.width='var(--sw)';col.appendChild(tb);return}reg(id,z.key,true,false,seatLabel(id));col.appendChild(seatBtn(id))});
+        left.appendChild(col);r2.appendChild(left);r2.appendChild(el('div','aisle'));
+        var right=el('div','side');right.style.alignSelf='stretch';
+        if(ln.R2){right.style.alignItems='center';ln.R2.forEach(function(id){reg(id,z.key,true,false,seatLabel(id));right.appendChild(seatBtn(id))})}
+        else{var sofa=el('div','sofa',ln.sofa);sofa.setAttribute('aria-hidden','true');right.appendChild(sofa)}
+        r2.appendChild(right);box.appendChild(r2);return;
+      }
+      if(ln.mon){
+        var o=el('div','row ovhrow');
+        ln.mon.forEach(function(id,i){
+          if(i)o.appendChild(el('div','aisle'));
+          var side=el('div','side');
+          if(id){reg(id,z.key,false,true,monLabel(id,z.mons[id]));side.appendChild(monBtn(id))}
+          o.appendChild(side);
+        });
+        box.appendChild(o);return;
+      }
+      var r=el('div','row');
+      [ln.L||[],ln.R||[]].forEach(function(ids,i){
+        if(i)r.appendChild(el('div','aisle'));
+        var side=el('div','side');
+        ids.forEach(function(id){reg(id,z.key,true,false,seatLabel(id));side.appendChild(seatBtn(id))});
+        r.appendChild(side);
+      });
+      box.appendChild(r);
+    });
+    sec.appendChild(box);host.appendChild(sec);
+  });
+  host.addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b)openEditor(b.dataset.id)});
+}
+/* saved = last SAVE (shared db). draft = edits on this device not yet SAVEd (kept in this browser). */
+var saved={}, draft={}, lastSave=null, dl=null, useSaved=false; /* useSaved: exports read the last SAVE only */
+var DRAFT_KEY='seat-a320-03-draft';
+try{draft=JSON.parse(localStorage.getItem(DRAFT_KEY)||'{}')||{}}catch(e){draft={}}
+function persistDraft(){try{localStorage.setItem(DRAFT_KEY,JSON.stringify(draft))}catch(e){}}
+function norm(d){d=d||{};return {s:d.s|0,m:d.m|0,note:d.note||'',by:d.by||'',at:d.at||''}}
+function same(a,b){a=norm(a);b=norm(b);return a.s===b.s&&a.m===b.m&&a.note===b.note}
+/* a draft keeps base = the saved values when editing started; only fields that differ from base count as edits,
+   every other field follows the latest saved value (so someone else's SAVE on another field shows through) */
+var FIELDS=['s','m','note'];
+function baseOf(id){var d=draft[id];return norm(d&&d.base?d.base:saved[id])}
+function draftFields(id){var d=draft[id];if(!d)return [];var b=baseOf(id),n=norm(d);return FIELDS.filter(function(f){return n[f]!==b[f]})}
+function get(id){var r=norm(saved[id]);if(useSaved||!draft[id])return r;var d=norm(draft[id]);
+  draftFields(id).forEach(function(f){r[f]=d[f]});r.by=d.by;r.at=d.at;return r}
+function draftDone(id){var sv=norm(saved[id]),d=norm(draft[id]);return draftFields(id).every(function(f){return d[f]===sv[f]})}
+function pend(id){return !useSaved&&!!draft[id]}
+function pendingIds(){return Object.keys(ITEMS).filter(function(id){return draft[id]})}
+
+function render(){
+  Object.keys(ITEMS).forEach(function(id){
+    var b=document.querySelector('#zones [data-id="'+id+'"]');if(!b)return;var d=get(id),it=ITEMS[id];
+    if(it.seat)b.dataset.s=d.s;
+    if(it.mon)b.dataset.m=d.m;
+    if(d.note)b.dataset.note='1';else delete b.dataset.note;
+    if(draft[id])b.dataset.pending='1';else delete b.dataset.pending;
+    var a=it.label+(it.seat?' · '+S_LABEL[d.s]:'')+(it.mon?' · '+M_LABEL[d.m]:'')+(d.note?' · '+d.note:'')+(draft[id]?' · ยังไม่ SAVE':'');
+    b.setAttribute('aria-label',a);
+    if(it.mon){var p=it.label.split(' · ').slice(1).join(' · ');b.dataset.tip=MT[MTYPE[id]].short+'\n'+p+'\n'+M_LABEL[d.m]+(d.note?'\nหมายเหตุ: '+d.note:'')+(draft[id]?'\n(ยังไม่ SAVE)':'');b.removeAttribute('title')}
+    else b.title=a;
+  });
+  renderSummary();renderDefects();renderTools();
+}
+function summaryData(){
+  var T={};ZONES.forEach(function(z){T[z.key]={t:0,s:[0,0,0],mt:0,m:[0,0,0]}});
+  Object.keys(ITEMS).forEach(function(id){var it=ITEMS[id],d=get(id),z=T[it.zone];
+    if(it.seat){z.t++;z.s[d.s]++} if(it.mon){z.mt++;z.m[d.m]++}});
+  var rows=[],sum={t:0,s:[0,0,0],mt:0,m:[0,0,0]};
+  ZONES.forEach(function(z){var v=T[z.key];rows.push({name:z.name,v:v});sum.t+=v.t;sum.mt+=v.mt;for(var i=0;i<3;i++){sum.s[i]+=v.s[i];sum.m[i]+=v.m[i]}});
+  rows.push({name:'รวม',v:sum});return rows;
+}
+function summaryHTML(){
+  var h='<thead><tr><th>ZONE</th><th>ที่นั่งรวม</th><th><i style="background:var(--ok)"></i>ใช้งานได้ปกติ</th><th><i style="background:var(--warn)"></i>ขัดข้องแต่ใช้ได้</th><th><i style="background:var(--bad)"></i>ใช้งานไม่ได้</th><th class="sep">Monitor</th><th><i style="background:var(--ok)"></i>ใช้งานได้</th><th><i style="background:var(--warn)"></i>เสื่อมสภาพ</th><th><i style="background:var(--bad)"></i>เสีย</th></tr></thead><tbody>';
+  summaryData().forEach(function(r){var z=r.v;
+    h+='<tr><td>'+r.name+'</td><td class="n">'+z.t+'</td><td class="n">'+z.s[0]+'</td><td class="n w'+(z.s[1]?' nz':'')+'">'+z.s[1]+'</td><td class="n b'+(z.s[2]?' nz':'')+'">'+z.s[2]+'</td><td class="n sep">'+z.mt+'</td><td class="n">'+z.m[0]+'</td><td class="n w'+(z.m[1]?' nz':'')+'">'+z.m[1]+'</td><td class="n b'+(z.m[2]?' nz':'')+'">'+z.m[2]+'</td></tr>'});
+  return h+'</tbody>';
+}
+function mtData(){
+  var T={};MT_ORDER.forEach(function(k){T[k]={t:0,m:[0,0,0]}});var sum={t:0,m:[0,0,0]};
+  Object.keys(ITEMS).forEach(function(id){if(!ITEMS[id].mon)return;var d=get(id),v=T[MTYPE[id]];v.t++;v.m[d.m]++;sum.t++;sum.m[d.m]++});
+  return MT_ORDER.map(function(k){return {name:MT[k].name,v:T[k]}}).concat([{name:'รวม',v:sum}]);
+}
+function mtHTML(){
+  var h='<thead><tr><th>ชนิด Monitor</th><th>จำนวน</th><th><i style="background:var(--ok)"></i>ใช้งานได้</th><th><i style="background:var(--warn)"></i>เสื่อมสภาพ</th><th><i style="background:var(--bad)"></i>เสีย</th></tr></thead><tbody>';
+  mtData().forEach(function(r){var z=r.v;h+='<tr><td>'+r.name+'</td><td class="n">'+z.t+'</td><td class="n">'+z.m[0]+'</td><td class="n w'+(z.m[1]?' nz':'')+'">'+z.m[1]+'</td><td class="n b'+(z.m[2]?' nz':'')+'">'+z.m[2]+'</td></tr>'});
+  return h+'</tbody>';
+}
+function renderSummary(){$('summary').innerHTML=summaryHTML();$('mtsum').innerHTML=mtHTML()}
+function fmt(at){if(!at)return '';var d=new Date(at);if(isNaN(d))return '';
+  try{return d.toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return d.toISOString().slice(0,16).replace('T',' ')}}
+function zoneName(k){for(var i=0;i<ZONES.length;i++)if(ZONES[i].key===k)return ZONES[i].name;return ''}
+function defectIds(){return Object.keys(ITEMS).filter(function(id){var d=get(id);return d.s||d.m||d.note})}
+function renderDefects(){
+  var ul=$('dlist');ul.textContent='';var ids=defectIds();
+  ids.forEach(function(id){var d=get(id),it=ITEMS[id];
+    var isMon=id.indexOf('MON-')===0;
+    var li=el('li');li.dataset.id=id;li.appendChild(el('span','id',isMon?'MON':id));
+    var body=el('div','txt'),tags=el('div','tags');
+    if(isMon||SEAT_NAME[id])tags.appendChild(el('span',null,it.label));
+    if(it.seat&&d.s)tags.appendChild(el('span','tag '+(d.s===1?'w':'b'),S_LABEL[d.s]));
+    if(it.mon&&d.m)tags.appendChild(el('span','tag '+(d.m===1?'w':'b'),M_LABEL[d.m]));
+    if(draft[id])tags.appendChild(el('span','tag p','ยังไม่ SAVE'));
+    body.appendChild(tags);if(d.note)body.appendChild(el('div',null,d.note));
+    var meta=[d.by,fmt(d.at)].filter(Boolean).join(' · ');if(meta)body.appendChild(el('div','meta',meta));
+    li.appendChild(body);ul.appendChild(li);
+  });
+  $('dempty').hidden=ids.length>0;$('dcount').textContent=ids.length?'('+ids.length+')':'';
+}
+function renderTools(){
+  var n=pendingIds().length;
+  $('pend').textContent=n?('แก้ไขแล้ว '+n+' รายการ ยังไม่ได้ SAVE'):'ไม่มีการแก้ไขค้าง';
+  $('pend').classList.toggle('on',n>0);
+  $('bSave').textContent=n?'SAVE ('+n+')':'SAVE';
+  $('bSave').disabled=!canWrite||!n;$('bClear').disabled=!n;
+  $('lastSave').textContent=lastSave&&lastSave.at?('SAVE ล่าสุด: '+[lastSave.by,fmt(lastSave.at)].filter(Boolean).join(' · ')):'ยังไม่เคย SAVE';
+}
+$('dlist').addEventListener('click',function(e){var li=e.target.closest('li');if(li)openEditor(li.dataset.id)});
+
+function optButtons(host,labels,key){
+  host.textContent='';
+  labels.forEach(function(t,i){var b=el('button','opt');b.type='button';
+    var sw=el('i','sw');sw.style.background=COL[i];b.appendChild(sw);b.appendChild(el('span',null,t));
+    b.setAttribute('aria-pressed',String(pick[key]===i));
+    b.addEventListener('click',function(){pick[key]=i;optButtons(host,labels,key)});
+    b.disabled=!canWrite;host.appendChild(b)});
+}
+function openEditor(id){
+  var it=ITEMS[id];if(!it)return;cur=id;var d=get(id);pick={s:d.s,m:d.m};
+  $('dTitle').textContent=it.label;
+  var sv=saved[id]?norm(saved[id]):null;
+  $('dSub').textContent=(draft[id]?'มีการแก้ไขที่ยังไม่ SAVE · ':'')+(sv&&sv.at?('SAVE ล่าสุด '+[sv.by,fmt(sv.at)].filter(Boolean).join(' · ')):'ยังไม่มีการบันทึก');
+  $('fsSeat').hidden=!it.seat;$('fsMon').hidden=!it.mon;
+  optButtons($('optS'),S_LABEL,'s');optButtons($('optM'),M_LABEL,'m');
+  $('note').value=d.note;$('note').readOnly=!canWrite;$('dErr').hidden=true;
+  $('dSave').hidden=!canWrite;$('dCancel').textContent=canWrite?'ยกเลิก':'ปิด';
+  showDlg($('dlg'));
+}
+function showDlg(d){if(d.showModal)d.showModal();else d.setAttribute('open','')}
+function hideDlg(d){if(d.close)d.close();else d.removeAttribute('open')}
+$('dCancel').addEventListener('click',function(){hideDlg($('dlg'));cur=null});
+$('dSave').addEventListener('click',function(){
+  if(!cur)return;var id=cur,it=ITEMS[id];
+  var prev=draft[id],b=prev&&prev.base?norm(prev.base):norm(saved[id]);
+  var doc={s:it.seat?pick.s:0,m:it.mon?pick.m:0,note:$('note').value.trim(),by:$('inspector').value.trim(),at:new Date().toISOString(),base:{s:b.s,m:b.m,note:b.note}};
+  draft[id]=doc;if(!draftFields(id).length||draftDone(id))delete draft[id];
+  persistDraft();render();hideDlg($('dlg'));cur=null;
+});
+function setReadOnly(msg){canWrite=false;$('app').classList.add('ro');$('dSave').hidden=true;
+  var n=$('notice');n.hidden=false;n.textContent=msg;renderTools()}
+
+var toastT=null;
+function toast(msg,bad){var t=$('toast');t.textContent=msg;t.className='toast show'+(bad?' bad':'');clearTimeout(toastT);toastT=setTimeout(function(){t.className='toast'},4000)}
+
+var who=$('inspector');
+try{who.value=localStorage.getItem('seat-a320-03-inspector')||''}catch(e){}
+who.addEventListener('change',function(){try{localStorage.setItem('seat-a320-03-inspector',who.value.trim())}catch(e){}});
+
+/* small yes/no dialog */
+var askCb=null;
+function ask(title,msg,yes,cb){$('aTitle').textContent=title;$('aMsg').textContent=msg;$('aYes').textContent=yes;askCb=cb;showDlg($('ask'))}
+$('aNo').addEventListener('click',function(){hideDlg($('ask'));askCb=null});
+$('aYes').addEventListener('click',function(){hideDlg($('ask'));var f=askCb;askCb=null;if(f)f()});
+
+/* CLEAR: drop every unsaved edit, back to the last SAVE */
+$('bClear').addEventListener('click',function(){
+  var n=pendingIds().length;if(!n)return;
+  ask('CLEAR การแก้ไข','ยกเลิกการแก้ไข '+n+' รายการที่ยังไม่ได้ SAVE และย้อนกลับไปที่ SAVE ครั้งล่าสุด','CLEAR',function(){
+    draft={};persistDraft();render();toast('ย้อนกลับไปที่ SAVE ครั้งล่าสุดแล้ว');
+  });
+});
+
+/* SAVE: write every pending edit to the shared record */
+var saving=false;
+function doSave(){
+  if(saving)return Promise.resolve(false);var ids=pendingIds();if(!ids.length){toast('ไม่มีรายการที่ต้อง SAVE');return Promise.resolve(true)}
+  if(!API){toast('ยังไม่ได้ตั้งค่า API_URL ใน config.js จึง SAVE ไม่ได้',true);return Promise.resolve(false)}
+  var by=who.value.trim();if(!by){toast('กรุณาใส่ชื่อผู้ตรวจก่อน SAVE',true);who.focus();return Promise.resolve(false)}
+  var pinStep=pinRequired===false?Promise.resolve(''):askPin(ids.length);
+  return pinStep.then(function(pin){
+    if(pin===null)return false;
+    return sendSave(pin,by);
+  });
+}
+function sendSave(pin,by){
+    var ids=pendingIds();if(!ids.length){render();return Promise.resolve(true)}
+    saving=true;$('bSave').disabled=true;$('bSave').textContent='กำลัง SAVE…';
+    var changes=ids.map(function(id){var r=get(id),b=baseOf(id);
+      return {id:id,s:r.s,m:r.m,note:r.note,fields:draftFields(id),base:{s:b.s,m:b.m,note:b.note}}});
+    return apiPost({action:'save',by:by,pin:pin,changes:changes}).then(function(res){
+      if(!res||!res.ok){
+        if(res&&res.error==='pin'){pinRequired=true;toast(pin?'รหัสไม่ถูกต้อง กด SAVE แล้วใส่รหัสอีกครั้ง':'ระบบนี้ต้องใส่รหัส กด SAVE อีกครั้ง',true);return false}
+        if(res&&res.error==='no_name'){toast('กรุณาใส่ชื่อผู้ตรวจก่อน SAVE',true);return false}
+        toast('SAVE ไม่สำเร็จ'+(res&&res.message?' ('+res.message+')':'')+' ลองกด SAVE อีกครั้ง',true);return false;
+      }
+      var conflicts=res.conflicts||[],cur=res.current||{},hit={};
+      conflicts.forEach(function(c){(hit[c.id]=hit[c.id]||{})[c.field]=c});
+      changes.forEach(function(c){
+        var old=norm(saved[c.id]),now=cur[c.id]?norm(cur[c.id]):norm(c);
+        var wrote=c.fields.some(function(f){return !(hit[c.id]&&hit[c.id][f])});
+        saved[c.id]={s:now.s,m:now.m,note:now.note,by:wrote?by:old.by,at:wrote?res.at:old.at};
+        if(!hit[c.id]){delete draft[c.id];return}
+        // keep only the clashing fields as the draft
+        var d=draft[c.id],keep={s:now.s,m:now.m,note:now.note};
+        Object.keys(hit[c.id]).forEach(function(f){keep[f]=norm(d)[f]});
+        draft[c.id]={s:keep.s,m:keep.m,note:keep.note,by:d.by,at:d.at,base:d.base};
+      });
+      persistDraft();if(res.lastSave)lastSave=res.lastSave;
+      var nOk=changes.length-Object.keys(hit).length;
+      if(conflicts.length){if(nOk)toast('SAVE เรียบร้อย '+nOk+' รายการ');showConflicts(conflicts,pin,by);return false}
+      toast('SAVE ลง Google Sheet เรียบร้อย '+changes.length+' รายการ');return true;
+    },function(){toast('ติดต่อ Google Sheet ไม่ได้ ตรวจสอบอินเทอร์เน็ตแล้วกด SAVE อีกครั้ง',true);return false})
+    .then(function(ok){saving=false;render();load();return ok});
+}
+
+/* someone else saved the same field first: let the user pick per field */
+var FIELD_TH={s:'สภาพที่นั่ง',m:'สภาพ Monitor',note:'หมายเหตุ'};
+function fieldText(f,v){return f==='s'?S_LABEL[v|0]:f==='m'?M_LABEL[v|0]:(v||'(ว่าง)')}
+var cfState=null;
+function showConflicts(list,pin,by){
+  cfState={list:list,pin:pin,by:by,pick:{}};
+  var host=$('cfList');host.textContent='';
+  list.forEach(function(c,i){
+    var box=el('div','cfrow');
+    box.appendChild(el('div','cfh',c.label+' · '+FIELD_TH[c.field]));
+    var mk=function(k,title,val,meta){var b=el('button','opt');b.type='button';b.dataset.i=i;b.dataset.k=k;
+      var t=el('div','cft');t.appendChild(el('span','cfk',title));t.appendChild(el('b',null,fieldText(c.field,val)));if(meta)t.appendChild(el('span','cfm',meta));
+      b.appendChild(t);b.setAttribute('aria-pressed','false');
+      b.addEventListener('click',function(){cfState.pick[i]=k;host.querySelectorAll('button[data-i="'+i+'"]').forEach(function(x){x.setAttribute('aria-pressed',String(x.dataset.k===k))});cfCheck()});
+      return b};
+    var o=el('div','opts');
+    o.appendChild(mk('theirs','ใช้ค่าที่บันทึกไว้',c.cur,[c.by?'โดย '+c.by:'',c.at?fmt(c.at):''].filter(Boolean).join(' · ')));
+    o.appendChild(mk('mine','ใช้ค่าของฉัน',c.mine,''));
+    box.appendChild(o);host.appendChild(box);
+  });
+  cfCheck();showDlg($('cfDlg'));
+}
+function cfCheck(){$('cfOk').disabled=!cfState||Object.keys(cfState.pick).length<cfState.list.length}
+$('cfOk').addEventListener('click',function(){
+  var st=cfState;if(!st)return;cfState=null;hideDlg($('cfDlg'));
+  var mine=0;
+  st.list.forEach(function(c,i){
+    var d=draft[c.id];if(!d)return;
+    d.base=Object.assign({},norm(d.base||saved[c.id]));d.base[c.field]=c.cur;   // now based on what is in the sheet
+    if(st.pick[i]==='mine'){d[c.field]=c.mine;mine++}else d[c.field]=c.cur;
+    var b=d.base;d.base={s:b.s,m:b.m,note:b.note};
+    if(!draftFields(c.id).length)delete draft[c.id];
+  });
+  persistDraft();render();
+  if(mine)sendSave(st.pin,st.by);else toast('ใช้ค่าที่บันทึกไว้แล้ว');
+});
+$('cfDlg').addEventListener('cancel',function(e){e.preventDefault()});
+
+/* PIN dialog: resolves with the typed PIN, or null when cancelled */
+var pinCb=null;
+function askPin(n){
+  $('pinIn').value='';$('pinMsg').textContent='SAVE '+n+' รายการ ใส่รหัสเพื่อยืนยันการบันทึกลง Google Sheet';
+  showDlg($('pinDlg'));setTimeout(function(){$('pinIn').focus()},50);
+  return new Promise(function(ok){pinCb=ok});
+}
+function closePin(v){hideDlg($('pinDlg'));var f=pinCb;pinCb=null;if(f)f(v)}
+$('pinNo').addEventListener('click',function(){closePin(null)});
+$('pinYes').addEventListener('click',function(){var p=$('pinIn').value.trim();if(!p){$('pinIn').focus();return}closePin(p)});
+$('pinIn').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('pinYes').click()}});
+$('pinDlg').addEventListener('cancel',function(e){e.preventDefault();closePin(null)});
+$('bSave').addEventListener('click',function(){doSave()});
+
+/* ---------- report (PREVIEW / PDF) ---------- */
+function stamp(){var d=new Date(),p=function(n){return String(n).padStart(2,'0')};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())}
+function reportNode(isPreview){
+  var r=el('div','report');if(isPreview)r.dataset.preview='1';
+  var h=el('div','blk rhead');
+  h.appendChild(el('h1',null,'STATUS SEAT PLAN A320(03) · รายงานสภาพที่นั่งและ Monitor'));
+  var meta=el('div','rmeta');
+  meta.appendChild(el('div',null,'วันที่ออกรายงาน: '+fmt(new Date().toISOString())));
+  meta.appendChild(el('div',null,'ผู้ตรวจ: '+(who.value.trim()||'-')));
+  meta.appendChild(el('div',null,$('lastSave').textContent));
+  h.appendChild(meta);
+  var n=useSaved?0:pendingIds().length,np=pendingIds().length;
+  if(r.dataset.preview&&np)h.appendChild(el('div','rwarn','ข้อมูลในตัวอย่างนี้เป็นข้อมูล SAVE ล่าสุด ยังไม่รวมการแก้ไข '+np+' รายการที่ยังไม่ได้ SAVE'));
+  h.appendChild(el('h2',null,'สรุปตามโซน'));
+  var t=el('table');t.innerHTML=summaryHTML();h.appendChild(t);
+  h.appendChild(el('h2',null,'สรุปตามชนิด Monitor'));var t2=el('table','mt');t2.innerHTML=mtHTML();h.appendChild(t2);
+  var lg=$('legend').cloneNode(true);lg.removeAttribute('id');h.appendChild(lg);
+  r.appendChild(h);
+  $('zones').querySelectorAll('section.zone').forEach(function(z){
+    var c=z.cloneNode(true);c.classList.add('blk');c.setAttribute('inert','');c.removeAttribute('id');
+    c.querySelectorAll('[data-id]').forEach(function(b){var id=b.dataset.id,it=ITEMS[id],d=get(id);
+      if(it.seat)b.dataset.s=d.s;if(it.mon)b.dataset.m=d.m;if(d.note)b.dataset.note='1';else delete b.dataset.note;delete b.dataset.pending});
+    r.appendChild(c);
+  });
+  var ids=defectIds(),dsec=el('div','blk');
+  dsec.appendChild(el('h2',null,'รวมข้อขัดข้องคงค้าง ('+ids.length+')'));
+  if(!ids.length)dsec.appendChild(el('p',null,'ไม่มีข้อขัดข้อง'));
+  else{
+    var dt=el('table','rdef'),th=el('tr');
+    ['ที่นั่ง / จุด','โซน','สภาพที่นั่ง','สภาพ Monitor','หมายเหตุ','ผู้บันทึก · เวลา'].forEach(function(x){th.appendChild(el('th',null,x))});
+    var thead=el('thead');thead.appendChild(th);dt.appendChild(thead);var tb=el('tbody');
+    ids.forEach(function(id){var d=get(id),it=ITEMS[id],tr=el('tr');
+      tr.appendChild(el('td',null,(id.indexOf('MON-')===0||SEAT_NAME[id])?it.label:id+(pend(id)?' *':'')));
+      tr.appendChild(el('td',null,zoneName(it.zone)));
+      var s=el('td',null,it.seat?S_LABEL[d.s]:'-');if(it.seat&&d.s)s.className=d.s===1?'w':'b';tr.appendChild(s);
+      var m=el('td',null,it.mon?M_LABEL[d.m]:'-');if(it.mon&&d.m)m.className=d.m===1?'w':'b';tr.appendChild(m);
+      tr.appendChild(el('td',null,d.note||'-'));
+      tr.appendChild(el('td',null,[d.by,fmt(d.at)].filter(Boolean).join(' · ')||'-'));
+      tb.appendChild(tr)});
+    dt.appendChild(tb);dsec.appendChild(dt);
+    if(n)dsec.appendChild(el('p','rnote','* = ยังไม่ได้ SAVE'));
+  }
+  r.appendChild(dsec);
+  return r;
+}
+function openPreview(){
+  useSaved=true;var node;try{node=reportNode(true)}finally{useSaved=false}
+  var host=$('pvBody');host.textContent='';host.appendChild(node);showDlg($('pv'));
+}
+/* before PREVIEW / EXPORT: warn when there are edits not yet SAVEd */
+var warnCb=null;
+function guard(label,fn){
+  var n=pendingIds().length;if(!n){fn();return}
+  $('wMsg').textContent='มีการแก้ไข '+n+' รายการที่ยังไม่ได้ SAVE ถ้ากด '+label+' ต่อ ข้อมูลที่ได้จะเป็นข้อมูลก่อน SAVE (SAVE ครั้งล่าสุด) ไม่รวมรายการที่แก้ไขไว้';
+  $('wGo').textContent=label+' ต่อ (ข้อมูลก่อน SAVE)';$('wSave').hidden=!canWrite;
+  warnCb=fn;showDlg($('warn'));
+}
+$('wNo').addEventListener('click',function(){hideDlg($('warn'));warnCb=null});
+$('wGo').addEventListener('click',function(){hideDlg($('warn'));var f=warnCb;warnCb=null;if(f)f()});
+$('wSave').addEventListener('click',function(){hideDlg($('warn'));var f=warnCb;warnCb=null;
+  doSave().then(function(ok){if(ok&&f&&!pendingIds().length)f()})});
+$('bPreview').addEventListener('click',function(){guard('PREVIEW',openPreview)});
+$('pvClose').addEventListener('click',function(){hideDlg($('pv'))});
+$('pvSave').addEventListener('click',function(){hideDlg($('pv'));doSave()});
+$('pvPdf').addEventListener('click',function(){exportPdf()});
+$('pvXls').addEventListener('click',function(){exportXlsx()});
+$('bPdf').addEventListener('click',function(){guard('EXPORT TO PDF',exportPdf)});
+$('bXls').addEventListener('click',function(){guard('EXPORT TO EXCEL',exportXlsx)});
+
+var libs={};
+function loadLib(src){if(!libs[src])libs[src]=new Promise(function(ok,no){var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=function(){delete libs[src];no(new Error('load'))};document.head.appendChild(s)});return libs[src]}
+function offerFile(name,data,mime){
+  var c=window.claude,p=(c&&c.use)?c.use('downloads'):Promise.resolve(null); /* outside Claude this resolves null and falls back to a normal download link */
+  return p.then(function(d){
+    if(d)return d.save({filename:name,data:data}).then(function(){toast('ส่งไฟล์ '+name+' แล้ว')},function(e){
+      if(e&&e.code==='declined')return;
+      if(e&&e.code==='rate_limited'){toast('มีหน้าต่างบันทึกไฟล์เปิดอยู่ รอสักครู่แล้วลองใหม่',true);return}
+      toast('บันทึกไฟล์ไม่สำเร็จในหน้านี้',true)});
+    var url=URL.createObjectURL(new Blob([data],{type:mime})),a=document.createElement('a');
+    a.href=url;a.download=name;document.body.appendChild(a);a.click();a.remove();setTimeout(function(){URL.revokeObjectURL(url)},4000);
+  });
+}
+var busy=false;
+function exportNote(){return pendingIds().length?' (ข้อมูลก่อน SAVE)':''}
+function exportPdf(){
+  if(busy)return;busy=true;toast('กำลังสร้าง PDF…'+exportNote());
+  useSaved=true;var wrap=el('div','offscreen'),node=reportNode();useSaved=false;wrap.appendChild(node);document.body.appendChild(wrap);
+  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),document.fonts?document.fonts.ready:null])
+  .then(function(){
+    var blks=[].slice.call(node.querySelectorAll(':scope > .blk'));
+    return blks.reduce(function(p,b){return p.then(function(arr){return html2canvas(b,{scale:2,backgroundColor:'#ffffff',logging:false}).then(function(cv){arr.push(cv);return arr})})},Promise.resolve([]));
+  })
+  .then(function(cvs){
+    var pdf=new window.jspdf.jsPDF({orientation:'p',unit:'mm',format:'a4'});
+    var M=10,W=210-2*M,H=297-2*M,y=M,first=true;
+    cvs.forEach(function(cv){
+      var mmPerPx=W/cv.width,hmm=cv.height*mmPerPx;
+      if(hmm<=H){
+        if(y+hmm>M+H&&!first){pdf.addPage();y=M}
+        pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',M,y,W,hmm);y+=hmm+4;first=false;return;
+      }
+      /* taller than a page: slice */
+      var pxPage=Math.floor(H/mmPerPx),off=0;
+      if(!first){pdf.addPage();y=M}
+      while(off<cv.height){
+        var h=Math.min(pxPage,cv.height-off),s=document.createElement('canvas');s.width=cv.width;s.height=h;
+        s.getContext('2d').drawImage(cv,0,off,cv.width,h,0,0,cv.width,h);
+        if(off>0){pdf.addPage();y=M}
+        pdf.addImage(s.toDataURL('image/jpeg',0.92),'JPEG',M,y,W,h*mmPerPx);y+=h*mmPerPx+4;off+=h;
+      }
+      first=false;
+    });
+    return offerFile('STATUS_SEAT_PLAN_A320-03_'+stamp()+'.pdf',pdf.output('arraybuffer'),'application/pdf');
+  })
+  .catch(function(){toast('สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง',true)})
+  .then(function(){wrap.remove();busy=false});
+}
+function exportXlsx(){
+  if(busy)return;busy=true;toast('กำลังสร้าง Excel…'+exportNote());
+  /* history comes from the Google Sheet; an older Apps Script without it still exports the other sheets */
+  var hist=API?apiPost({action:'history',pin:accessPin}).then(function(r){return r&&r.ok?r.rows:null},function(){return null}):Promise.resolve(null);
+  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'),loadLib('export-excel.js'),hist]).then(function(res){
+    var st={};Object.keys(ITEMS).forEach(function(id){st[id]=norm(saved[id])});
+    var wb=window.buildSeatWorkbook(window.ExcelJS,{state:st,lastSave:lastSave,inspector:who.value.trim(),history:res[2]});
+    return wb.xlsx.writeBuffer();
+  }).then(function(buf){
+    return offerFile('STATUS_SEAT_PLAN_A320-03_'+stamp()+'.xlsx',buf,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+  })
+  .catch(function(){toast('สร้าง Excel ไม่สำเร็จ ลองอีกครั้ง',true)})
+  .then(function(){busy=false});
+}
+
+/* owner-only: wipe the shared record */
+$('resetBtn').addEventListener('click',function(){$('resetAsk').hidden=false;$('resetBtn').hidden=true});
+$('resetNo').addEventListener('click',function(){$('resetAsk').hidden=true;$('resetBtn').hidden=false});
+$('resetYes').addEventListener('click',function(){
+  if(!API)return;var pin=$('adminPin').value.trim();if(!pin){toast('ใส่รหัส Admin ก่อน',true);$('adminPin').focus();return}
+  $('resetYes').disabled=true;
+  apiPost({action:'reset',by:who.value.trim(),adminPin:pin}).then(function(res){
+    if(res&&res.ok){draft={};persistDraft();toast('ล้างข้อมูลแล้ว ทุกที่นั่งกลับเป็นปกติ');load()}
+    else toast(res&&res.error==='admin_pin'?'รหัส Admin ไม่ถูกต้อง':'ล้างข้อมูลไม่สำเร็จ',true);
+  },function(){toast('ติดต่อ Google Sheet ไม่ได้',true)})
+  .then(function(){$('resetYes').disabled=false;$('adminPin').value='';$('resetAsk').hidden=true;$('resetBtn').hidden=false});
+});
+
+window.addEventListener('beforeunload',function(e){if(pendingIds().length){e.preventDefault();e.returnValue=''}});
+
+build();
+Object.keys(draft).forEach(function(id){if(!ITEMS[id])delete draft[id]});
+render();
+
+function showGate(err){var g=$('gate');g.hidden=false;$('gateErr').textContent=err||'';$('gateErr').hidden=!err;$('gateBtn').disabled=false;
+  $('gatePin').value='';setTimeout(function(){$('gatePin').focus()},50)}
+function hideGate(){$('gate').hidden=true}
+$('gateBtn').addEventListener('click',function(){var p=$('gatePin').value.trim();if(!p){$('gatePin').focus();return}
+  accessPin=p;$('gateBtn').disabled=true;load()});
+$('gatePin').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('gateBtn').click()}});
+var loading=false;
+function load(){
+  if(!API||loading)return Promise.resolve();loading=true;
+  return apiGet().then(function(res){
+    if(res&&res.error==='pin'){showGate(accessPin?'รหัสไม่ถูกต้อง ลองอีกครั้ง':'');return}
+    if(!res||!res.ok)throw new Error(res&&res.message||'load');
+    hideGate();
+    var s2={};Object.keys(res.seats||{}).forEach(function(id){if(ITEMS[id])s2[id]=res.seats[id]});
+    saved=s2;lastSave=res.lastSave||null;resetEnabled=!!res.resetEnabled;pinRequired=!!res.pinRequired;$('foot').hidden=!resetEnabled;
+    Object.keys(draft).forEach(function(id){if(!draftFields(id).length||draftDone(id))delete draft[id]});persistDraft();
+    render();
+    $('sync').innerHTML='ข้อมูลจาก Google Sheet · อัปเดตอัตโนมัติทุก 30 วินาที · ล่าสุด <b>'+fmt(new Date().toISOString())+'</b>';
+  }).catch(function(){$('sync').textContent='ดึงข้อมูลจาก Google Sheet ไม่ได้ จะลองใหม่อัตโนมัติ'})
+  .then(function(){loading=false});
+}
+function start(){
+  if(!API){offline();return}
+  load();
+  setInterval(function(){if(!document.hidden&&!saving&&$('gate').hidden)load()},30000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&!saving&&$('gate').hidden)load()});
+}
+function offline(){$('sync').textContent='ยังไม่ได้ตั้งค่า API_URL ใน config.js หน้านี้จึงยังไม่เชื่อมกับ Google Sheet';
+  var n=$('notice');n.hidden=false;n.textContent='ผู้ดูแลต้องติดตั้ง Apps Script และใส่ URL ใน config.js ก่อน (ดู README) ตอนนี้แก้ไขได้แต่ SAVE ไม่ได้'}
+start();
+})();
+</script>
+</body>
+</html>
