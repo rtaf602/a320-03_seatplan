@@ -21,6 +21,7 @@
   var ZN = { F: 'FRONT CREW ZONE', A: 'VVIP OA', B: 'VVIP OB', C: 'VVIP OC', D: 'PASSENGER OD' };
   var ZKEYS = ['F', 'A', 'B', 'C', 'D'];
   var MTYPE = { W: 'Monitor', R: 'OVHD Monitor' };
+  var MTYPE_CELL = { W: 'Monitor 21.5"', R: 'OVHD 12.0"' }; /* label on the plan, with screen size */
   var MTYPE_FULL = { W: 'Wall Mounted Monitor 21.5 Inch', R: 'Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch' };
   var LIST = 'ทุกที่นั่ง และ Monitor';
   var FONT = 'Tahoma';
@@ -163,7 +164,7 @@
       pair.forEach(function (m, i) {
         if (!m) return;
         var c = m[3] || (i ? MON_R : MON_L), a = col(c), id = m[0], label = MTYPE[m[1]] + ' ' + m[2];
-        put(r, c, MTYPE[m[1]], { span: 4, font: font({ size: 7, bold: true }), fill: m[1] === 'R' ? C.OVHD : C.MGREEN });
+        put(r, c, MTYPE_CELL[m[1]], { span: 4, font: font({ size: 7, bold: true }), fill: m[1] === 'R' ? C.OVHD : C.MGREEN });
         put(r + 1, c, M[0], { span: 4, font: font({ size: 7 }), fill: C.WHITE }); dv(a + (r + 1), M);
         put(r + 2, c, null, { span: 4, font: font({ size: 7 }), fill: C.WHITE, align: { wrapText: true, vertical: 'top', horizontal: 'left' } });
         statusColor(a + r + ':' + col(c + 3) + r, '$' + a + '$' + (r + 1), M);
