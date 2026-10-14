@@ -509,7 +509,7 @@ function statusRules_(s, a1) {
 }
 const LIST_HDR = ['ที่นั่ง / จุด', 'ประเภท', 'โซน', 'สภาพที่นั่ง', 'สภาพ Monitor', 'หมายเหตุ', 'ผู้บันทึกล่าสุด', 'วัน/เวลาล่าสุด (TH-LT)'];
 const LIST_W = [250, 100, 130, 110, 100, 300, 170, 140];
-const ZONE_NAME = { F: 'FRONT CREW ZONE', A: 'VVIP OA', B: 'VVIP OB', C: 'VVIP OC', D: 'PASSENGER OD' };
+const ZONE_NAME = { F: 'FRONT CREW ZONE', A: 'VVIP OA', B: 'VIP OB', C: 'VVIP OC', D: 'PASSENGER OD' };
 
 function setupLog_(ss) {
   let s = ss.getSheetByName(LOG_SHEET);
@@ -597,7 +597,7 @@ const ShimExcel_ = (function () {
   var C = { GREEN: 'FF00FF00', MGREEN: 'FF8ED873', YEL: 'FFFFFF00', RED: 'FFFF0000', CABIN: 'FFCAEDFB', ROWNO: 'FF6D9EEB',
     ZONEH: 'FFC1E4F5', TAG: 'FF45B0E1', WHITE: 'FFFFFFFF', BLUE: 'FF00B0F0', GREY: 'FFF2F2F2', MUTED: 'FF566575',
     OVHD: 'FFB4A7D6', FURN: 'FFD9D9D9' };
-  var ZN = { F: 'FRONT CREW ZONE', A: 'VVIP OA', B: 'VVIP OB', C: 'VVIP OC', D: 'PASSENGER OD' };
+  var ZN = { F: 'FRONT CREW ZONE', A: 'VVIP OA', B: 'VIP OB', C: 'VVIP OC', D: 'PASSENGER OD' };
   var ZKEYS = ['F', 'A', 'B', 'C', 'D'];
   var MTYPE = { W: 'Monitor', R: 'OVHD Monitor' };
   var MTYPE_CELL = { W: 'Monitor 21.5"', R: 'OVHD 12.0"' }; /* label on the plan, with screen size */
@@ -790,8 +790,8 @@ const ShimExcel_ = (function () {
     monRow('A', [['MON-A2', 'W', 'หลังที่นั่ง 3A'], ['MON-A3', 'W', 'หลังโซฟา']]);
     zr.A = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
-    /* VVIP OB: Meeting Area */
-    z0 = r; zoneHeader('VVIP OB · Meeting Area (6 Seats)', 'VVIP OB');
+    /* VIP OB: Meeting Area */
+    z0 = r; zoneHeader('VIP OB · Meeting Area (6 Seats)', 'VIP OB');
     monRow('B', [['MON-B1', 'W', 'หน้าที่นั่ง 5B'], ['MON-B2', 'W', 'หน้าที่นั่ง 5D, 5F']]);
     /* right side: 5D/5F and 6D/6F sit side by side under their Monitor (columns 15-18), table as wide as the 2 seats */
     seatRow('B', 5, [['5B', COLS.B], ['5D', 15], ['5F', 17]]); gapRow();

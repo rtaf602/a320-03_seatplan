@@ -18,7 +18,7 @@
 |---|---|---|
 | FRONT CREW ZONE | Commander Center 1A (ในห้อง Commander Center), 1D, 1F | หน้า CC 1A, หน้า 1D/1F |
 | VVIP OA | 2A, 3A (โซฟาด้านขวา) | หน้า 2A, หลัง 3A, หลังโซฟา |
-| VVIP OB · Meeting Area | 5B, 5D, 5F, 6B, 6D, 6F (มีโต๊ะคั่น) | หน้า 5B, หน้า 5D/5F, หลัง 6B, หลัง 6D/6F |
+| VIP OB · Meeting Area | 5B, 5D, 5F, 6B, 6D, 6F (มีโต๊ะคั่น) | หน้า 5B, หน้า 5D/5F, หลัง 6B, หลัง 6D/6F |
 | VVIP OC · Business Class | 7B, 7C, 7D, 7F, 8B, 8C, 8D, 8F | หน้า 7B/7C, หน้า 7D/7F, หลัง 8B/8C, หลัง 8D/8F |
 | PASSENGER OD · Economy Class | แถว 9–12 และ 14–18 แถวละ A–F (54 ที่นั่ง) | Monitor หน้า 9A–9C, 9D–9F และ OVHD Monitor หน้าแถว 10, 12, 15, 17 ฝั่งละ 1 จอ |
 
