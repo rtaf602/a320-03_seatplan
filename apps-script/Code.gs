@@ -358,7 +358,9 @@ function setupSheet() {
     let keep = null;
     let sh = ss.getSheetByName(MAP_SHEET);
     if (sh && sh.getLastRow() > 20) {
-      try { keep = loadData_().seats; } catch (err) { keep = null; }
+      // อ่านจากแท็บ "ทุกที่นั่ง และ Monitor" ตามชื่อที่นั่ง (สูตรในแท็บนั้นยังชี้ช่องตามผังเดิม จึงถูกต้องแม้ย้ายตำแหน่งช่อง)
+      keep = keepFromList_(ss);
+      if (!keep) { try { keep = loadData_().seats; } catch (err) { keep = null; } }
     }
     if (!sh) sh = ss.insertSheet(MAP_SHEET, 0);
     applyWorksheet_(sh, ws, L.wb.seatFrames);
@@ -387,6 +389,23 @@ function setupSheet() {
   } finally {
     lock.releaseLock();
   }
+}
+
+/** สภาพเดิมของทุกที่นั่งจากแท็บ "ทุกที่นั่ง และ Monitor" (จับคู่ด้วยชื่อในคอลัมน์ A) */
+function keepFromList_(ss) {
+  const s = ss.getSheetByName(LIST_SHEET);
+  if (!s || s.getLastRow() < 2) return null;
+  const L = layout_(), byLabel = {};
+  Object.keys(L.items).forEach(function (id) { byLabel[L.items[id].label] = id; });
+  const out = {};
+  let n = 0;
+  s.getRange(2, 1, s.getLastRow() - 1, 6).getDisplayValues().forEach(function (r) {
+    const id = byLabel[String(r[0]).trim()];
+    if (!id) return;
+    out[id] = { s: Math.max(0, SEAT_TXT.indexOf(String(r[3]).trim())), m: Math.max(0, MON_TXT.indexOf(String(r[4]).trim())), note: String(r[5]).trim() };
+    n++;
+  });
+  return n ? out : null;
 }
 
 function hex_(argb) { return argb ? '#' + String(argb).slice(-6) : null; }
@@ -717,11 +736,12 @@ const ShimExcel_ = (function () {
       small(r + 2, 2, 'NOTE');
       r += 3;
     }
-    /* monitors: [left, right], each null or [id, type 'W'|'R', position text] */
+    /* monitors: [left, right], each null or [id, type 'W'|'R', position text, first column (optional)]
+     * the 4-column Monitor cell sits centred over the seats it serves */
     function monRow(zone, pair) {
       pair.forEach(function (m, i) {
         if (!m) return;
-        var c = i ? MON_R : MON_L, a = col(c), id = m[0], label = MTYPE[m[1]] + ' ' + m[2];
+        var c = m[3] || (i ? MON_R : MON_L), a = col(c), id = m[0], label = MTYPE[m[1]] + ' ' + m[2];
         put(r, c, MTYPE[m[1]], { span: 4, font: font({ size: 7, bold: true }), fill: m[1] === 'R' ? C.OVHD : C.MGREEN });
         put(r + 1, c, M[0], { span: 4, font: font({ size: 7 }), fill: C.WHITE }); dv(a + (r + 1), M);
         put(r + 2, c, null, { span: 4, font: font({ size: 7 }), fill: C.WHITE, align: { wrapText: true, vertical: 'top', horizontal: 'left' } });
@@ -762,8 +782,9 @@ const ShimExcel_ = (function () {
     z0 = r; zoneHeader('VVIP OA (2 Seats)', 'VVIP OA');
     monRow('A', [['MON-A1', 'W', 'หน้าที่นั่ง 2A'], null]);
     var sofa0 = r;
-    seatRow('A', 2, [['2A', COLS.A]]); gapRow();
-    seatRow('A', 3, [['3A', COLS.A]]);
+    /* 2A and 3A sit in the middle column of the left side so they line up under the Monitor */
+    seatRow('A', 2, [['2A', COLS.B]]); gapRow();
+    seatRow('A', 3, [['3A', COLS.B]]);
     furniture(sofa0, 14, r - sofa0, 6, 'SOFA');
     monRow('A', [['MON-A2', 'W', 'หลังที่นั่ง 3A'], ['MON-A3', 'W', 'หลังโซฟา']]);
     zr.A = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
@@ -779,10 +800,10 @@ const ShimExcel_ = (function () {
 
     /* VVIP OC: Business Class */
     z0 = r; zoneHeader('VVIP OC · Business Class (8 Seats)', 'VVIP OC');
-    monRow('C', [['MON-C1', 'W', 'หน้าที่นั่ง 7B, 7C'], ['MON-C2', 'W', 'หน้าที่นั่ง 7D, 7F']]);
+    monRow('C', [['MON-C1', 'W', 'หน้าที่นั่ง 7B, 7C', 5], ['MON-C2', 'W', 'หน้าที่นั่ง 7D, 7F']]);
     seatRow('C', 7, [['7B', COLS.B], ['7C', COLS.C], ['7D', COLS.D], ['7F', COLS.F]]); gapRow();
     seatRow('C', 8, [['8B', COLS.B], ['8C', COLS.C], ['8D', COLS.D], ['8F', COLS.F]]);
-    monRow('C', [['MON-C3', 'W', 'หลังที่นั่ง 8B, 8C'], ['MON-C4', 'W', 'หลังที่นั่ง 8D, 8F']]);
+    monRow('C', [['MON-C3', 'W', 'หลังที่นั่ง 8B, 8C', 5], ['MON-C4', 'W', 'หลังที่นั่ง 8D, 8F']]);
     zr.C = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
     /* PASSENGER OD: Economy, OVHD Monitors in front of rows 10, 12, 15, 17 */
