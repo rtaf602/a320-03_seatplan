@@ -2,5 +2,5 @@
  * API_URL  = URL ของ Apps Script Web App (ลงท้ายด้วย /exec) ได้จากขั้นตอน Deploy ใน README.md
  */
 window.SEATPLAN_CONFIG = {
-  API_URL: ''
+  API_URL: 'https://script.google.com/macros/s/AKfycbzu76fSbwfBeuPc_ub55tEPa3f0G_dfjfhn3odVrkWIlUZq5tKOUKpLTCi_KtwdCZpcAg/exec'
 };
