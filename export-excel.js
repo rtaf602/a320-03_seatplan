@@ -147,7 +147,7 @@
       if (num !== null) put(r, 2, num, { span: 1, font: font({ size: 10, bold: true, color: { argb: 'FFFFFFFF' } }), fill: C.ROWNO });
       seats.forEach(function (s) {
         var id = s[0], c = s[1], span = s[2] || 2, a = col(c);
-        put(r, c, s[3] || id, { span: span, font: font({ size: s[3] ? 8 : 11, bold: true }), fill: C.GREEN });
+        put(r, c, s[3] || id, { span: span, font: font({ size: s[3] ? 10 : 11, bold: true }), fill: C.GREEN });
         put(r + 1, c, S[0], { span: span, font: font({ size: 7 }), fill: C.WHITE }); dv(a + (r + 1), S);
         put(r + 2, c, null, { span: span, font: font({ size: 7 }), fill: C.WHITE, align: { wrapText: true, vertical: 'top', horizontal: 'left' } });
         statusColor(a + r + ':' + col(c + span - 1) + r, '$' + a + '$' + (r + 1), S);
@@ -196,7 +196,8 @@
     ws.mergeCells(r, 3, r, 8); ws.getCell(r, 3).value = 'ห้อง Commander Center';
     ws.getCell(r, 3).font = font({ size: 8, bold: true, color: { argb: C.MUTED } }); ws.getCell(r, 3).alignment = CENTER; r++;
     monRow('F', [['MON-F1', 'W', 'หน้าที่นั่ง CC 1A'], ['MON-F2', 'W', 'หน้าที่นั่ง 1D, 1F']]);
-    seatRow('F', 1, [['CC1A', 3, 6, 'Commander Center 1A'], ['1D', COLS.D], ['1F', COLS.F]]);
+    /* Commander Center 1A: 4 columns (4-7), the same width and line as 7B+7C and their Monitor */
+    seatRow('F', 1, [['CC1A', 4, 4, 'Commander Center 1A'], ['1D', COLS.D], ['1F', COLS.F]]);
     frame(rr0, r - 1, 3, 8);
     zr.F = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
