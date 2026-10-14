@@ -223,8 +223,9 @@
     /* VVIP OC: Business Class */
     z0 = r; zoneHeader('VVIP OC · Business Class (8 Seats)', 'VVIP OC');
     monRow('C', [['MON-C1', 'W', 'หน้าที่นั่ง 7B, 7C', 5], ['MON-C2', 'W', 'หน้าที่นั่ง 7D, 7F']]);
-    seatRow('C', 7, [['7B', COLS.B], ['7C', COLS.C], ['7D', COLS.D], ['7F', COLS.F]]); gapRow();
-    seatRow('C', 8, [['8B', COLS.B], ['8C', COLS.C], ['8D', COLS.D], ['8F', COLS.F]]);
+    /* right side: 7D/7F and 8D/8F side by side under their Monitor (columns 15-18) */
+    seatRow('C', 7, [['7B', COLS.B], ['7C', COLS.C], ['7D', 15], ['7F', 17]]); gapRow();
+    seatRow('C', 8, [['8B', COLS.B], ['8C', COLS.C], ['8D', 15], ['8F', 17]]);
     monRow('C', [['MON-C3', 'W', 'หลังที่นั่ง 8B, 8C', 5], ['MON-C4', 'W', 'หลังที่นั่ง 8D, 8F']]);
     zr.C = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
