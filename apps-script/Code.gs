@@ -792,9 +792,10 @@ const ShimExcel_ = (function () {
     /* VVIP OB: Meeting Area */
     z0 = r; zoneHeader('VVIP OB · Meeting Area (6 Seats)', 'VVIP OB');
     monRow('B', [['MON-B1', 'W', 'หน้าที่นั่ง 5B'], ['MON-B2', 'W', 'หน้าที่นั่ง 5D, 5F']]);
-    seatRow('B', 5, [['5B', COLS.B], ['5D', COLS.D], ['5F', COLS.F]]); gapRow();
-    furniture(r, COLS.B, 1, 2, 'TABLE'); furniture(r, 14, 1, 6, 'TABLE'); ws.getRow(r).height = 22; r++; gapRow();
-    seatRow('B', 6, [['6B', COLS.B], ['6D', COLS.D], ['6F', COLS.F]]);
+    /* right side: 5D/5F and 6D/6F sit side by side under their Monitor (columns 15-18), table as wide as the 2 seats */
+    seatRow('B', 5, [['5B', COLS.B], ['5D', 15], ['5F', 17]]); gapRow();
+    furniture(r, COLS.B, 1, 2, 'TABLE'); furniture(r, 15, 1, 4, 'TABLE'); ws.getRow(r).height = 22; r++; gapRow();
+    seatRow('B', 6, [['6B', COLS.B], ['6D', 15], ['6F', 17]]);
     monRow('B', [['MON-B3', 'W', 'หลังที่นั่ง 6B'], ['MON-B4', 'W', 'หลังที่นั่ง 6D, 6F']]);
     zr.B = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
