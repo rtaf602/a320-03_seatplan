@@ -222,7 +222,7 @@
     zr.B = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
     /* VVIP OC: Business Class */
-    z0 = r; zoneHeader('VVIP OC · Business Class (8 Seats)', 'VVIP OC');
+    z0 = r; zoneHeader('VVIP OC (8 Seats)', 'VVIP OC');
     monRow('C', [['MON-C1', 'W', 'หน้าที่นั่ง 7B, 7C'], ['MON-C2', 'W', 'หน้าที่นั่ง 7D, 7F']]);
     /* seat pairs sit side by side under their Monitor, lined up with VVIP OA / OB: left columns 4-7, right columns 15-18 */
     seatRow('C', 7, [['7B', 4], ['7C', 6], ['7D', 15], ['7F', 17]]); gapRow();
@@ -231,7 +231,7 @@
     zr.C = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
     /* PASSENGER OD: Economy, OVHD Monitors in front of rows 10, 12, 15, 17 */
-    z0 = r; zoneHeader('Passenger OD · Economy Class (54 Seats)', 'ECONOMY');
+    z0 = r; zoneHeader('Passenger OD (54 Seats)', 'ECONOMY');
     monRow('D', [['MON-D1', 'W', 'หน้าที่นั่ง 9A, 9B, 9C'], ['MON-D2', 'W', 'หน้าที่นั่ง 9D, 9E, 9F']]);
     [9, 10, 11, 12, 14, 15, 16, 17, 18].forEach(function (n, i) {
       if ([10, 12, 15, 17].indexOf(n) >= 0) monRow('D', [['MON-D' + n + 'L', 'R', 'หน้าที่นั่ง ' + n + 'A, ' + n + 'B, ' + n + 'C'], ['MON-D' + n + 'R', 'R', 'หน้าที่นั่ง ' + n + 'D, ' + n + 'E, ' + n + 'F']]);
