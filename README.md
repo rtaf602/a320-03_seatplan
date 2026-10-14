@@ -1,7 +1,7 @@
 # STATUS SEAT PLAN A320(03) · ตรวจสภาพที่นั่งและ Monitor
 
 หน้าเว็บให้ฝ่ายการช่าง/ฝ่ายสื่อสารบันทึกสภาพที่นั่งและ Monitor ของเครื่อง A320(03)
-(73 ที่นั่ง, Monitor 23 จอ: Wall Mounted Monitor 21.5 Inch 15 จอ และ Bin Mounted Retractable Monitors (OVHD Monitor) 9.7 Inch 8 จอ)
+(73 ที่นั่ง, Monitor 23 จอ: Wall Mounted Monitor 21.5 Inch 15 จอ และ Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch 8 จอ)
 ข้อมูลทุกครั้งที่กด **SAVE** จะบันทึกลง Google Sheet **Seat Plan 320(03) (For Admin)** โดยตรง
 และเพิ่มบรรทัดในแท็บ **ประวัติการแก้ไข**
 
@@ -22,7 +22,7 @@
 | VVIP OC · Business Class | 7B, 7C, 7D, 7F, 8B, 8C, 8D, 8F | หน้า 7B/7C, หน้า 7D/7F, หลัง 8B/8C, หลัง 8D/8F |
 | PASSENGER OD · Economy Class | แถว 9–12 และ 14–18 แถวละ A–F (54 ที่นั่ง) | Monitor หน้า 9A–9C, 9D–9F และ OVHD Monitor หน้าแถว 10, 12, 15, 17 ฝั่งละ 1 จอ |
 
-ในผัง: **Monitor** = จอติดผนัง 21.5 นิ้ว, **OVHD Monitor** = จอพับเหนือที่นั่ง 9.7 นิ้ว (ชี้เมาส์ที่ป้ายจอบนหน้าเว็บเพื่อดูชนิดจอ)
+ในผัง: **Monitor** = จอติดผนัง 21.5 นิ้ว, **OVHD Monitor** = จอพับเหนือที่นั่ง 12.0 นิ้ว (ชี้เมาส์ที่ป้ายจอบนหน้าเว็บเพื่อดูชนิดจอ)
 
 ## การติดตั้ง (ทำครั้งเดียว)
 

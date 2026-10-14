@@ -303,9 +303,9 @@ var M_LABEL=['Monitor ใช้งานได้','Monitor เสื่อม�
 var COL=['var(--ok)','var(--warn)','var(--bad)'];
 /* A320(03) cabin from the Excel seat plan "32003 SEAT". Each line: L = left seats, R = right seats,
    mon = [left monitor, right monitor], L2 + sofa = left seats stacked beside the sofa, tables = [left width, right width]. */
-/* Monitor types: w21 = wall mounted, b97 = bin mounted retractable (overhead, in front of the row it serves). */
-var MT={w21:{name:'Wall Mounted Monitor 21.5 Inch',short:'Wall Monitor 21.5"'},b97:{name:'Bin Mounted Retractable Monitors (OVHD Monitor) 9.7 Inch',short:'OVHD Monitor 9.7"'}};
-var MT_ORDER=['w21','b97'];
+/* Monitor types: w21 = wall mounted, b120 = bin mounted retractable (overhead, in front of the row it serves). */
+var MT={w21:{name:'Wall Mounted Monitor 21.5 Inch',short:'Wall Monitor 21.5"'},b120:{name:'Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch',short:'OVHD Monitor 12.0"'}};
+var MT_ORDER=['w21','b120'];
 var BIN_ROWS=[10,12,15,17];
 var MTYPE={}; // monitor id -> type key
 var ZONES=[
@@ -332,7 +332,7 @@ var ZONES=[
          {mon:['MON-C3','MON-C4']}]},
  {key:'D',name:'PASSENGER OD',title:'Passenger OD · Economy Class (54 Seats)',tag:'ECONOMY',
   mons:(function(){var m={'MON-D1':['w21','หน้าที่นั่ง 9A, 9B, 9C'],'MON-D2':['w21','หน้าที่นั่ง 9D, 9E, 9F']};
-    BIN_ROWS.forEach(function(n){m['MON-D'+n+'L']=['b97','หน้าที่นั่ง '+n+'A, '+n+'B, '+n+'C'];m['MON-D'+n+'R']=['b97','หน้าที่นั่ง '+n+'D, '+n+'E, '+n+'F']});return m})(),
+    BIN_ROWS.forEach(function(n){m['MON-D'+n+'L']=['b120','หน้าที่นั่ง '+n+'A, '+n+'B, '+n+'C'];m['MON-D'+n+'R']=['b120','หน้าที่นั่ง '+n+'D, '+n+'E, '+n+'F']});return m})(),
   lines:[{mon:['MON-D1','MON-D2']}].concat([].concat.apply([],[9,10,11,12,14,15,16,17,18].map(function(n){
     var row={L:[n+'A',n+'B',n+'C'],R:[n+'D',n+'E',n+'F']};
     return BIN_ROWS.indexOf(n)>=0?[{mon:['MON-D'+n+'L','MON-D'+n+'R']},row]:[row]})))}

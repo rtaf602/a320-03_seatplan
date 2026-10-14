@@ -21,7 +21,7 @@
   var ZN = { F: 'FRONT CREW ZONE', A: 'VVIP OA', B: 'VVIP OB', C: 'VVIP OC', D: 'PASSENGER OD' };
   var ZKEYS = ['F', 'A', 'B', 'C', 'D'];
   var MTYPE = { W: 'Monitor', R: 'OVHD Monitor' };
-  var MTYPE_FULL = { W: 'Wall Mounted Monitor 21.5 Inch', R: 'Bin Mounted Retractable Monitors (OVHD Monitor) 9.7 Inch' };
+  var MTYPE_FULL = { W: 'Wall Mounted Monitor 21.5 Inch', R: 'Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch' };
   var LIST = 'ทุกที่นั่ง และ Monitor';
   var FONT = 'Tahoma';
   var CENTER = { horizontal: 'center', vertical: 'middle', wrapText: true };
@@ -120,7 +120,7 @@
     ws.getRow(TYP0).height = 22;
     ws.getCell('B18').value = 'วิธีใช้'; ws.getCell('B18').font = font({ size: 8, bold: true });
     ws.mergeCells('C18:T18');
-    ws.getCell('C18').value = 'เลือกสภาพจาก dropdown ใต้ชื่อที่นั่งและใต้ป้าย Monitor · พิมพ์รายละเอียดในช่อง NOTE · สีและตารางสรุปเปลี่ยนเอง · Monitor = จอติดผนัง 21.5 นิ้ว, OVHD Monitor = จอพับเหนือที่นั่ง 9.7 นิ้ว';
+    ws.getCell('C18').value = 'เลือกสภาพจาก dropdown ใต้ชื่อที่นั่งและใต้ป้าย Monitor · พิมพ์รายละเอียดในช่อง NOTE · สีและตารางสรุปเปลี่ยนเอง · Monitor = จอติดผนัง 21.5 นิ้ว, OVHD Monitor = จอพับเหนือที่นั่ง 12.0 นิ้ว';
     ws.getCell('C18').font = font({ size: 8 }); ws.getCell('C18').alignment = { wrapText: true, vertical: 'middle' };
     ws.getRow(18).height = 30;
 
