@@ -212,7 +212,7 @@
     zr.A = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
 
     /* VIP OB: Meeting Area */
-    z0 = r; zoneHeader('VIP OB · Meeting Area (6 Seats)', 'VIP OB');
+    z0 = r; zoneHeader('VIP OB (6 Seats)', 'VIP OB');
     monRow('B', [['MON-B1', 'W', 'หน้าที่นั่ง 5B'], ['MON-B2', 'W', 'หน้าที่นั่ง 5D, 5F']]);
     /* right side: 5D/5F and 6D/6F sit side by side under their Monitor (columns 15-18), table as wide as the 2 seats */
     seatRow('B', 5, [['5B', COLS.B], ['5D', 15], ['5F', 17]]); gapRow();
