@@ -193,6 +193,69 @@ dialog.wide[open]{display:flex;flex-direction:column}
 #gatePin{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:16px}
 #pinIn{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-bottom:12px}
 #adminPin{width:150px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-right:6px}
+
+/* EXPORT TO PDF A4 2PAGE: one landscape A4 page, cabin drawn nose (left) to tail (right),
+   right-side seats (D-F) on the upper half and left-side seats (A-C) on the lower half; always light */
+.a4{--ok:#2e9d57;--warn:#e2a400;--bad:#d23b33;--ink:#14212e;--muted:#566575;--line:#c5d0dc;--accent:#1f5fa8;--rowno:#35547c;
+  --mon-wall:#8ed873;--ovh-ok:#b4a7d6;--zone:#eef3f8;--on-status:#10202b;
+  width:1123px;height:794px;box-sizing:border-box;padding:26px 30px 16px;background:#fff;color:var(--ink);font-family:var(--sans);
+  display:flex;flex-direction:column;gap:7px;font-size:11px;line-height:1.35}
+.a4 *{box-sizing:border-box}
+.a4 .top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
+.a4 .top h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.01em}
+.a4 .top .sub{color:var(--muted);font-size:11px}
+.a4 .meta{display:grid;grid-template-columns:auto auto;gap:1px 14px;font-size:11px}
+.a4 .meta b{font-weight:700}
+.a4 .rule{border-top:3px solid var(--accent);margin-top:2px}
+.a4 .dir{display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted)}
+.a4 .cab{display:flex;gap:8px;align-items:stretch}
+.a4 .hz{flex:1 1 auto;min-width:0;background:var(--zone);border:1px solid var(--line);border-radius:8px;padding:7px 8px 9px;display:flex;flex-direction:column;gap:3px}
+.a4 .hz.grow{flex:3 1 auto}
+.a4 .hz>header{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:11px;font-weight:700;line-height:1.25}
+.a4 .hz>header div{min-width:0}
+.a4 .hz>header span{font-family:var(--mono);font-size:9px;background:var(--accent);color:#fff;padding:1px 6px;border-radius:3px}
+.a4 .hg{display:grid;column-gap:4px;row-gap:7px;grid-template-rows:14px 98px 98px;justify-content:center;margin:auto 0}
+.a4 .hl{font-family:var(--mono);font-weight:600;font-size:10.5px;color:var(--rowno);text-align:center;align-self:end}
+.a4 .st{display:flex;flex-direction:column;justify-content:center;gap:4px}
+.a4 .s{width:29px;height:30px;border-radius:5px;background:var(--ok);color:var(--on-status);font-family:var(--mono);font-weight:600;font-size:10px;
+  display:flex;align-items:center;justify-content:center;position:relative;text-align:center;line-height:1.1}
+.a4 .s.cc{font-size:8.5px;letter-spacing:-.02em;white-space:nowrap}
+.a4 .s[data-s="1"]{background:var(--warn)} .a4 .s[data-s="2"]{background:var(--bad)}
+.a4 .s[data-s="1"]::after{content:"!"} .a4 .s[data-s="2"]::after{content:"×"}
+.a4 [data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);border-radius:0 0 3px 3px}
+.a4 .m{width:8px;border-radius:4px;background:var(--mon-wall);justify-self:center;align-self:center;position:relative}
+.a4 .m.r{background:var(--ovh-ok)}
+.a4 .m[data-m="1"]{background:var(--warn)} .a4 .m[data-m="2"]{background:var(--bad)}
+.a4 .m[data-note]::before{height:auto;top:auto;bottom:-6px;left:-1px;right:-1px;height:3px}
+.a4 .f{border:1.5px dashed var(--muted);border-radius:6px;background:#fff;color:var(--muted);font-size:7.5px;font-weight:700;letter-spacing:.06em;
+  display:flex;align-items:center;justify-content:center;height:82px;align-self:center}
+.a4 .room{border:1.5px solid var(--rowno);border-radius:7px;position:relative;height:42px;align-self:center;margin:0 -6px}
+.a4 .room em{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-size:8px;font-weight:600;color:var(--rowno)}
+.a4 .legend{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:9.5px;color:var(--muted)}
+.a4 .legend span{display:inline-flex;align-items:center;gap:5px}
+.a4 .legend i{display:inline-block;width:11px;height:11px;border-radius:2px}
+.a4 .legend i.bar{width:5px;height:12px;border-radius:3px}
+.a4 .tabs{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start}
+.a4 h2{font-size:12px;margin:0 0 4px;font-weight:700}
+.a4 table{border-collapse:collapse;width:100%;min-width:0;font-variant-numeric:tabular-nums;border:1px solid var(--line)}
+.a4 th,.a4 td{border:1px solid var(--line);padding:2px 6px;font-size:9.5px;text-align:center;line-height:1.25}
+.a4 th{background:#e8edf3;font-weight:600;color:var(--ink)}
+.a4 th:first-child,.a4 td:first-child{text-align:left;font-weight:600}
+.a4 td.n{font-family:var(--mono)}
+.a4 tr:last-child td{font-weight:700;background:#f2f5f8}
+.a4 td.w.nz{background:#fdf0c4} .a4 td.b.nz{background:#fbdad7}
+.a4 th i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:3px}
+.a4 .sep{border-left:2px solid var(--line)}
+.a4 .defs{margin-top:8px;background:#f2f5f8;border:1px solid var(--line);border-radius:6px;padding:6px 9px}
+.a4 .defs h3{margin:0 0 3px;font-size:11px}
+.a4 .defs ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1px;font-size:9.5px}
+.a4 .defs li b{font-family:var(--mono);margin-right:6px}
+.a4 .defs .more{color:var(--accent);font-size:10px;font-weight:700;margin-top:2px}
+.a4 .foot{margin-top:auto;display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:4px;font-size:8.5px;color:var(--muted)}
+.a4 .dtab th,.a4 .dtab td{text-align:left;vertical-align:top;font-weight:400}
+.a4 .dtab th{font-weight:700}
+.a4 .dtab td.w{background:#fdf0c4} .a4 .dtab td.b{background:#fbdad7}
+.a4 .dtab tr:last-child td{background:inherit;font-weight:400}
 </style>
 <!-- config.js and export-excel.js are loaded with a time stamp so a browser never keeps an old copy after an update -->
 <script>window.SEATPLAN_BUST=Date.now();document.write('<script src="config.js?v='+window.SEATPLAN_BUST+'"><\/script>')</script>
@@ -208,6 +271,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
       <button class="btn" id="bPreview" type="button">PREVIEW</button>
       <button class="btn pri" id="bSave" type="button">SAVE</button>
       <button class="btn" id="bPdf" type="button">EXPORT TO PDF</button>
+      <button class="btn" id="bPdf2" type="button">EXPORT TO PDF A4 2PAGE</button>
       <button class="btn" id="bXls" type="button">EXPORT TO EXCEL</button>
     </div>
     <div class="status"><span class="pend" id="pend"></span><span id="lastSave"></span></div>
@@ -282,7 +346,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
 <dialog id="pv" class="wide">
   <div class="pvbar">
     <h3>PREVIEW รายงาน</h3>
-    <div class="acts"><button class="btn" id="pvClose" type="button">ปิด</button><button class="btn" id="pvPdf" type="button">EXPORT TO PDF</button><button class="btn" id="pvXls" type="button">EXPORT TO EXCEL</button><button class="btn pri" id="pvSave" type="button">SAVE</button></div>
+    <div class="acts"><button class="btn" id="pvClose" type="button">ปิด</button><button class="btn" id="pvPdf" type="button">EXPORT TO PDF</button><button class="btn" id="pvPdf2" type="button">EXPORT TO PDF A4 2PAGE</button><button class="btn" id="pvXls" type="button">EXPORT TO EXCEL</button><button class="btn pri" id="pvSave" type="button">SAVE</button></div>
   </div>
   <div class="pvbody" id="pvBody"></div>
 </dialog>
@@ -309,6 +373,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
 <script>
 (function(){
 var $=function(id){return document.getElementById(id)};
+var AC='A320(03)';
 var S_LABEL=['ใช้งานได้ปกติ','มีข้อขัดข้องแต่ใช้งานได้ / Manual ได้','ใช้งานไม่ได้'];
 var M_LABEL=['Monitor ใช้งานได้','Monitor เสื่อมสภาพ','Monitor เสีย'];
 var COL=['var(--ok)','var(--warn)','var(--bad)'];
@@ -728,8 +793,10 @@ $('bPreview').addEventListener('click',function(){guard('PREVIEW',openPreview)})
 $('pvClose').addEventListener('click',function(){hideDlg($('pv'))});
 $('pvSave').addEventListener('click',function(){hideDlg($('pv'));doSave()});
 $('pvPdf').addEventListener('click',function(){exportPdf()});
+$('pvPdf2').addEventListener('click',function(){exportPdfA4()});
 $('pvXls').addEventListener('click',function(){exportXlsx()});
 $('bPdf').addEventListener('click',function(){guard('EXPORT TO PDF',exportPdf)});
+$('bPdf2').addEventListener('click',function(){guard('EXPORT TO PDF A4 2PAGE',exportPdfA4)});
 $('bXls').addEventListener('click',function(){guard('EXPORT TO EXCEL',exportXlsx)});
 
 var libs={};
@@ -794,6 +861,115 @@ function exportXlsx(){
   .catch(function(){toast('สร้าง Excel ไม่สำเร็จ ลองอีกครั้ง',true)})
   .then(function(){busy=false});
 }
+
+/* ---------- EXPORT TO PDF A4 2PAGE: landscape A4, cabin drawn nose-to-tail ----------
+   Each zone is a grid: row 1 = row numbers, row 2 = right side (F at top .. D), row 3 = left side (C .. A at bottom).
+   cols: 'm' = Monitor bar, 's' = seat column, 'f' = furniture column. Items: {c: column, h: 't'|'b', ...} */
+var A4_ZONES=[
+ {key:'F',cols:['m','s'],labels:{2:'1'},items:[
+   {c:1,h:'t',m:'MON-F2',n:2},{c:2,h:'t',s:['1F','1D']},
+   {c:1,h:'b',room:2,label:'ห้อง Commander Center'},{c:1,h:'b',m:'MON-F1',n:1},{c:2,h:'b',s:['CC1A']}]},
+ {key:'A',cols:['m','s','s','m'],labels:{2:'2',3:'3'},items:[
+   {c:2,h:'t',f:'SOFA',span:2},{c:4,h:'t',m:'MON-A3',sofa:1},
+   {c:1,h:'b',m:'MON-A1',n:1},{c:2,h:'b',s:['2A']},{c:3,h:'b',s:['3A']},{c:4,h:'b',m:'MON-A2',n:1}]},
+ {key:'B',cols:['m','s','f','s','m'],labels:{2:'5',4:'6'},items:[
+   {c:1,h:'t',m:'MON-B2',n:2},{c:2,h:'t',s:['5F','5D']},{c:3,h:'t',f:'TABLE'},{c:4,h:'t',s:['6F','6D']},{c:5,h:'t',m:'MON-B4',n:2},
+   {c:1,h:'b',m:'MON-B1',n:1},{c:2,h:'b',s:['5B']},{c:3,h:'b',f:'TABLE'},{c:4,h:'b',s:['6B']},{c:5,h:'b',m:'MON-B3',n:1}]},
+ {key:'C',cols:['m','s','s','m'],labels:{2:'7',3:'8'},items:[
+   {c:1,h:'t',m:'MON-C2',n:2},{c:2,h:'t',s:['7F','7D']},{c:3,h:'t',s:['8F','8D']},{c:4,h:'t',m:'MON-C4',n:2},
+   {c:1,h:'b',m:'MON-C1',n:2},{c:2,h:'b',s:['7C','7B']},{c:3,h:'b',s:['8C','8B']},{c:4,h:'b',m:'MON-C3',n:2}]},
+ {key:'D',grow:1,cols:[],labels:{},items:[]}
+];
+(function(){ /* Passenger OD: Monitor before row 9, OVHD Monitor before rows 10, 12, 15, 17 */
+  var z=A4_ZONES[4],c=0;
+  function mon(t,b){c++;z.cols.push('m');z.items.push({c:c,h:'t',m:t,n:3},{c:c,h:'b',m:b,n:3})}
+  mon('MON-D2','MON-D1');
+  [9,10,11,12,14,15,16,17,18].forEach(function(n){
+    if(BIN_ROWS.indexOf(n)>=0)mon('MON-D'+n+'R','MON-D'+n+'L');
+    c++;z.cols.push('s');z.labels[c]=String(n);
+    z.items.push({c:c,h:'t',s:[n+'F',n+'E',n+'D']},{c:c,h:'b',s:[n+'C',n+'B',n+'A']});
+  });
+})();
+var A4_SEAT_TEXT={CC1A:'CC 1A'};
+/* a Monitor bar is as long as the seats it serves (n seats), never longer; the sofa Monitor matches the sofa */
+var A4_SEAT_H=30,A4_SEAT_GAP=4,A4_SOFA_H=82;
+function thStamp(at){var d=new Date(at);if(isNaN(d))return '-';var t=new Date(d.getTime()+7*3600e3),p=function(n){return String(n).padStart(2,'0')};
+  return p(t.getUTCDate())+' '+['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][t.getUTCMonth()]+p(t.getUTCFullYear()%100)+' ('+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+' TH-LT)'}
+function a4Zone(hz){
+  var z=null;ZONES.forEach(function(x){if(x.key===hz.key)z=x});
+  var box=el('section','hz'+(hz.grow?' grow':'')),h=el('header');h.appendChild(el('div',null,z.title));h.appendChild(el('span',null,z.tag));box.appendChild(h);
+  var g=el('div','hg');g.style.gridTemplateColumns=hz.cols.map(function(k){return k==='m'?'8px':'29px'}).join(' ');
+  Object.keys(hz.labels).forEach(function(c){var l=el('div','hl',hz.labels[c]);l.style.gridColumn=c;l.style.gridRow=1;g.appendChild(l)});
+  hz.items.forEach(function(it){
+    var row=it.h==='t'?2:3,e;
+    if(it.room){e=el('div','room');e.appendChild(el('em',null,it.label));e.style.gridColumn=it.c+' / span '+it.room}
+    else if(it.m){var d=get(it.m);e=el('div','m'+(MTYPE[it.m].charAt(0)==='b'?' r':''));e.dataset.m=d.m;if(d.note)e.dataset.note='1';
+      e.style.height=(it.sofa?A4_SOFA_H:(it.n||1)*A4_SEAT_H+((it.n||1)-1)*A4_SEAT_GAP)+'px'}
+    else if(it.f){e=el('div','f',it.f);if(it.span)e.style.gridColumn=it.c+' / span '+it.span}
+    else{e=el('div','st');it.s.forEach(function(id){var d=get(id),s=el('div','s'+(A4_SEAT_TEXT[id]?' cc':''),A4_SEAT_TEXT[id]||id);s.dataset.s=d.s;if(d.note)s.dataset.note='1';e.appendChild(s)})}
+    if(!e.style.gridColumn)e.style.gridColumn=it.c;e.style.gridRow=row;g.appendChild(e);
+  });
+  box.appendChild(g);return box;
+}
+function a4Page(n,total){
+  var p=el('div','a4');
+  var top=el('div','top'),l=el('div');l.appendChild(el('h1',null,'STATUS SEAT PLAN '+AC));l.appendChild(el('div','sub','รายงานสภาพที่นั่งและ Monitor · ฝ่ายการช่าง / ฝ่ายสื่อสาร'));top.appendChild(l);
+  var meta=el('div','meta');
+  [['ผู้ตรวจ',who.value.trim()||'-'],['SAVE ล่าสุด',lastSave&&lastSave.at?[lastSave.by,thStamp(lastSave.at)].filter(Boolean).join(' · '):'ยังไม่เคย SAVE'],['ออกรายงาน',thStamp(new Date())]]
+    .forEach(function(x){meta.appendChild(el('span',null,x[0]));meta.appendChild(el('b',null,x[1]))});
+  top.appendChild(meta);p.appendChild(top);p.appendChild(el('div','rule'));
+  var foot=el('div','foot');foot.appendChild(el('span',null,'ข้อมูลจาก SAVE ล่าสุดใน Google Sheet'));foot.appendChild(el('span',null,'STATUS SEAT PLAN '+AC+' · หน้า '+n+'/'+total));
+  return {page:p,foot:foot};
+}
+function defText(id){var d=get(id),it=ITEMS[id],a=[];
+  if(it.seat&&d.s)a.push(S_LABEL[d.s]);if(it.mon&&d.m)a.push(M_LABEL[d.m]);if(d.note)a.push(d.note);return a.join(' · ')}
+function defName(id){var it=ITEMS[id];return id.indexOf('MON-')===0?MT[MTYPE[id]].short+' '+it.label.split(' · ').slice(1).join(' · '):(SEAT_NAME[id]?it.label:id)}
+function a4Nodes(){
+  var ids=defectIds(),total=ids.length?2:1; /* any defect: page 1 gives the count, page 2 lists every item */
+  var p1=a4Page(1,total),p=p1.page;
+  var dir=el('div','dir');dir.appendChild(el('span',null,'◀ หัวเครื่อง (NOSE)'));dir.appendChild(el('span',null,'ด้านบน = ที่นั่งฝั่งขวา (D-F) · ด้านล่าง = ฝั่งซ้าย (A-C)'));dir.appendChild(el('span',null,'ท้ายเครื่อง (TAIL) ▶'));p.appendChild(dir);
+  var cab=el('div','cab');A4_ZONES.forEach(function(hz){cab.appendChild(a4Zone(hz))});p.appendChild(cab);
+  var lg=el('div','legend');
+  [['var(--ok)','','ใช้งานได้ปกติ'],['var(--warn)','','ขัดข้องแต่ใช้ได้ / Manual ได้ (!) · จอเสื่อมสภาพ'],['var(--bad)','','ใช้งานไม่ได้ (×) · จอเสีย'],
+   ['var(--mon-wall)','bar','Monitor 21.5"'],['var(--ovh-ok)','bar','OVHD Monitor 12.0"']].forEach(function(x){var s=el('span'),i=el('i',x[1]);i.style.background=x[0];s.appendChild(i);s.appendChild(el('span',null,x[2]));lg.appendChild(s)});
+  var ns=el('span'),ni=el('i');ni.style.background='var(--ok)';ni.style.borderBottom='3px solid var(--ink)';ns.appendChild(ni);ns.appendChild(el('span',null,'ขีดล่าง = มีหมายเหตุ'));lg.appendChild(ns);
+  p.appendChild(lg);
+  var tabs=el('div','tabs'),a=el('div'),b=el('div');
+  a.appendChild(el('h2',null,'สรุปตามโซน'));var t1=el('table');t1.innerHTML=summaryHTML();a.appendChild(t1);
+  b.appendChild(el('h2',null,'สรุปตามชนิด Monitor'));var t2=el('table');t2.innerHTML=mtHTML();b.appendChild(t2);
+  var dbx=el('div','defs');
+  if(!ids.length)dbx.appendChild(el('h3',null,'ไม่มีข้อขัดข้องคงค้าง'));
+  else{dbx.appendChild(el('h3',null,'รวมข้อขัดข้องคงค้าง '+ids.length+' รายการ'));dbx.appendChild(el('div','more','รายละเอียดอยู่หน้า 2'));}
+  b.appendChild(dbx);tabs.appendChild(a);tabs.appendChild(b);p.appendChild(tabs);p.appendChild(p1.foot);
+  var pages=[p];
+  if(total===2){
+    var p2=a4Page(2,2),q=p2.page;q.appendChild(el('h2',null,'รวมข้อขัดข้องคงค้าง ('+ids.length+')'));
+    var dt=el('table','dtab'),th=el('tr');['ที่นั่ง / จุด','โซน','สภาพที่นั่ง','สภาพ Monitor','หมายเหตุ','ผู้บันทึก · เวลา'].forEach(function(x){th.appendChild(el('th',null,x))});
+    var hd=el('thead');hd.appendChild(th);dt.appendChild(hd);var tb=el('tbody');
+    ids.forEach(function(id){var d=get(id),it=ITEMS[id],tr=el('tr');
+      tr.appendChild(el('td',null,defName(id)));tr.appendChild(el('td',null,zoneName(it.zone)));
+      var s=el('td',null,it.seat?S_LABEL[d.s]:'-');if(it.seat&&d.s)s.className=d.s===1?'w':'b';tr.appendChild(s);
+      var m=el('td',null,it.mon?M_LABEL[d.m]:'-');if(it.mon&&d.m)m.className=d.m===1?'w':'b';tr.appendChild(m);
+      tr.appendChild(el('td',null,d.note||'-'));tr.appendChild(el('td',null,[d.by,thStamp(d.at)].filter(function(x){return x&&x!=='-'}).join(' · ')||'-'));tb.appendChild(tr)});
+    dt.appendChild(tb);q.appendChild(dt);q.appendChild(p2.foot);pages.push(q);
+  }
+  return pages;
+}
+function exportPdfA4(){
+  if(busy)return;busy=true;toast('กำลังสร้าง PDF A4…'+exportNote());
+  useSaved=true;var wrap=el('div','offscreen'),pages;try{pages=a4Nodes()}finally{useSaved=false}
+  pages.forEach(function(x){wrap.appendChild(x)});document.body.appendChild(wrap);
+  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),document.fonts?document.fonts.ready:null])
+  .then(function(){return pages.reduce(function(pr,pg){return pr.then(function(arr){return html2canvas(pg,{scale:2,backgroundColor:'#ffffff',logging:false}).then(function(cv){arr.push(cv);return arr})})},Promise.resolve([]))})
+  .then(function(cvs){
+    var pdf=new window.jspdf.jsPDF({orientation:'l',unit:'mm',format:'a4'});
+    cvs.forEach(function(cv,i){if(i)pdf.addPage('a4','l');pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,297,210)});
+    return offerFile('A4 2P STATUS_SEAT_PLAN_A320-03_'+stamp()+'.pdf',pdf.output('arraybuffer'),'application/pdf');
+  })
+  .catch(function(){toast('สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง',true)})
+  .then(function(){wrap.remove();busy=false});
+}
+window.__a4Nodes=a4Nodes; /* used by the layout preview test */
 
 /* owner-only: wipe the shared record */
 $('resetBtn').addEventListener('click',function(){$('resetAsk').hidden=false;$('resetBtn').hidden=true});
