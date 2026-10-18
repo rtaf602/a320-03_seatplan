@@ -870,7 +870,7 @@ var A4_ZONES=[
    {c:1,h:'t',m:'MON-F2',n:2},{c:2,h:'t',s:['1F','1D']},
    {c:1,h:'b',room:2,label:'ห้อง Commander Center'},{c:1,h:'b',m:'MON-F1',n:1},{c:2,h:'b',s:['CC1A']}]},
  {key:'A',cols:['m','s','s','m'],labels:{2:'2',3:'3'},items:[
-   {c:2,h:'t',f:'SOFA',span:2,n:1},{c:4,h:'t',m:'MON-A3',sofa:1},
+   {c:2,h:'t',f:'SOFA',span:2,n:2},{c:4,h:'t',m:'MON-A3',sofa:1},
    {c:1,h:'b',m:'MON-A1',n:1},{c:2,h:'b',s:['2A']},{c:3,h:'b',s:['3A']},{c:4,h:'b',m:'MON-A2',n:1}]},
  {key:'B',cols:['m','s','f','s','m'],labels:{2:'5',4:'6'},items:[
    {c:1,h:'t',m:'MON-B2',n:2},{c:2,h:'t',s:['5F','5D']},{c:3,h:'t',f:'TABLE',n:2},{c:4,h:'t',s:['6F','6D']},{c:5,h:'t',m:'MON-B4',n:2},
@@ -891,9 +891,9 @@ var A4_ZONES=[
   });
 })();
 var A4_SEAT_TEXT={CC1A:'CC 1A'};
-/* a Monitor bar is as long as the seats it serves (n seats), never longer; the sofa (as wide as 2A+3A, 1 seat deep) and its Monitor are 1 seat long;
+/* a Monitor bar is as long as the seats it serves (n seats), never longer; the sofa (as wide as 2A+3A, 2 seats deep) and its Monitor are 2 seats long;
    VIP OB tables are as long as the seats on their side */
-var A4_SEAT_H=30,A4_SEAT_GAP=4,A4_SOFA_H=30;
+var A4_SEAT_H=30,A4_SEAT_GAP=4,A4_SOFA_H=64;
 function a4Len(n){return n*A4_SEAT_H+(n-1)*A4_SEAT_GAP}
 function thStamp(at){var d=new Date(at);if(isNaN(d))return '-';var t=new Date(d.getTime()+7*3600e3),p=function(n){return String(n).padStart(2,'0')};
   return p(t.getUTCDate())+' '+['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][t.getUTCMonth()]+p(t.getUTCFullYear()%100)+' ('+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+' TH-LT)'}
