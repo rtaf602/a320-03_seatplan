@@ -343,9 +343,19 @@ dialog.wide[open]{display:flex;flex-direction:column}
   <div class="acts"><button class="btn pri" id="cfOk" type="button" disabled>ยืนยัน</button></div>
 </dialog>
 
+<dialog id="pvPick" class="small">
+  <h3>PREVIEW แบบไหน</h3>
+  <p class="sub">เลือกรูปแบบรายงานที่จะดูตัวอย่าง</p>
+  <div class="opts">
+    <button class="opt" id="pvPickStd" type="button"><span><b>EXPORT TO PDF</b><br><span class="cfk">A4 แนวตั้ง ผังแบบหน้าเว็บ หลายหน้า</span></span></button>
+    <button class="opt" id="pvPickA4" type="button"><span><b>EXPORT TO PDF A4 2PAGE</b><br><span class="cfk">A4 แนวนอน ผังหัวเครื่องถึงท้ายเครื่องในหน้าเดียว</span></span></button>
+  </div>
+  <div class="acts" style="margin-top:12px"><button class="btn" id="pvPickNo" type="button">ยกเลิก</button></div>
+</dialog>
+
 <dialog id="pv" class="wide">
   <div class="pvbar">
-    <h3>PREVIEW รายงาน</h3>
+    <h3 id="pvTitle">PREVIEW รายงาน</h3>
     <div class="acts"><button class="btn" id="pvClose" type="button">ปิด</button><button class="btn" id="pvPdf" type="button">EXPORT TO PDF</button><button class="btn" id="pvPdf2" type="button">EXPORT TO PDF A4 2PAGE</button><button class="btn" id="pvXls" type="button">EXPORT TO EXCEL</button><button class="btn pri" id="pvSave" type="button">SAVE</button></div>
   </div>
   <div class="pvbody" id="pvBody"></div>
@@ -775,8 +785,24 @@ function reportNode(isPreview){
 }
 function openPreview(){
   useSaved=true;var node;try{node=reportNode(true)}finally{useSaved=false}
+  $('pvTitle').textContent='PREVIEW · EXPORT TO PDF';
   var host=$('pvBody');host.textContent='';host.appendChild(node);showDlg($('pv'));
 }
+/* PREVIEW of the A4 2PAGE report: the landscape pages scaled to fit the preview window */
+function openPreviewA4(){
+  useSaved=true;var pages;try{pages=a4Nodes()}finally{useSaved=false}
+  $('pvTitle').textContent='PREVIEW · EXPORT TO PDF A4 2PAGE';
+  var host=$('pvBody');host.textContent='';showDlg($('pv'));
+  var np=pendingIds().length;
+  if(np){var w=el('div','report');w.style.cssText='width:auto;padding:0 0 10px;background:transparent';w.appendChild(el('div','rwarn','ข้อมูลในตัวอย่างนี้เป็นข้อมูล SAVE ล่าสุด ยังไม่รวมการแก้ไข '+np+' รายการที่ยังไม่ได้ SAVE'));host.appendChild(w)}
+  var sc=Math.min(1,(host.clientWidth-28)/1123);
+  pages.forEach(function(pg){var box=el('div');box.style.cssText='width:'+Math.round(1123*sc)+'px;height:'+Math.round(794*sc)+'px;margin:0 auto 12px;box-shadow:0 1px 4px rgba(0,0,0,.25);overflow:hidden;background:#fff';
+    pg.style.transform='scale('+sc+')';pg.style.transformOrigin='0 0';box.appendChild(pg);host.appendChild(box)});
+}
+function pickPreview(fn){hideDlg($('pvPick'));guard('PREVIEW',fn)}
+$('pvPickStd').addEventListener('click',function(){pickPreview(openPreview)});
+$('pvPickA4').addEventListener('click',function(){pickPreview(openPreviewA4)});
+$('pvPickNo').addEventListener('click',function(){hideDlg($('pvPick'))});
 /* before PREVIEW / EXPORT: warn when there are edits not yet SAVEd */
 var warnCb=null;
 function guard(label,fn){
@@ -789,7 +815,7 @@ $('wNo').addEventListener('click',function(){hideDlg($('warn'));warnCb=null});
 $('wGo').addEventListener('click',function(){hideDlg($('warn'));var f=warnCb;warnCb=null;if(f)f()});
 $('wSave').addEventListener('click',function(){hideDlg($('warn'));var f=warnCb;warnCb=null;
   doSave().then(function(ok){if(ok&&f&&!pendingIds().length)f()})});
-$('bPreview').addEventListener('click',function(){guard('PREVIEW',openPreview)});
+$('bPreview').addEventListener('click',function(){showDlg($('pvPick'))});
 $('pvClose').addEventListener('click',function(){hideDlg($('pv'))});
 $('pvSave').addEventListener('click',function(){hideDlg($('pv'));doSave()});
 $('pvPdf').addEventListener('click',function(){exportPdf()});
