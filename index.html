@@ -227,8 +227,8 @@ dialog.wide[open]{display:flex;flex-direction:column}
 .a4 .m.r{background:var(--ovh-ok)}
 .a4 .m[data-m="1"]{background:var(--warn)} .a4 .m[data-m="2"]{background:var(--bad)}
 .a4 .m[data-note]::before{height:auto;top:auto;bottom:-6px;left:-1px;right:-1px;height:3px}
-.a4 .f{border:1.5px dashed var(--muted);border-radius:6px;background:#fff;color:var(--muted);font-size:7.5px;font-weight:700;letter-spacing:.06em;
-  display:flex;align-items:center;justify-content:center;height:82px;align-self:center}
+.a4 .f{border:1.5px dashed var(--muted);border-radius:6px;background:#fff;color:var(--muted);font-size:7px;font-weight:700;letter-spacing:0;overflow:hidden;
+  display:flex;align-items:center;justify-content:center;align-self:center}
 .a4 .room{border:1.5px solid var(--rowno);border-radius:7px;position:relative;height:42px;align-self:center;margin:0 -6px}
 .a4 .room em{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-size:8px;font-weight:600;color:var(--rowno)}
 .a4 .legend{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:9.5px;color:var(--muted)}
@@ -870,11 +870,11 @@ var A4_ZONES=[
    {c:1,h:'t',m:'MON-F2',n:2},{c:2,h:'t',s:['1F','1D']},
    {c:1,h:'b',room:2,label:'ห้อง Commander Center'},{c:1,h:'b',m:'MON-F1',n:1},{c:2,h:'b',s:['CC1A']}]},
  {key:'A',cols:['m','s','s','m'],labels:{2:'2',3:'3'},items:[
-   {c:2,h:'t',f:'SOFA',span:2},{c:4,h:'t',m:'MON-A3',sofa:1},
+   {c:2,h:'t',f:'SOFA',span:2,n:1},{c:4,h:'t',m:'MON-A3',sofa:1},
    {c:1,h:'b',m:'MON-A1',n:1},{c:2,h:'b',s:['2A']},{c:3,h:'b',s:['3A']},{c:4,h:'b',m:'MON-A2',n:1}]},
  {key:'B',cols:['m','s','f','s','m'],labels:{2:'5',4:'6'},items:[
-   {c:1,h:'t',m:'MON-B2',n:2},{c:2,h:'t',s:['5F','5D']},{c:3,h:'t',f:'TABLE'},{c:4,h:'t',s:['6F','6D']},{c:5,h:'t',m:'MON-B4',n:2},
-   {c:1,h:'b',m:'MON-B1',n:1},{c:2,h:'b',s:['5B']},{c:3,h:'b',f:'TABLE'},{c:4,h:'b',s:['6B']},{c:5,h:'b',m:'MON-B3',n:1}]},
+   {c:1,h:'t',m:'MON-B2',n:2},{c:2,h:'t',s:['5F','5D']},{c:3,h:'t',f:'TABLE',n:2},{c:4,h:'t',s:['6F','6D']},{c:5,h:'t',m:'MON-B4',n:2},
+   {c:1,h:'b',m:'MON-B1',n:1},{c:2,h:'b',s:['5B']},{c:3,h:'b',f:'TABLE',n:1},{c:4,h:'b',s:['6B']},{c:5,h:'b',m:'MON-B3',n:1}]},
  {key:'C',cols:['m','s','s','m'],labels:{2:'7',3:'8'},items:[
    {c:1,h:'t',m:'MON-C2',n:2},{c:2,h:'t',s:['7F','7D']},{c:3,h:'t',s:['8F','8D']},{c:4,h:'t',m:'MON-C4',n:2},
    {c:1,h:'b',m:'MON-C1',n:2},{c:2,h:'b',s:['7C','7B']},{c:3,h:'b',s:['8C','8B']},{c:4,h:'b',m:'MON-C3',n:2}]},
@@ -891,8 +891,10 @@ var A4_ZONES=[
   });
 })();
 var A4_SEAT_TEXT={CC1A:'CC 1A'};
-/* a Monitor bar is as long as the seats it serves (n seats), never longer; the sofa Monitor matches the sofa */
-var A4_SEAT_H=30,A4_SEAT_GAP=4,A4_SOFA_H=82;
+/* a Monitor bar is as long as the seats it serves (n seats), never longer; the sofa (as wide as 2A+3A, 1 seat deep) and its Monitor are 1 seat long;
+   VIP OB tables are as long as the seats on their side */
+var A4_SEAT_H=30,A4_SEAT_GAP=4,A4_SOFA_H=30;
+function a4Len(n){return n*A4_SEAT_H+(n-1)*A4_SEAT_GAP}
 function thStamp(at){var d=new Date(at);if(isNaN(d))return '-';var t=new Date(d.getTime()+7*3600e3),p=function(n){return String(n).padStart(2,'0')};
   return p(t.getUTCDate())+' '+['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][t.getUTCMonth()]+p(t.getUTCFullYear()%100)+' ('+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+' TH-LT)'}
 function a4Zone(hz){
@@ -904,8 +906,8 @@ function a4Zone(hz){
     var row=it.h==='t'?2:3,e;
     if(it.room){e=el('div','room');e.appendChild(el('em',null,it.label));e.style.gridColumn=it.c+' / span '+it.room}
     else if(it.m){var d=get(it.m);e=el('div','m'+(MTYPE[it.m].charAt(0)==='b'?' r':''));e.dataset.m=d.m;if(d.note)e.dataset.note='1';
-      e.style.height=(it.sofa?A4_SOFA_H:(it.n||1)*A4_SEAT_H+((it.n||1)-1)*A4_SEAT_GAP)+'px'}
-    else if(it.f){e=el('div','f',it.f);if(it.span)e.style.gridColumn=it.c+' / span '+it.span}
+      e.style.height=(it.sofa?A4_SOFA_H:a4Len(it.n||1))+'px'}
+    else if(it.f){e=el('div','f',it.f);if(it.span)e.style.gridColumn=it.c+' / span '+it.span;e.style.height=a4Len(it.n||1)+'px'}
     else{e=el('div','st');it.s.forEach(function(id){var d=get(id),s=el('div','s'+(A4_SEAT_TEXT[id]?' cc':''),A4_SEAT_TEXT[id]||id);s.dataset.s=d.s;if(d.note)s.dataset.note='1';e.appendChild(s)})}
     if(!e.style.gridColumn)e.style.gridColumn=it.c;e.style.gridRow=row;g.appendChild(e);
   });
