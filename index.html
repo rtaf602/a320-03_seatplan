@@ -3,33 +3,32 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
-<title>STATUS SEAT PLAN A320(03)</title>
+<title>STATUS SEAT PLAN A320-03</title>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Thai:wght@400;500;600;700&family=IBM+Plex+Mono:wght@500;600&display=swap">
 <style>
 :root{padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
 body{margin:0}
 img{max-width:100%}
 [hidden]{display:none!important}
-/* Layout: sticky status bar, summary tables, then the A320(03) cabin drawn nose-to-tail as five zone panels of tappable seats and Monitors. */
+</style>
+<style>
+/* Layout: sticky status bar, summary tables, then the A320-03 cabin drawn nose-to-tail as five zone panels. */
 :root{
   --bg:#eef2f6; --panel:#ffffff; --cabin:#dfeaf5; --ink:#14212e; --muted:#566575; --line:#c5d0dc;
-  --accent:#1f5fa8; --accent-ink:#ffffff; --rowno:#35547c;
+  --accent:#1f5fa8; --accent-ink:#ffffff; --rowno:#35547c; --room:rgba(255,255,255,.45); --mon21:#8ed873; --mon27:#9fc5e8; --monb:#b4a7d6;
   --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7;
   --on-status:#10202b;
-  --mon-wall:#8ed873; --ovh-ok:#b4a7d6; --ovh-warn:rgba(226,164,0,.6); --ovh-bad:rgba(210,59,51,.6);
   --sans:"IBM Plex Sans Thai","Noto Sans Thai",Tahoma,sans-serif; --mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
 }
 @media (prefers-color-scheme: dark){ :root:not([data-theme="light"]){
   --bg:#0e151c; --panel:#17212b; --cabin:#1c2a38; --ink:#e6edf4; --muted:#9aa9b8; --line:#33455a;
-  --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6;
+  --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6; --room:rgba(23,33,43,.45); --mon21:#5e9e4a; --mon27:#4f81ad; --monb:#7a6bb0;
   --ok:#3fb56c; --ok-soft:#173a26; --warn:#e9b422; --warn-soft:#40330d; --bad:#ea5a52; --bad-soft:#451b19;
-  --mon-wall:#6fbf63; --ovh-ok:#9c8dd4; --ovh-warn:rgba(233,180,34,.6); --ovh-bad:rgba(234,90,82,.6);
   --on-status:#08131f; color-scheme:dark } }
 :root[data-theme="dark"]{
   --bg:#0e151c; --panel:#17212b; --cabin:#1c2a38; --ink:#e6edf4; --muted:#9aa9b8; --line:#33455a;
-  --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6;
+  --accent:#6aa9ee; --accent-ink:#08131f; --rowno:#9dbde6; --room:rgba(23,33,43,.45); --mon21:#5e9e4a; --mon27:#4f81ad; --monb:#7a6bb0;
   --ok:#3fb56c; --ok-soft:#173a26; --warn:#e9b422; --warn-soft:#40330d; --bad:#ea5a52; --bad-soft:#451b19;
-  --mon-wall:#6fbf63; --ovh-ok:#9c8dd4; --ovh-warn:rgba(233,180,34,.6); --ovh-bad:rgba(234,90,82,.6);
   --on-status:#08131f; color-scheme:dark }
 *{box-sizing:border-box}
 body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15px;line-height:1.5}
@@ -49,6 +48,7 @@ button,input,textarea{font:inherit;color:inherit}
 
 h2{font-size:15px;font-weight:700;margin:0 0 8px;text-wrap:balance}
 .tablebox{overflow-x:auto;background:var(--panel);border:1px solid var(--line);border-radius:8px}
+table.mt{min-width:420px}
 table{border-collapse:collapse;width:100%;min-width:640px;font-variant-numeric:tabular-nums}
 th,td{padding:8px 10px;text-align:center;border-bottom:1px solid var(--line);font-size:14px}
 th{font-size:12px;font-weight:600;color:var(--muted);line-height:1.3}
@@ -63,7 +63,6 @@ th i{display:inline-block;width:10px;height:10px;border-radius:2px;margin-right:
 .legend span{display:inline-flex;align-items:center;gap:6px}
 .sw{width:16px;height:16px;border-radius:3px;display:inline-block}
 .sw.mon{width:28px;height:12px;border-radius:3px}
-table.mt{min-width:420px}
 
 .zone{background:var(--cabin);border:1px solid var(--line);border-radius:8px;padding:14px 12px 16px}
 .zone header{display:flex;justify-content:space-between;align-items:baseline;gap:10px;margin-bottom:12px}
@@ -76,7 +75,7 @@ table.mt{min-width:420px}
 .seat{flex:none;width:var(--sw);padding:0;border:0;background:none;cursor:pointer;display:flex;flex-direction:column;align-items:stretch;position:relative}
 .seat.wide{width:calc(2 * var(--sw) + var(--sg))}
 .seat .s{height:40px;border-radius:6px 6px 3px 3px;background:var(--ok);color:var(--on-status);font-family:var(--mono);font-weight:600;font-size:14px;display:flex;align-items:center;justify-content:center;border:1px solid transparent;white-space:nowrap}
-.seat.txt .s{font-family:var(--sans);font-size:12px;font-weight:700;line-height:1.15;white-space:normal;text-align:center;padding:0 2px}
+.seat.txt .s{font-family:var(--sans);font-size:11px;line-height:1.1;white-space:normal;text-align:center;padding:0 2px}
 .seat:hover .s{border-color:var(--ink)}
 .seat[data-s="1"] .s,.ovh[data-m="1"]{background:var(--warn)}
 .seat[data-s="2"] .s,.ovh[data-m="2"]{background:var(--bad)}
@@ -86,27 +85,173 @@ table.mt{min-width:420px}
 .seat .s{position:relative}
 .seat[data-note] .s::before{content:"";position:absolute;left:-1px;right:-1px;bottom:-1px;height:4px;background:var(--ink);border-radius:0 0 3px 3px;pointer-events:none}
 .ovhrow{align-items:center;min-height:24px}
-.ovh{border:0;cursor:pointer;background:var(--mon-wall);color:var(--on-status);font-size:11px;font-weight:600;border-radius:3px;padding:3px 12px;white-space:nowrap;position:relative}
+/* OVHD (bin) monitors: a thin bar the width of the seat group, so the economy rows stay compact */
+.ovhrow.binrow{min-height:0}
+.ovh.bin{width:100%;padding:1px 0;border-radius:8px;font-size:9px;font-weight:700;letter-spacing:.12em;line-height:14px}
+/* monitor colour by type (same colours as the Google Sheet); a degraded / broken monitor still shows yellow / red */
+.ovh.t-w21{background:var(--mon21)} .ovh.t-w27{background:var(--mon27)} .ovh.t-b12{background:var(--monb)}
+.ovh.ovh[data-m="1"]{background:var(--warn)} .ovh.ovh[data-m="2"]{background:var(--bad)}
+.ovh{border:0;cursor:pointer;background:var(--ok);color:var(--on-status);font-size:11px;font-weight:600;border-radius:3px;padding:3px 12px;white-space:nowrap;position:relative}
 /* hover / keyboard-focus tooltip naming the monitor type */
 .ovh[data-tip]:hover::after,.ovh[data-tip]:focus-visible::after{content:attr(data-tip);position:absolute;left:50%;bottom:calc(100% + 6px);transform:translateX(-50%);z-index:20;background:var(--ink);color:var(--bg);font-size:12px;font-weight:500;line-height:1.35;padding:6px 9px;border-radius:6px;white-space:pre;text-align:left;pointer-events:none;box-shadow:0 2px 8px rgba(0,0,0,.25)}
 .report .ovh::after{display:none}
 .ovh:hover{box-shadow:0 0 0 1px var(--ink)}
 .ovh[data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);border-radius:0 0 3px 3px;pointer-events:none}
-/* Monitors are coloured by type when working (Wall = light green, OVHD = purple, as in the Google Sheet);
-   yellow / red show a degraded or broken screen. OVHD is a full-width pill so the overhead screens do not crowd the plan */
-.ovh.bin{width:calc(3 * var(--sw) + 2 * var(--sg));padding:1px 0;border-radius:999px;font-size:9px;font-weight:700;letter-spacing:.14em;background:var(--ovh-ok);color:var(--on-status)}
-.ovh.bin[data-m="1"]{background:var(--warn)}
-.ovh.bin[data-m="2"]{background:var(--bad)}
-.ovh.bin[data-note]::before{left:14px;right:14px}
 .ro .seat,.ro .ovh{cursor:default}
 .stack{display:flex;flex-direction:column;gap:20px}
 .sofa,.tbl{border-radius:10px;border:2px dashed var(--muted);background:var(--panel);color:var(--muted);font-weight:700;font-size:12px;letter-spacing:.08em;display:flex;align-items:center;justify-content:center}
 .sofa{width:calc(2 * var(--sw) + var(--sg));align-self:stretch}
-.room{display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid var(--rowno);border-radius:8px;padding:6px 6px 8px;background:var(--room)}
+.rows{--ccw:calc(2 * var(--sw) + var(--sg) + 24px)}  /* Commander Center room width, LAV A uses the same */
+.room{width:var(--ccw);max-width:100%;display:flex;flex-direction:column;align-items:center;gap:8px;border:2px solid var(--rowno);border-radius:8px;padding:6px 6px 8px;background:var(--room)}
 .roomname{font-size:11px;font-weight:600;color:var(--rowno);line-height:1.2;text-align:center}
 .side.col{flex-direction:column;align-items:center;gap:8px}
 .seatrow{display:flex;gap:var(--sg)}
 .tbl{height:48px;border-radius:6px;font-size:10px;letter-spacing:.02em;overflow:hidden}
+
+
+/* ===== Galley และห้องน้ำ (ยกแบบจาก A340): Galley = ตาราง ช่องขาวมีแถบสีซ้าย = สภาพ · LAV = ห้องสีฟ้าอ่อน กรอบสี = สภาพ ===== */
+:root{--galley:#1ebdd2;--galley-ink:#06262c;--gline:#8fa3b5;--lavbg:#e6edfb;--lavink:#2c4f9e}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--galley:#1792a3;--galley-ink:#041a1e;--gline:#4a5f74;--lavbg:#1d2944;--lavink:#9db8f0}}
+:root[data-theme="dark"]{--galley:#1792a3;--galley-ink:#041a1e;--gline:#4a5f74;--lavbg:#1d2944;--lavink:#9db8f0}
+.report{--galley:#1ebdd2;--galley-ink:#06262c;--gline:#8fa3b5;--lavbg:#e6edfb;--lavink:#2c4f9e}
+.rows{--aw:clamp(18px,6vw,56px)}
+/* Galley / LAV rows use the same tracks as the seat rows: left side (A-C) | aisle | right side (D-F) */
+.row.facrow{align-items:stretch}
+.facrow .side{align-items:stretch;flex-direction:column;gap:6px}
+.facrow .side>.lav{align-self:center}
+.fullw{width:calc(6 * var(--sw) + 4 * var(--sg) + var(--aw));max-width:100%;flex:none}
+/* doors: a dashed band across the cabin, labels outside the seat columns */
+.door{width:100%;display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);align-items:center;column-gap:4px;border-block:1.5px dashed var(--gline);background:rgba(127,140,155,.08);min-height:24px;padding-block:3px;margin-block:2px}
+.door .dmid{width:calc(6 * var(--sw) + 4 * var(--sg) + var(--aw))}
+.door .dmid .row{width:auto}
+.door .dl,.door .dr{font-size:10px;font-weight:800;color:var(--muted);letter-spacing:.04em;line-height:1.15;display:flex;flex-direction:column;min-width:0}
+.door .dl{align-items:flex-start;padding-left:2px}.door .dr{align-items:flex-end;text-align:right;padding-right:2px}
+.door .dl small,.door .dr small{font-size:8.5px;font-weight:700;letter-spacing:0}
+.door.exit{border-color:#e07b24;background:rgba(224,123,36,.08)}
+.door.exit .dl,.door.exit .dr{color:#b85a10}
+/* emergency exits: marked only in the side margins, stopping before the seat columns (nothing crosses the seats) */
+.door.exit{border:0;background:none;column-gap:10px;padding-block:0}
+.door.exit .dl,.door.exit .dr{align-self:stretch;justify-content:center;border-block:1.5px dashed #e07b24;background:rgba(224,123,36,.08);padding:4px 6px;min-height:24px}
+.door .sh{display:none}
+@media (max-width:760px){.door .lg{display:none}.door .sh{display:flex;flex-direction:column}}
+.gbox{display:flex;flex-direction:column;border:1px solid var(--gline);border-radius:4px;overflow:hidden;background:var(--gline);gap:1px;min-width:0}
+.glab{background:var(--galley);color:var(--galley-ink);font-size:11px;font-weight:700;letter-spacing:.04em;text-align:center;padding:4px 6px}
+.gtab{display:grid;gap:1px;background:var(--gline)}
+.gc{min-width:0;min-height:36px;padding:3px 2px;font-size:10px;font-weight:600;line-height:1.1;display:flex;align-items:center;justify-content:center;text-align:center;overflow:hidden}
+.gc .t2{display:none;font-family:var(--mono);font-size:8px;letter-spacing:-.3px}
+@media (max-width:600px){.gc .t1{display:none}.gc .t2{display:inline}.gc{padding-inline:1px}}
+/* rows spread evenly (AFT GALLEY): every cell in a row takes the same width */
+.grow{display:flex;gap:1px}.grow>.gc{flex:1 1 0}
+/* tall cells (Refrigerator, Steam Oven, Trolley, Air Chiller): text reads bottom-to-top, as A340 side galleys */
+.gc.vt{position:relative}
+.gc.vt::after{position:absolute;right:2px;bottom:1px;margin:0}
+.report .gc{font-size:9px}
+.report .gc .gsub{font-size:7.5px}
+.gc.vt .t1{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap}
+@media (max-width:600px){.gc.vt .t1{display:inline}.gc.vt .t2{display:none}}
+.gc .gsub{display:block;font-size:8.5px;font-weight:500;color:var(--muted);margin-top:1px}
+.gc.hassub{flex-direction:column;gap:0}
+.gc.outlet{flex-direction:column;gap:1px;padding-inline:1px}
+.gc.outlet .plug{width:13px;height:13px;flex:none}
+.gc.outlet .pv{font-family:var(--mono);font-size:8px;font-weight:700;letter-spacing:-.3px}
+@media (max-width:600px){.gc.outlet .pv{font-size:6.5px;letter-spacing:-.4px}.gc.outlet .plug{width:11px;height:11px}}
+.gc.gn{font-size:8.5px;font-weight:600;color:var(--muted);font-style:italic}
+.gc.ge{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23f6f9fc'/%3E%3Cpath d='M-1 1l2-2M0 8L8 0M7 9l2-2' stroke='%23b4c2d0' stroke-width='1.2'/%3E%3C/svg%3E") repeat}  /* hatch as an SVG tile: the PDF renderer draws it the same as the screen */
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .gc.ge{background:repeating-linear-gradient(135deg,var(--panel) 0 6px,var(--cabin) 6px 8px)}}
+:root[data-theme="dark"] .gc.ge{background:repeating-linear-gradient(135deg,var(--panel) 0 6px,var(--cabin) 6px 8px)}
+.report .gc.ge{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='8' height='8'%3E%3Crect width='8' height='8' fill='%23f6f9fc'/%3E%3Cpath d='M-1 1l2-2M0 8L8 0M7 9l2-2' stroke='%23b4c2d0' stroke-width='1.2'/%3E%3C/svg%3E") repeat!important}
+.gc.gn{color:#4d5d6e!important}
+.eq{position:relative;cursor:pointer;border:0;border-radius:0;font-family:var(--sans)}
+.eq.gc{--st:var(--ok);background:var(--panel);color:var(--ink);box-shadow:inset 4px 0 0 var(--st);padding-left:6px}
+.eq.gc[data-s="1"]{--st:var(--warn);background:var(--warn-soft)}
+.eq.gc[data-s="2"]{--st:var(--bad);background:var(--bad-soft)}
+.eq.gc[data-s="1"]::after{content:"!"}.eq.gc[data-s="2"]::after{content:"×"}
+.eq.gc[data-s]::after{color:var(--st);font-weight:800;margin-left:1px}
+.eq.gc:hover{box-shadow:inset 4px 0 0 var(--st),inset 0 0 0 2px var(--ink)}
+.lav{--st:var(--ok);position:relative;cursor:pointer;font:inherit;min-height:42px;width:100%;border-radius:6px;display:flex;align-items:center;justify-content:center;gap:6px;padding:4px 8px;background:var(--lavbg);color:var(--lavink);border:2px solid var(--st);box-shadow:inset 0 0 0 1px var(--panel);font-family:var(--mono);font-weight:700;font-size:12px;white-space:nowrap}
+.lav .wc{width:18px;height:18px;flex:none}
+.wc path,.plug path{fill:currentColor}
+/* report / PDF: every LAV the same — icon and name on one line, sized to fit 2-seat boxes */
+.report .lav,.report .lav[style*="width"]{font-size:9px!important;flex-wrap:nowrap!important;white-space:nowrap!important;gap:3px!important;padding:3px 4px!important}
+.report .lav .wc{width:13px!important;height:13px!important}
+/* LAV as wide as 2 seats: name wraps inside the box, never spills out */
+.lav[style*="width"]{gap:2px 4px;padding:3px 4px;font-size:11px;white-space:normal;line-height:1.15;text-align:center;overflow:hidden;flex-wrap:wrap;min-width:0}
+.lav[style*="width"] span{min-width:0;overflow-wrap:anywhere}
+.lav[style*="width"] .wc{width:15px;height:15px}
+@media (max-width:600px){.lav{white-space:normal;line-height:1.1;font-size:10px;padding:3px 4px;text-align:center}.lav[style*="width"] .wc{display:none}}
+.lav[data-s="1"]{--st:var(--warn);background:var(--warn-soft);color:var(--ink)}
+.lav[data-s="2"]{--st:var(--bad);background:var(--bad-soft);color:var(--ink)}
+.lav[data-s="1"]::after{content:"!"}.lav[data-s="2"]::after{content:"×"}
+.lav[data-s]::after{color:var(--st);font-weight:800;margin-left:2px}
+.lav:hover{box-shadow:inset 0 0 0 2px var(--ink)}
+.eq[data-note]::before,.lav[data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);pointer-events:none}
+.eq[data-pending],.lav[data-pending]{outline:2px dashed var(--accent);outline-offset:-3px}
+.report .eq[data-pending],.report .lav[data-pending]{outline:0}
+.ro .eq,.ro .lav{cursor:default}
+.report .rows{--aw:48px}
+.sumgrid{display:grid;grid-template-columns:minmax(0,1.35fr) minmax(0,1fr);gap:16px;align-items:start}
+@media (max-width:820px){.sumgrid{grid-template-columns:minmax(0,1fr)}}
+.sumgrid table{min-width:0}
+tr.gh td{background:var(--cabin)}
+td.ind{padding-left:22px;font-weight:400!important}
+td small{font-weight:400;color:var(--muted)}
+/* phone: the 9-column zone summary as two 5-column tables (ที่นั่ง, Monitor) so nothing scrolls sideways (เหมือน A340) */
+.sumM{display:none}
+.sumM h3{font-size:13px;margin:12px 0 6px;color:var(--muted)}
+.sumM h3:first-child{margin-top:0}
+@media (max-width:700px){#sumFull{display:none}.sumM{display:block}.sumM table{min-width:0}.sumM th,.sumM td{padding-inline:6px}}
+/* A4 SUMMARY: หน้า Galley และห้องน้ำ (nose ซ้าย -> tail ขวา, บน = ฝั่งขวา D-F, ล่าง = ฝั่งซ้าย A-C เหมือนหน้า 1) */
+.op1.pg3 .lbody{display:flex;flex-direction:column;gap:10px}
+.op1.pg3 .ldir{display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted);font-weight:600}
+.op1.pg3 .fuse{display:grid;grid-template-rows:14px minmax(70px,auto) 14px minmax(70px,auto) 14px 18px;column-gap:5px;align-items:center;border:1px solid var(--line);background:var(--cabin);border-radius:40px 14px 14px 40px;padding:4px 12px 6px 26px}
+.op1.pg3 .fl{display:flex;justify-content:center;align-items:center;gap:4px;align-self:center;z-index:1}
+.op1.pg3 .fl.R{grid-row:2}.op1.pg3 .fl.L{grid-row:4}.op1.pg3 .fl.X{grid-row:2 / 5}
+.op1.pg3 .fais{grid-row:3;grid-column:1 / -1;border-block:1px dashed var(--gline);height:10px;position:relative}
+.op1.pg3 .fais span{position:absolute;left:4px;top:50%;transform:translateY(-50%);font-size:6.5px;font-weight:700;color:var(--muted);background:var(--cabin);padding:0 3px;letter-spacing:.04em}
+.op1.pg3 .fseat{grid-row:2 / 5;align-self:stretch;display:flex;flex-direction:column;align-items:center;justify-content:center;background:#d9e0e7;border:1px solid #c0cad4;border-radius:4px;padding:3px 4px;font-size:7.5px;color:#3d4c5c;text-align:center;line-height:1.25;z-index:1}
+.op1.pg3 .fdoor{grid-row:1 / 6;align-self:stretch;display:flex;flex-direction:column;align-items:center;font-size:7px;font-weight:800;color:#33475c;z-index:2}
+.op1.pg3 .fdoor i{flex:1;border-left:1.5px dashed #33475c;margin:2px 0}
+.op1.pg3 .fdoor span{display:inline-block;background:#33475c;color:#fff;border-radius:2px;padding:2px 3px 3px;line-height:1;white-space:nowrap}
+.op1.pg3 .fdoor.ex i{border-color:#c4600f}.op1.pg3 .fdoor.ex span{background:#c4600f}
+.op1.pg3 .fdoor.lane i.top{visibility:hidden}
+.op1.pg3 .fl{min-width:max-content}.op1.pg3 .eg{flex:none}
+.op1.pg3 .ec .plug{width:8px;height:8px;flex:none}
+.op1.pg3 .egr{display:flex;gap:1px}.op1.pg3 .egr>.ec{flex:1 1 0}
+.op1.pg3 .fseat b{font-size:8px}
+.op1.pg3 .fz{grid-row:6;font-size:7.5px;font-weight:700;text-align:center;border-top:2px solid #7d8fa3;padding-top:2px;color:#33475c;white-space:nowrap}
+.op1.pg3 .eg{border:1px solid var(--gline);border-radius:3px;background:var(--gline);display:flex;flex-direction:column;gap:1px;overflow:hidden}
+.op1.pg3 .egh{background:var(--galley);color:var(--galley-ink);font-size:7.5px;font-weight:700;text-align:center;padding:1px 4px;white-space:nowrap}
+.op1.pg3 .egt{display:grid;gap:1px;background:var(--gline)}
+.op1.pg3 .ec{font-size:7.5px;font-weight:600;color:var(--ink);border-left:3px solid;padding:1px 2px;min-width:18px;height:auto;min-height:15px;display:flex;align-items:center;justify-content:center;gap:1px;white-space:nowrap;position:relative}
+.op1.pg3 .ec.ee{background:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='6'%3E%3Crect width='6' height='6' fill='%23f6f9fc'/%3E%3Cpath d='M-1 1l2-2M0 6L6 0M5 7l2-2' stroke='%23b4c2d0' stroke-width='1.2'/%3E%3C/svg%3E") repeat;border-left:0;font-size:6.5px;font-style:italic;color:#4d5d6e;font-weight:600}
+.op1.pg3 .ec.nt::after,.op1.pg3 .el.nt::after{content:'';position:absolute;left:0;right:0;bottom:0;height:2px;background:var(--ink)}
+.op1.pg3 .el{position:relative;display:flex;align-items:center;justify-content:center;gap:3px;border:2px solid;border-radius:4px;padding:3px 5px;font-family:var(--mono);font-size:8px;font-weight:700;color:var(--lavink);white-space:nowrap}
+.op1.pg3 .el .wc{width:10px;height:10px;flex:none}
+.op1.pg3 .el{white-space:normal;text-align:center;line-height:1.15;padding:3px 4px}
+.op1.pg3 .fl.lv{align-self:stretch;flex-direction:column;justify-content:center;padding-block:3px}
+.op1.pg3 .el.v{width:24px;padding:4px 0;flex-direction:column;justify-content:flex-start;gap:0}
+.op1.pg3 .el.v span{position:absolute;left:50%;top:calc(50% + 7px);transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap;font-size:7px;line-height:1.1;text-align:center}
+.op1.pg3 .el.v .wc{margin-top:1px}
+.op1.pg3 .lleg{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 16px;font-size:9.5px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:4px 8px}
+.op1.pg3 .lleg i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.op1.pg3 .lleg i.lge{background:#fff;border-left:4px solid var(--ok);box-sizing:border-box;width:14px;outline:1px solid var(--gline)}
+.op1.pg3 .lleg i.lgl{background:var(--lavbg);border:2px solid var(--ok);box-sizing:border-box;width:14px}
+.op1.pg3 .lleg i.lgn{background:var(--ok);border-bottom:3px solid var(--ink);box-sizing:border-box}
+.op1.pg3 .lbot{display:grid;grid-template-columns:1fr 1.15fr 1.3fr;gap:14px;align-items:start}
+.op1.pg3 .lbot>div{min-width:0}
+.op1.pg3 .lbot h3{font-size:12px;margin:0 0 5px}
+.report.op1.pg3 .lsum{border-collapse:collapse;width:100%;min-width:0}
+.report.op1.pg3 .lsum th,.report.op1.pg3 .lsum td{font-size:10px;padding:3px 5px;border:1px solid var(--line);text-align:center;font-weight:400}
+.report.op1.pg3 .lsum th{background:#eef2f6;font-weight:700;color:var(--ink);font-size:9.5px}
+.report.op1.pg3 .lsum td{font-family:var(--mono);font-weight:600}
+.report.op1.pg3 .lsum td:first-child,.report.op1.pg3 .lsum th:first-child{text-align:left;font-family:var(--sans);font-weight:700}
+.report.op1.pg3 .lsum th i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:3px}
+.report.op1.pg3 .lsum tbody tr:last-child td{background:#eef2f6;font-weight:700}
+.report.op1.pg3 .lsum td.w.nz{background:var(--warn-soft)} .report.op1.pg3 .lsum td.b.nz{background:var(--bad-soft)}
+.report.op1.pg3 .lsum td .sm{font-weight:400;color:var(--muted);font-size:8.5px}
+.report.op1.pg3 .lsum td.na{color:var(--muted)}
+.report.op1.pg3 .lsum th,.report.op1.pg3 .lsum td{padding:1.5px 4px;font-size:9px;line-height:1.2}
+.op1.pg3 .lbody{gap:6px}
 
 .defects{background:var(--panel);border:1px solid var(--line);border-radius:8px;padding:14px}
 .defects ul{list-style:none;margin:0;padding:0;display:flex;flex-direction:column}
@@ -137,6 +282,7 @@ textarea{width:100%;min-height:76px;padding:8px 10px;border:1px solid var(--line
 .btn:disabled{opacity:.5;cursor:default}
 .err{color:var(--bad);font-size:13px;margin:0 0 10px}
 .foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;font-size:13px;color:var(--muted)}
+
 .tools{width:100%;display:flex;flex-wrap:wrap;gap:6px}
 .tools .btn{padding:7px 12px;font-size:13px;letter-spacing:.02em}
 .status{width:100%;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:var(--muted)}
@@ -160,17 +306,20 @@ dialog.wide[open]{display:flex;flex-direction:column}
 .pvmode button{border:0;background:var(--panel);color:var(--accent);font:inherit;font-size:13px;font-weight:600;padding:7px 12px;cursor:pointer}
 .pvmode button+button{border-left:1px solid var(--accent)}
 .pvmode button[aria-pressed="true"]{background:var(--accent);color:var(--accent-ink)}
-.pvbody{overflow:auto;padding:14px;background:#d9dee4}
+.pva4{margin:0 auto 12px;box-shadow:0 1px 4px rgba(0,0,0,.25);overflow:hidden;background:#fff;position:relative}
+.pvbody{overflow:auto;padding:14px;background:var(--line)}
 .toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;pointer-events:none;background:var(--ink);color:var(--bg);padding:9px 16px;border-radius:8px;font-size:14px;max-width:calc(100vw - 32px);transition:opacity .2s,transform .2s;z-index:50}
 .toast.show{opacity:1;transform:translate(-50%,0)}
-.toast.bad{background:var(--bad);color:#fff}
+.toast.bad{background:var(--bad);color:var(--accent-ink)}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
 
 /* report used by PREVIEW and PDF: always light, fixed A4-ish width */
 .report{
+  --room:rgba(255,255,255,.45); --mon21:#8ed873; --mon27:#9fc5e8; --monb:#b4a7d6; --rowno:#35547c;
   --bg:#ffffff; --panel:#ffffff; --cabin:#eef4fa; --ink:#14212e; --muted:#566575; --line:#c5d0dc;
-  --accent:#1f5fa8; --accent-ink:#ffffff; --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7; --on-status:#10202b; --mon-wall:#8ed873; --ovh-ok:#b4a7d6; --ovh-warn:rgba(226,164,0,.6); --ovh-bad:rgba(210,59,51,.6);
-  background:#fff;color:var(--ink);width:794px;max-width:none;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:14px;font-family:var(--sans)}
-.report .blk{background:#fff}
+  --accent:#1f5fa8; --accent-ink:#ffffff; --ok:#2e9d57; --ok-soft:#d6f0df; --warn:#e2a400; --warn-soft:#fdf0c4; --bad:#d23b33; --bad-soft:#fbdad7; --on-status:#10202b;
+  background:var(--bg);color:var(--ink);width:794px;max-width:none;margin:0 auto;padding:24px;display:flex;flex-direction:column;gap:14px;font-family:var(--sans)}
+.report .blk{background:var(--bg)}
 .report h1{font-size:20px;margin:0 0 6px}
 .report h2{font-size:15px;margin:10px 0 6px}
 .report .rmeta{display:flex;flex-wrap:wrap;gap:4px 18px;font-size:13px;color:var(--muted)}
@@ -181,13 +330,81 @@ dialog.wide[open]{display:flex;flex-direction:column}
 .report .rows{--sw:50px;--sg:6px}
 .report .aisle{width:48px}
 .report .seat[data-pending] .s,.report .ovh[data-pending]{outline:0}
-.report .ovh::after{display:none}
 .report .rdef th,.report .rdef td{text-align:left;vertical-align:top;font-size:12px;padding:6px 8px;font-weight:400;border:1px solid var(--line)}
-.report .rdef th{font-weight:700;color:var(--ink);background:#f2f5f8}
+.report .rdef th{font-weight:700;color:var(--ink);background:var(--cabin)}
 .report .rdef td.w{background:var(--warn-soft)} .report .rdef td.b{background:var(--bad-soft)}
 .report .rdef tr:last-child td{font-weight:400}
+.report table.nototal tr:last-child td{font-weight:400}
+.report table.nototal tr:last-child td.ind{font-weight:400!important}
 .report .rnote{font-size:12px;color:var(--muted);margin:6px 0 0}
 .offscreen{position:fixed;left:-10000px;top:0}
+/* EXPORT TO PDF A4 2PAGE: landscape A4 pages 1070x741px (= 283x196mm). Page 1 long seat map + summaries, next pages outstanding defects */
+.report.op1{width:1070px;padding:0;gap:9px;--cabin:#f3f6f9}
+.report.op1.pg{height:741px;overflow:hidden}
+.op1 .top{display:flex;justify-content:space-between;align-items:flex-end;gap:16px;border-bottom:2px solid var(--accent);padding-bottom:6px}
+.op1 .top h1{font-size:19px;margin:0;letter-spacing:.5px}
+.op1 .top .sub{font-size:10.5px;color:var(--muted)}
+.op1 .meta{display:grid;grid-template-columns:auto auto;gap:1px 12px;font-size:11px;text-align:left}
+.op1 .meta b{font-weight:700}
+.op1 h3{font-size:12px;margin:0 0 4px}
+.report.op1 table{border-collapse:collapse;width:100%;min-width:0}
+.op1 .sum{table-layout:fixed}
+.report.op1 .sum th,.report.op1 .sum td{font-size:9px;padding:2px 2px;border:1px solid var(--line);text-align:center;overflow:hidden;line-height:1.25}
+.report.op1 .sum th{background:#eef2f6;font-weight:700;color:var(--ink)}
+.report.op1 .sum th:first-child{width:24%}
+.report.op1 .sum.mt th:first-child{width:50%}
+.report.op1 .sum td:first-child,.report.op1 .sum th:first-child{text-align:left}
+.report.op1 .sum th i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:2px}
+.report.op1 .sum tr:last-child td{font-weight:700;background:#eef2f6}
+.report.op1 .sum .sep{border-left:1px solid var(--line)}
+.op1 .leg{display:flex;flex-direction:column;gap:2px;font-size:9.5px;color:var(--muted)}
+.op1 .leg i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.op1 .leg i.mon{width:18px;height:7px;vertical-align:0}
+.op1 .defsnote{font-size:11px;margin:2px 0 0;padding:6px 8px;background:#eef2f6;border-radius:4px}
+.report.op1 .def th,.report.op1 .def td{font-size:10px;padding:1.5px 5px;border:1px solid var(--line);text-align:left;vertical-align:top;line-height:1.35;font-weight:400}
+.report.op1 .def th{background:#eef2f6;font-weight:700}
+.op1 .def td.n{text-align:center;color:var(--muted)}
+.report.op1 .def td.id{font-weight:700}
+.op1 .def td.nw{white-space:nowrap}
+.op1 .def td.w{background:var(--warn-soft)} .op1 .def td.b{background:var(--bad-soft)}
+.op1 .fill{flex:1}
+.op1 .foot{display:flex;justify-content:space-between;gap:12px;font-size:8.5px;color:var(--muted);border-top:1px solid var(--line);padding-top:4px}
+/* A4 2PAGE, long layout: cabin drawn nose (left) to tail (right); D-F on top, A-C below the aisle; tables underneath */
+.op1 .hmap{display:flex;gap:5px;justify-content:center;align-items:stretch;--hw:28px;--hg:3px}
+.op1 .hz{border:1px solid var(--line);background:var(--cabin);border-radius:6px;padding:5px 6px 6px;display:flex;flex-direction:column;gap:3px}
+.op1 .hz header{display:flex;justify-content:space-between;align-items:center;gap:6px}
+.op1 .hz h2{font-size:11px;margin:0;white-space:nowrap}
+.op1 .hz header span{font-family:var(--mono);font-size:7.5px;font-weight:600;background:var(--accent);color:var(--accent-ink);padding:1px 4px;border-radius:3px;white-space:nowrap}
+.op1 .hg{display:grid;column-gap:4px;row-gap:0;align-items:center;justify-items:center;margin:0 auto}
+.op1 .hno{font-family:var(--mono);font-weight:600;font-size:10px;color:var(--rowno);height:14px;line-height:14px}
+.op1 .hband{height:calc(3 * var(--hw) + 2 * var(--hg));display:flex;flex-direction:column;justify-content:center;align-items:center;gap:var(--hg)}
+.op1 .haisle{height:12px}
+.op1 .hs{width:var(--hw);height:var(--hw);border-radius:4px;background:var(--ok);color:var(--on-status);font-family:var(--mono);font-weight:600;font-size:10px;display:flex;align-items:center;justify-content:center;position:relative;white-space:nowrap}
+.op1 .hs.wide{height:calc(2 * var(--hw) + var(--hg));font-family:var(--sans);font-size:8px;line-height:1.1;text-align:center;white-space:normal}
+.op1 .hs[data-s="1"]{background:var(--warn)} .op1 .hs[data-s="2"]{background:var(--bad)}
+.op1 .hs[data-s="1"]::after{content:"!"} .op1 .hs[data-s="2"]::after{content:"×"}
+.op1 .hs[data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);border-radius:0 0 4px 4px}
+.op1 .hm{width:11px;border-radius:4px;position:relative}
+.op1 .hs.cc{font-family:var(--sans);font-size:8px}
+.op1 .hm.t-w21{background:var(--mon21)} .op1 .hm.t-w27{background:var(--mon27)} .op1 .hm.t-b12{background:var(--monb);width:8px}
+.op1 .hm[data-m="1"]{background:var(--warn)} .op1 .hm[data-m="2"]{background:var(--bad)}
+.op1 .hm[data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);border-radius:0 0 4px 4px}
+.op1 .htbl{width:var(--hw);height:calc(2 * var(--hw) + var(--hg));border:1.5px dashed var(--muted);border-radius:4px;background:var(--panel);color:var(--muted);font-size:6.5px;font-weight:700;display:flex;align-items:center;justify-content:center}
+.op1 .hroom{border:1.5px solid var(--rowno);border-radius:6px;align-self:stretch;justify-self:stretch;margin:-3px -3px;z-index:0}
+.op1 .hroomname{font-size:7.5px;font-weight:600;color:var(--rowno);white-space:nowrap;line-height:12px;align-self:end}
+.op1 .hg>*:not(.hroom){z-index:1}
+.op1 .hdoor{align-self:stretch;display:flex;flex-direction:column;align-items:center;font-size:6.5px;font-weight:800;color:#33475c}
+.op1 .hdoor i{flex:1;border-left:1.5px dashed #33475c;margin:2px 0}
+.op1 .hdoor span{display:inline-block;background:#33475c;color:#fff;border-radius:2px;padding:2px 2px 3px;line-height:1;white-space:nowrap}
+.op1 .hdoor.ex i{border-color:#c4600f}.op1 .hdoor.ex span{background:#c4600f}
+.op1 .hbelow{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}
+.op1 .hleg{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 18px;font-size:10px;color:var(--muted);padding:5px 8px;border:1px solid var(--line);border-radius:5px}
+.op1 .hleg i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
+.op1 .hbelow .leg{font-size:9.5px}
+.report.op1.pg1h .sum th,.report.op1.pg1h .sum td{font-size:10.5px;padding:3px 3px}
+.op1.pg1h h3{font-size:13px;margin:4px 0 5px}
+.op1.pg1h .defsnote{font-size:12px;margin-top:8px}
+.op1 .noseh{display:flex;justify-content:space-between;font-size:9px;color:var(--muted);margin:-2px 2px 0}
 @media (max-width:600px){.bar{padding-block:8px;gap:6px 10px}.bar .sync{display:none}.tools .btn{padding:6px 9px;font-size:12px}.who input{width:130px}}
 @media print{.bar,.foot,.notice{display:none}}
 .sheetlink{color:var(--accent);font-weight:600;text-decoration:none}
@@ -198,85 +415,22 @@ dialog.wide[open]{display:flex;flex-direction:column}
 #gatePin{width:100%;padding:10px 12px;border:1px solid var(--line);border-radius:6px;background:var(--bg);font-size:16px}
 #pinIn{width:100%;padding:8px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-bottom:12px}
 #adminPin{width:150px;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--bg);margin-right:6px}
-
-/* EXPORT TO PDF A4 2PAGE: one landscape A4 page, cabin drawn nose (left) to tail (right),
-   right-side seats (D-F) on the upper half and left-side seats (A-C) on the lower half; always light */
-.a4{--ok:#2e9d57;--warn:#e2a400;--bad:#d23b33;--ink:#14212e;--muted:#566575;--line:#c5d0dc;--accent:#1f5fa8;--rowno:#35547c;
-  --mon-wall:#8ed873;--ovh-ok:#b4a7d6;--zone:#eef3f8;--on-status:#10202b;
-  width:1123px;height:794px;box-sizing:border-box;padding:26px 30px 16px;background:#fff;color:var(--ink);font-family:var(--sans);
-  display:flex;flex-direction:column;gap:7px;font-size:11px;line-height:1.35}
-.a4 *{box-sizing:border-box}
-.a4 .top{display:flex;justify-content:space-between;align-items:flex-end;gap:20px}
-.a4 .top h1{margin:0;font-size:22px;font-weight:700;letter-spacing:.01em}
-.a4 .top .sub{color:var(--muted);font-size:11px}
-.a4 .meta{display:grid;grid-template-columns:auto auto;gap:1px 14px;font-size:11px}
-.a4 .meta b{font-weight:700}
-.a4 .rule{border-top:3px solid var(--accent);margin-top:2px}
-.a4 .dir{display:flex;justify-content:space-between;font-size:9.5px;color:var(--muted)}
-.a4 .cab{display:flex;gap:8px;align-items:stretch}
-.a4 .hz{flex:1 1 auto;min-width:0;background:var(--zone);border:1px solid var(--line);border-radius:8px;padding:7px 8px 9px;display:flex;flex-direction:column;gap:3px}
-.a4 .hz.grow{flex:3 1 auto}
-.a4 .hz>header{display:flex;flex-direction:column;align-items:flex-start;gap:2px;font-size:11px;font-weight:700;line-height:1.25}
-.a4 .hz>header div{min-width:0}
-.a4 .hz>header span{font-family:var(--mono);font-size:9px;background:var(--accent);color:#fff;padding:1px 6px;border-radius:3px}
-.a4 .hg{display:grid;column-gap:4px;row-gap:7px;grid-template-rows:14px 98px 98px;justify-content:center;margin:auto 0}
-.a4 .hl{font-family:var(--mono);font-weight:600;font-size:10.5px;color:var(--rowno);text-align:center;align-self:end}
-.a4 .st{display:flex;flex-direction:column;justify-content:center;gap:4px}
-.a4 .s{width:29px;height:30px;border-radius:5px;background:var(--ok);color:var(--on-status);font-family:var(--mono);font-weight:600;font-size:10px;
-  display:flex;align-items:center;justify-content:center;position:relative;text-align:center;line-height:1.1}
-.a4 .s.cc{font-size:8.5px;letter-spacing:-.02em;white-space:nowrap}
-.a4 .s[data-s="1"]{background:var(--warn)} .a4 .s[data-s="2"]{background:var(--bad)}
-.a4 .s[data-s="1"]::after{content:"!"} .a4 .s[data-s="2"]::after{content:"×"}
-.a4 [data-note]::before{content:"";position:absolute;left:0;right:0;bottom:0;height:3px;background:var(--ink);border-radius:0 0 3px 3px}
-.a4 .m{width:8px;border-radius:4px;background:var(--mon-wall);justify-self:center;align-self:center;position:relative}
-.a4 .m.r{background:var(--ovh-ok)}
-.a4 .m[data-m="1"]{background:var(--warn)} .a4 .m[data-m="2"]{background:var(--bad)}
-.a4 .m[data-note]::before{height:auto;top:auto;bottom:-6px;left:-1px;right:-1px;height:3px}
-.a4 .f{border:1.5px dashed var(--muted);border-radius:6px;background:#fff;color:var(--muted);font-size:7px;font-weight:700;letter-spacing:0;overflow:hidden;
-  display:flex;align-items:center;justify-content:center;align-self:center}
-.a4 .room{border:1.5px solid var(--rowno);border-radius:7px;position:relative;height:42px;align-self:center;margin:0 -6px}
-.a4 .room em{position:absolute;left:50%;bottom:-14px;transform:translateX(-50%);white-space:nowrap;font-style:normal;font-size:8px;font-weight:600;color:var(--rowno)}
-.a4 .legend{display:flex;flex-wrap:wrap;gap:4px 18px;align-items:center;justify-content:center;border:1px solid var(--line);border-radius:6px;padding:5px 10px;font-size:9.5px;color:var(--muted)}
-.a4 .legend span{display:inline-flex;align-items:center;gap:5px}
-.a4 .legend i{display:inline-block;width:11px;height:11px;border-radius:2px}
-.a4 .legend i.bar{width:5px;height:12px;border-radius:3px}
-.a4 .tabs{display:grid;grid-template-columns:1.15fr 1fr;gap:16px;align-items:start}
-.a4 h2{font-size:12px;margin:0 0 4px;font-weight:700}
-.a4 table{border-collapse:collapse;width:100%;min-width:0;font-variant-numeric:tabular-nums;border:1px solid var(--line)}
-.a4 th,.a4 td{border:1px solid var(--line);padding:2px 6px;font-size:9.5px;text-align:center;line-height:1.25}
-.a4 th{background:#e8edf3;font-weight:600;color:var(--ink)}
-.a4 th:first-child,.a4 td:first-child{text-align:left;font-weight:600}
-.a4 td.n{font-family:var(--mono)}
-.a4 tr:last-child td{font-weight:700;background:#f2f5f8}
-.a4 td.w.nz{background:#fdf0c4} .a4 td.b.nz{background:#fbdad7}
-.a4 th i{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:3px}
-.a4 .sep{border-left:2px solid var(--line)}
-.a4 .defs{margin-top:8px;background:#f2f5f8;border:1px solid var(--line);border-radius:6px;padding:6px 9px}
-.a4 .defs h3{margin:0 0 3px;font-size:11px}
-.a4 .defs ul{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:1px;font-size:9.5px}
-.a4 .defs li b{font-family:var(--mono);margin-right:6px}
-.a4 .defs .more{color:var(--accent);font-size:10px;font-weight:700;margin-top:2px}
-.a4 .foot{margin-top:auto;display:flex;justify-content:space-between;border-top:1px solid var(--line);padding-top:4px;font-size:8.5px;color:var(--muted)}
-.a4 .dtab th,.a4 .dtab td{text-align:left;vertical-align:top;font-weight:400}
-.a4 .dtab th{font-weight:700}
-.a4 .dtab td.w{background:#fdf0c4} .a4 .dtab td.b{background:#fbdad7}
-.a4 .dtab tr:last-child td{background:inherit;font-weight:400}
 </style>
-<!-- config.js and export-excel.js are loaded with a time stamp so a browser never keeps an old copy after an update -->
+<!-- config.js, layout.js and export-excel.js load with a time stamp so a browser never keeps an old copy after an update -->
 <script>window.SEATPLAN_BUST=Date.now();document.write('<script src="config.js?v='+window.SEATPLAN_BUST+'"><\/script>')</script>
 </head>
 <body>
 
 <div class="wrap" id="app">
   <div class="bar">
-    <h1>STATUS SEAT PLAN A320(03)<small>บันทึกสภาพที่นั่งและ Monitor · ฝ่ายการช่าง / ฝ่ายสื่อสาร</small></h1>
+    <h1>STATUS SEAT PLAN A320-03<small>บันทึกสภาพที่นั่ง, Monitor, Galley และห้องน้ำ · ฝ่ายการช่าง / ฝ่ายสื่อสาร</small></h1>
     <div class="who"><label for="inspector">ชื่อผู้ตรวจ</label><input id="inspector" maxlength="60" placeholder="พิมพ์ชื่อของคุณ" autocomplete="off"></div>
     <div class="tools">
       <button class="btn" id="bClear" type="button">CLEAR</button>
       <button class="btn" id="bPreview" type="button">PREVIEW</button>
       <button class="btn pri" id="bSave" type="button">SAVE</button>
-      <button class="btn" id="bPdf" type="button">EXPORT TO PDF</button>
-      <button class="btn" id="bPdf2" type="button">EXPORT TO PDF A4 2PAGE</button>
+      <button class="btn" id="bPdf" type="button">EXPORT TO PDF ALL PAGES</button>
+      <button class="btn" id="bPdf2" type="button">EXPORT SUMMARY 4 PAGES</button>
       <button class="btn" id="bXls" type="button">EXPORT TO EXCEL</button>
     </div>
     <div class="status"><span class="pend" id="pend"></span><span id="lastSave"></span></div>
@@ -286,19 +440,39 @@ dialog.wide[open]{display:flex;flex-direction:column}
 
   <section>
     <h2>สรุปตามโซน</h2>
-    <div class="tablebox"><table id="summary"></table></div>
+    <div class="tablebox" id="sumFull"><table id="summary"></table></div>
+    <div class="sumM" aria-hidden="true">
+      <h3>ที่นั่ง</h3><div class="tablebox"><table id="summaryS"></table></div>
+      <h3>Monitor</h3><div class="tablebox"><table id="summaryMon"></table></div>
+    </div>
   </section>
   <section>
     <h2>สรุปตามชนิด Monitor</h2>
     <div class="tablebox"><table id="mtsum" class="mt"></table></div>
   </section>
 
+  <div class="sumgrid">
+    <section>
+      <h2>สรุป Galley</h2>
+      <div class="tablebox"><table id="galSum"></table></div>
+    </section>
+    <section>
+      <h2>สรุปห้องน้ำ (LAVATORY)</h2>
+      <div class="tablebox"><table id="lavSum"></table></div>
+    </section>
+  </div>
+
   <div class="legend" id="legend">
     <span><i class="sw" style="background:var(--ok)"></i>ใช้งานได้ปกติ</span>
     <span><i class="sw" style="background:var(--warn)"></i>ขัดข้องแต่ใช้ได้ / Manual ได้ (!)</span>
     <span><i class="sw" style="background:var(--bad)"></i>ใช้งานไม่ได้ (×)</span>
-    <span><i class="sw mon" style="background:var(--mon-wall)"></i>Monitor = จอติดผนัง 21.5"</span>
-    <span><i class="sw mon" style="background:var(--ovh-ok);border-radius:999px"></i>OVHD = จอพับเหนือที่นั่ง 12.0" (OVHD Monitor)<span class="nopdf">&nbsp;(ชี้เมาส์ที่ป้ายเพื่อดูชนิดจอ)</span></span>
+    <span><i class="sw" style="background:var(--panel);box-shadow:inset 5px 0 0 var(--ok);border:1px solid var(--gline);width:24px"></i>อุปกรณ์ Galley: แถบสีด้านซ้าย = สภาพ</span>
+    <span><i class="sw" style="border-block:2px dashed var(--gline);width:24px;height:10px;border-radius:0"></i>ประตู (DOOR)</span>
+    <span><i class="sw" style="border-block:2px dashed #e07b24;width:24px;height:10px;border-radius:0"></i>ทางออกฉุกเฉิน (OVERWING EXIT)</span>
+    <span>ตัวย่อ Galley: CM = Coffee Maker (Beverage Maker) · MW = Microwave · HC = Hot Cup · REF = Refrigerator · WB = Water Boiler · WH = Water Heater · FCT = Faucet (Sink) · WL = Work Light · ปลั๊ก 220V = 220VAC Power Outlet · STO / Stor = Storage · STW / Stow = Stowage · TRL = Trolley Stowage · ACH = Air Chiller · WST = Waste · ช่องลายเส้น = ไม่ได้ตรวจ (Elec. Panel, Sink)</span>
+    <span><i class="sw" style="background:var(--lavbg);border:2px solid var(--ok);width:24px;box-sizing:border-box"></i>ห้องน้ำ (LAV): สีกรอบ = สภาพ</span>
+    <span><i class="sw mon" style="background:var(--mon21)"></i>Monitor 21.5"</span>
+    <span><i class="sw mon" style="background:var(--monb);border-radius:8px"></i>OVHD Monitor 12.0"<span class="nopdf">&nbsp;(ชี้เมาส์ที่ป้ายเพื่อดูรายละเอียด)</span></span>
     <span><i class="sw" style="background:var(--ok);border-bottom:4px solid var(--ink);box-sizing:border-box"></i>ขีดล่าง = มีหมายเหตุ</span>
     <span class="nopdf"><i class="sw" style="background:var(--ok);outline:2px dashed var(--accent);outline-offset:2px"></i>เส้นประ = แก้ไขแล้ว ยังไม่ SAVE</span>
   </div>
@@ -306,21 +480,21 @@ dialog.wide[open]{display:flex;flex-direction:column}
   <div id="zones"></div>
 
   <section class="defects">
-    <h2>รวมข้อขัดข้องคงค้าง <span id="dcount"></span></h2>
+    <h2>รายการข้อขัดข้องและหมายเหตุ <span id="dcount"></span></h2>
     <ul id="dlist"></ul>
-    <p class="empty" id="dempty">ยังไม่มีรายการ แตะที่นั่งหรือ Monitor ในผังเพื่อบันทึกข้อขัดข้อง</p>
+    <p class="empty" id="dempty">ยังไม่มีรายการ แตะที่นั่ง, Monitor, อุปกรณ์ Galley หรือห้องน้ำในผังเพื่อบันทึกข้อขัดข้อง</p>
   </section>
 
   <div class="foot" id="foot" hidden>
     <button class="btn danger" id="resetBtn" type="button">ล้างข้อมูลทั้งหมดเพื่อเริ่มรอบตรวจใหม่</button>
-    <span id="resetAsk" hidden>ตั้งทุกที่นั่งกลับเป็นปกติและล้างหมายเหตุ (ประวัติยังอยู่) <input id="adminPin" type="password" placeholder="รหัส Admin" autocomplete="off"> <button class="btn danger" id="resetYes" type="button">ยืนยันลบ</button> <button class="btn" id="resetNo" type="button">ยกเลิก</button></span>
+    <span id="resetAsk" hidden>ตั้งทุกที่นั่ง, Galley และห้องน้ำกลับเป็นปกติและล้างหมายเหตุ (ประวัติยังอยู่) <input id="adminPin" type="password" placeholder="รหัส Admin" autocomplete="off"> <button class="btn danger" id="resetYes" type="button">ยืนยันลบ</button> <button class="btn" id="resetNo" type="button">ยกเลิก</button></span>
   </div>
 </div>
 
 <dialog id="dlg">
   <h3 id="dTitle"></h3>
   <p class="sub" id="dSub"></p>
-  <fieldset id="fsSeat"><legend>สภาพที่นั่ง</legend><div class="opts" id="optS"></div></fieldset>
+  <fieldset id="fsSeat"><legend id="lgSeat">สภาพที่นั่ง</legend><div class="opts" id="optS"></div></fieldset>
   <fieldset id="fsMon"><legend>สภาพ Monitor</legend><div class="opts" id="optM"></div></fieldset>
   <fieldset><legend><label for="note">หมายเหตุ / รายละเอียดข้อขัดข้อง</label></legend>
     <textarea id="note" maxlength="500" placeholder="เช่น Backrest ใช้งานไม่ได้, Travel Seat INOP, รออะไหล่ P/N …"></textarea></fieldset>
@@ -351,15 +525,15 @@ dialog.wide[open]{display:flex;flex-direction:column}
 <dialog id="pv" class="wide">
   <div class="pvbar">
     <div class="pvhead"><h3 id="pvTitle">PREVIEW</h3>
-      <div class="pvmode" role="group" aria-label="แบบที่ดูตัวอย่าง"><button type="button" id="pvModeStd" aria-pressed="true">แบบ EXPORT TO PDF</button><button type="button" id="pvModeA4" aria-pressed="false">แบบ EXPORT TO PDF A4 2PAGE</button></div></div>
-    <div class="acts"><button class="btn" id="pvClose" type="button">ปิด</button><button class="btn" id="pvPdf" type="button">EXPORT TO PDF</button><button class="btn" id="pvPdf2" type="button">EXPORT TO PDF A4 2PAGE</button><button class="btn" id="pvXls" type="button">EXPORT TO EXCEL</button><button class="btn pri" id="pvSave" type="button">SAVE</button></div>
+      <div class="pvmode" role="group" aria-label="แบบที่ดูตัวอย่าง"><button type="button" id="pvModeStd" aria-pressed="true">PREVIEW ALL PAGES</button><button type="button" id="pvModeA4" aria-pressed="false">PREVIEW SUMMARY 4 PAGES</button></div></div>
+    <div class="acts"><button class="btn" id="pvClose" type="button">ปิด</button><button class="btn" id="pvPdf" type="button">EXPORT TO PDF ALL PAGES</button><button class="btn" id="pvPdf2" type="button">EXPORT SUMMARY 4 PAGES</button><button class="btn" id="pvXls" type="button">EXPORT TO EXCEL</button><button class="btn pri" id="pvSave" type="button">SAVE</button></div>
   </div>
   <div class="pvbody" id="pvBody"></div>
 </dialog>
 
 <div class="gate" id="gate" hidden>
   <div class="gatebox" role="dialog" aria-modal="true" aria-labelledby="gateT">
-    <h2 id="gateT">STATUS SEAT PLAN A320(03)</h2>
+    <h2 id="gateT">STATUS SEAT PLAN A320-03</h2>
     <p>ใส่รหัสเพื่อเข้าใช้งาน</p>
     <input id="gatePin" type="password" autocomplete="off" placeholder="รหัส">
     <p class="err" id="gateErr" hidden></p>
@@ -379,24 +553,113 @@ dialog.wide[open]{display:flex;flex-direction:column}
 <script>
 (function(){
 var $=function(id){return document.getElementById(id)};
-var AC='A320(03)';
+var AC='A320-03', KEY='seat-a320-03';
 var S_LABEL=['ใช้งานได้ปกติ','มีข้อขัดข้องแต่ใช้งานได้ / Manual ได้','ใช้งานไม่ได้'];
 var M_LABEL=['Monitor ใช้งานได้','Monitor เสื่อมสภาพ','Monitor เสีย'];
 var COL=['var(--ok)','var(--warn)','var(--bad)'];
-/* A320(03) cabin from the Excel seat plan "32003 SEAT". Each line: L = left seats, R = right seats,
-   mon = [left monitor, right monitor], L2 + sofa = left seats stacked beside the sofa, tables = [left width, right width]. */
-/* Monitor types: w21 = wall mounted, b120 = bin mounted retractable (overhead, in front of the row it serves). */
-var MT={w21:{name:'Wall Mounted Monitor 21.5 Inch',short:'Wall Monitor 21.5"'},b120:{name:'Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch',short:'OVHD Monitor 12.0"'}};
-var MT_ORDER=['w21','b120'];
+/* ===== Galley และห้องน้ำ (ตาม Excel "32003 SEAT AND CABIN STATUS") =====
+   สภาพ 3 ระดับเหมือนตารางสถานภาพ Galley ใน Excel */
+var E_LABEL=['ใช้งานได้','ใช้งานได้บางส่วน','ใช้งานไม่ได้'];
+var GALLEYS={FWD:{name:'FWD GALLEY',code:'G1'},AFT:{name:'AFT GALLEY',code:'G5'}};
+var GAL_ORDER=['FWD','AFT'];
+var TYPES={OVEN:'Oven',CM:'Coffee Maker',MW:'Microwave',HOTCUP:'Hot Cup',BOILER:'Water Boiler',CHILLER:'Air Chiller',FRIDGE:'Refrigerator',STORAGE:'Storage',STOWAGE:'Stowage',TROLLEY:'Trolley Stowage',HEATER:'Water Heater',FAUCET:'Faucet',LIGHT:'Work Light',OUTLET:'220VAC Power Outlet',WASTE:'Waste'};
+var TSHORT={OUTLET:'220V',FAUCET:'Fct',LIGHT:'WL',HEATER:'WH',TROLLEY:'Trolley',OVEN:'Oven',CM:'CM',MW:'MW',HOTCUP:'HC',BOILER:'Boiler',CHILLER:'Air Chl',FRIDGE:'Fridge',STORAGE:'Stor',STOWAGE:'Stow',WASTE:'Waste'};
+/* text on the galley buttons: t1 = desktop, t2 = phone (full name is in the dialog / tooltip) */
+var TBTN={OUTLET:'220V',FAUCET:'Faucet',LIGHT:'Work Light',HEATER:'Water Heater',TROLLEY:'Trolley',OVEN:'Oven',CM:'CM',MW:'MW',HOTCUP:'Hot Cup',BOILER:'Boiler',CHILLER:'Air Chiller',FRIDGE:'Fridge',STORAGE:'Storage',STOWAGE:'Stow',WASTE:'Waste'};
+var TCODE={OUTLET:'PWR',FAUCET:'FCT',LIGHT:'WL',HEATER:'WH',TROLLEY:'TRL',OVEN:'OV',CM:'CM',MW:'MW',HOTCUP:'HC',BOILER:'WB',CHILLER:'ACH',FRIDGE:'REF',STORAGE:'STO',STOWAGE:'STW',WASTE:'WST'};
+function numOf(label){var m=/(\d+)$/.exec(label);return m?m[1]:''}
+var TYPE_ORDER=['OVEN','CM','MW','HOTCUP','BOILER','HEATER','FAUCET','LIGHT','OUTLET','CHILLER','FRIDGE','STORAGE','STOWAGE','TROLLEY','WASTE'];
+/* ตารางแต่ละ Galley วาดช่องต่อช่องตาม Excel: [รหัส, ชนิด, ชื่อบนปุ่ม, จำนวนคอลัมน์ที่กิน] · ตัวเลขเดี่ยว = ช่องว่างกว้างกี่คอลัมน์ */
+var GLAYOUT={
+ /* FWD GALLEY = G1 GALLEY LAYOUT (A320 CCOM-S 02-140) มองจากหน้า Galley:
+    Stowage ไล่เลขจากแถวบนลงล่าง ซ้ายไปขวา (1-2 บน, 3 ข้าง Oven, 4 ล่าง) · คอลัมน์ 1-2 = Refrigerator / Steam Oven / Trolley · 3-4 = CM, Stowage ข้าง Oven, Microwave, Stowage / Hot Cup, Sink, Waste · 5 = Air Chiller
+    cell = {id, type, label (ชื่อเต็ม), b (ข้อความบนปุ่ม), c, r (คอลัมน์/แถว), cs, rs (กว้าง/สูงกี่ช่อง), v (ตัวหนังสือแนวตั้ง)} · ไม่มี id = ช่องที่ไม่ได้ตรวจ (n = ชื่อ) */
+ /* FWD GALLEY = G1 GALLEY LAYOUT (A320 CCOM-S 02-140 P2) มองจากหน้า Galley:
+    เหนือเคาน์เตอร์ (7 คอลัมน์) = Refrigerator | Steam Oven | CM 1 | CM 2 (เหนือ Stowage 3) | Hot Cup | Faucet (เหนือ Sink) | Work Light ที่แนวลาด
+    ใต้เคาน์เตอร์ (5 คอลัมน์) = Trolley 1 | Trolley 2 | MW, Stowage 4 (มี Water Heater) | Sink, Waste | Air Chiller */
+ FWD:{cols:7,nrows:6,pw:205,bands:[{r0:1,r1:3,h:46,w:[1,1,.9,.9,.9,.9,.8]},{r0:4,r1:6,w:[1,1,1.8,1.8,1]}],
+  cells:[
+  {id:'STOWAGE-1',type:'STOWAGE',label:'Stowage 1',b:'Stow 1',c:1,r:1,v:1},
+  {id:'STOWAGE-2',type:'STOWAGE',label:'Stowage 2',b:'Stow 2',c:2,r:1,v:1},
+  {n:'Elec. Panel',c:3,r:1,cs:2},
+  {n:'',c:5,r:1,cs:3},
+  {id:'FRIDGE-1',type:'FRIDGE',label:'Refrigerator',b:'Refrigerator',c:1,r:2,rs:2,v:1},
+  {id:'OVEN-1',type:'OVEN',label:'Steam Oven',b:'Steam Oven',c:2,r:2,rs:2,v:1},
+  {id:'CM-1',type:'CM',label:'Coffee Maker 1 (Beverage Maker)',b:'CM 1',c:3,r:2},
+  {id:'CM-2',type:'CM',label:'Coffee Maker 2 (Beverage Maker)',b:'CM 2',c:4,r:2},
+  {n:'Elec. Panel',c:5,r:2,cs:2},
+  {id:'LIGHT-1',type:'LIGHT',label:'Work Light',b:'Work Light',c:7,r:2,rs:2,v:1},
+  {id:'STOWAGE-3',type:'STOWAGE',label:'Stowage 3 (ข้าง Oven ใต้ CM)',b:'Stow 3',c:3,r:3,cs:2},
+  {id:'HOTCUP-1',type:'HOTCUP',label:'Hot Cup',b:'Hot Cup',c:5,r:3,v:1},
+  {id:'FAUCET-1',type:'FAUCET',label:'Faucet (Sink)',b:'Faucet',c:6,r:3,v:1},
+  {id:'TROLLEY-1',type:'TROLLEY',label:'Trolley Stowage 1 (Half / Full Size)',b:'Trolley 1',c:1,r:4,rs:3,v:1},
+  {id:'TROLLEY-2',type:'TROLLEY',label:'Trolley Stowage 2 (Half / Full Size)',b:'Trolley 2',c:2,r:4,rs:3,v:1},
+  {id:'MW-1',type:'MW',label:'Microwave',b:'MW',c:3,r:4},
+  {n:'Sink',c:4,r:4},
+  {id:'OUTLET-1',type:'OUTLET',label:'220VAC Power Outlet',b:'220V',c:5,r:4},
+  {id:'STOWAGE-4',type:'STOWAGE',label:'Stowage 4 (ช่องที่มี Water Heater)',b:'Stow 4',c:3,r:5},
+  {id:'WASTE-1',type:'WASTE',label:'Waste Compartment (behind Stowage door)',b:'Waste',c:4,r:5,rs:2},
+  {id:'CHILLER-1',type:'CHILLER',label:'Air Chiller',b:'Air Chiller',c:5,r:5,rs:2,v:1},
+  {id:'HEATER-1',type:'HEATER',label:'Water Heater (ใน Stowage 4)',b:'Water Heater',c:3,r:6}]},
+ /* AFT GALLEY = G5 GALLEY LAYOUT (A320 CCOM-S 02-140 P5) มองจากหน้า Galley ซ้ายไปขวา เต็มความกว้างลำ;
+    Stowage ไล่เลขจากแถวบนลงล่าง ซ้ายไปขวา (1-4 บนเหนือ Oven, 5-7 แถวกลาง, 8 ล่างซ้ายสุด, 9 = ช่องที่มี Water Heater ด้านใน, 10 ล่างขวาสุด · Waste Compartment = ช่อง Stowage ของ Waste ทั้งช่อง) */
+ AFT:{cols:10,nrows:5,pw:230,
+  /* two bands with their own column widths, measured from the G5 drawing (above the counter / below it), so each row keeps the drawing's proportions */
+  bands:[{r0:1,r1:3,w:[45,40,34,34,59,59,59,80,45,55]},{r0:4,r1:5,w:[50,67,63,62,62,62,62,62,50]}],
+  cells:[
+  {n:'',c:1,r:1,rs:2},
+  {id:'OUTLET-1',type:'OUTLET',label:'220VAC Power Outlet',b:'220V',c:1,r:3},
+  {n:'Elec. Panel',c:2,r:1,cs:3},
+  {id:'STOWAGE-1',type:'STOWAGE',label:'Stowage 1',b:'Stow 1',c:5,r:1},
+  {id:'STOWAGE-2',type:'STOWAGE',label:'Stowage 2',b:'Stow 2',c:6,r:1},
+  {id:'STOWAGE-3',type:'STOWAGE',label:'Stowage 3',b:'Stow 3',c:7,r:1},
+  {id:'STOWAGE-4',type:'STOWAGE',label:'Stowage 4',b:'Stow 4',c:8,r:1},
+  {n:'',c:9,r:1,cs:2},
+  {id:'BOILER-1',type:'BOILER',label:'Water Boiler',b:'Boiler',c:2,r:2},
+  {id:'CM-1',type:'CM',label:'Coffee Maker 1 (Beverage Maker)',b:'CM 1',c:3,r:2},
+  {id:'CM-2',type:'CM',label:'Coffee Maker 2 (Beverage Maker)',b:'CM 2',c:4,r:2},
+  {id:'OVEN-1',type:'OVEN',label:'Steam Oven 1',b:'Steam Oven 1',c:5,r:2,rs:2,v:1},
+  {id:'OVEN-2',type:'OVEN',label:'Steam Oven 2',b:'Steam Oven 2',c:6,r:2,rs:2,v:1},
+  {id:'OVEN-3',type:'OVEN',label:'Steam Oven 3',b:'Steam Oven 3',c:7,r:2,rs:2,v:1},
+  {id:'STOWAGE-5',type:'STOWAGE',label:'Stowage 5 (เหนือ Microwave)',b:'Stow 5',c:8,r:2},
+  {id:'STOWAGE-6',type:'STOWAGE',label:'Stowage 6',b:'Stow 6',c:9,r:2,rs:2,v:1},
+  {n:'',c:10,r:2},
+  {id:'STOWAGE-7',type:'STOWAGE',label:'Stowage 7',b:'Stow 7',c:10,r:3},  /* half height, as the G5 drawing */
+  {id:'LIGHT-1',type:'LIGHT',label:'Work Light',b:'Work Light',c:2,r:3},
+  {id:'FAUCET-1',type:'FAUCET',label:'Faucet (Sink)',b:'Faucet',sub:'Sink',c:3,r:3,cs:2},
+  {id:'MW-1',type:'MW',label:'Microwave',b:'MW',c:8,r:3},
+  {id:'STOWAGE-8',type:'STOWAGE',label:'Stowage 8',b:'Stow 8',c:1,r:4},
+  {n:'',c:1,r:5},
+  {id:'WASTE-1',type:'WASTE',label:'Waste Compartment (Stowage)',b:'Waste',c:2,r:4,rs:2},
+  {id:'STOWAGE-9',type:'STOWAGE',label:'Stowage 9 (ช่องที่มี Water Heater)',b:'Stow 9',c:3,r:4},
+  {id:'HEATER-1',type:'HEATER',label:'Water Heater (ใน Stowage 9)',b:'Water Heater',c:3,r:5},  /* แยกสภาพจาก Stowage 9 */,
+  {id:'TROLLEY-1',type:'TROLLEY',label:'Full Size Trolley Stowage 1',b:'Trolley 1',c:4,r:4,rs:2,v:1},
+  {id:'TROLLEY-2',type:'TROLLEY',label:'Full Size Trolley Stowage 2',b:'Trolley 2',c:5,r:4,rs:2,v:1},
+  {id:'TROLLEY-3',type:'TROLLEY',label:'Full Size Trolley Stowage 3',b:'Trolley 3',c:6,r:4,rs:2,v:1},
+  {id:'TROLLEY-4',type:'TROLLEY',label:'Full Size Trolley Stowage 4',b:'Trolley 4',c:7,r:4,rs:2,v:1},
+  {id:'TROLLEY-5',type:'TROLLEY',label:'Full Size Trolley Stowage 5',b:'Trolley 5',c:8,r:4,rs:2,v:1},
+  {id:'STOWAGE-10',type:'STOWAGE',label:'Stowage 10',b:'Stow 10',c:9,r:4},
+  {n:'',c:9,r:5}]}
+};
+/* ห้องน้ำ 5 ห้อง: zone = นับในสรุปห้องน้ำของโซนไหน */
+var LAVS={A:{name:'LAVATORY A',short:'LAV A',zone:'F'},FV:{name:'FWD VIP LAVATORY',short:'FWD VIP LAV',zone:'A'},CV:{name:'CENTER VIP LAVATORY',short:'CENTER VIP LAV',zone:'C'},D:{name:'LAVATORY D',short:'LAV D',zone:'D'},E:{name:'LAVATORY E',short:'LAV E',zone:'D'}};
+function stLabel(it,v){return (it&&it.kind?E_LABEL:S_LABEL)[v|0]}
+var WC_ICON='<svg class="wc" width="16" height="16" viewBox="0 0 24 24" aria-hidden="true"><path fill="#2c4f9e" d="M6 2h5a1 1 0 0 1 1 1v6H5V3a1 1 0 0 1 1-1zm-3 8.5h18a.5.5 0 0 1 .5.5v.5a7 7 0 0 1-5.6 6.86L16.5 22h-9l.9-3.7A7 7 0 0 1 2.5 11.5V11a.5.5 0 0 1 .5-.5z"/></svg>';
+
+/* A320-03 cabin from the Excel seat plan "32003 SEAT". Each line: L = left seats, R = right seats,
+   mon = [left monitor, right monitor], L2 = left seats stacked; with R2 = right seats centred beside them. */
+/* Monitor types: w21 = wall mounted, b12 = bin mounted retractable (overhead, in front of the row it serves). */
+var MT={w21:{name:'Wall Mounted Monitor 21.5 Inch',short:'Wall Monitor 21.5"'},b12:{name:'Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch',short:'OVHD Monitor 12.0"'}};
+var MT_ORDER=['w21','b12'];
 var BIN_ROWS=[10,12,15,17];
 var MTYPE={}; // monitor id -> type key
 var ZONES=[
  {key:'F',name:'FRONT CREW ZONE',title:'Front Crew Zone (3 Seats)',tag:'CREW',
   mons:{'MON-F1':['w21','หน้าที่นั่ง CC 1A'],'MON-F2':['w21','หน้าที่นั่ง 1D, 1F']},
-  lines:[{room:{name:'ห้อง Commander Center',mon:'MON-F1',seats:['CC1A']},R:{mon:'MON-F2',seats:['1D','1F']}}]},
+  lines:[{fac:{L:[{lav:'A',room:1}],R:[{gal:'FWD'}]}},{door:{code:'1',kind:'door'}},{room:{name:'ห้อง Commander Center',mon:'MON-F1',seats:['CC1A']},R:{mon:'MON-F2',seats:['1D','1F']}}]},
  {key:'A',name:'VVIP OA',title:'VVIP OA (2 Seats)',tag:'VVIP OA',
   mons:{'MON-A1':['w21','หน้าที่นั่ง 2A'],'MON-A2':['w21','หลังที่นั่ง 3A'],'MON-A3':['w21','หลังโซฟา']},
-  lines:[{mon:['MON-A1',null]},
+  lines:[{fac:{R:[{lav:'FV',seats:2}]}},{mon:['MON-A1',null]},
          {L2:['2A','3A'],sofa:'SOFA'},
          {mon:['MON-A2','MON-A3']}]},
  {key:'B',name:'VIP OB',title:'VIP OB (6 Seats)',tag:'VIP OB',
@@ -405,48 +668,116 @@ var ZONES=[
          {L:['5B'],R:['5D','5F']},
          {tables:[1,2]},
          {L:['6B'],R:['6D','6F']},
-         {mon:['MON-B3','MON-B4']}]},
+         {mon:['MON-B3','MON-B4']},
+         {door:{code:'FWD',kind:'exit'}}]},
  {key:'C',name:'VVIP OC',title:'VVIP OC (8 Seats)',tag:'VVIP OC',
   mons:{'MON-C1':['w21','หน้าที่นั่ง 7B, 7C'],'MON-C2':['w21','หน้าที่นั่ง 7D, 7F'],'MON-C3':['w21','หลังที่นั่ง 8B, 8C'],'MON-C4':['w21','หลังที่นั่ง 8D, 8F']},
-  lines:[{mon:['MON-C1','MON-C2']},
+  lines:[{door:{code:'AFT',kind:'exit'},fac:{R:[{lav:'CV',seats:2}]}},{mon:['MON-C1','MON-C2']},
          {L:['7B','7C'],R:['7D','7F']},
          {L:['8B','8C'],R:['8D','8F']},
          {mon:['MON-C3','MON-C4']}]},
  {key:'D',name:'PASSENGER OD',title:'Passenger OD (54 Seats)',tag:'ECONOMY',
   mons:(function(){var m={'MON-D1':['w21','หน้าที่นั่ง 9A, 9B, 9C'],'MON-D2':['w21','หน้าที่นั่ง 9D, 9E, 9F']};
-    BIN_ROWS.forEach(function(n){m['MON-D'+n+'L']=['b120','หน้าที่นั่ง '+n+'A, '+n+'B, '+n+'C'];m['MON-D'+n+'R']=['b120','หน้าที่นั่ง '+n+'D, '+n+'E, '+n+'F']});return m})(),
+    BIN_ROWS.forEach(function(n){m['MON-D'+n+'L']=['b12','หน้าที่นั่ง '+n+'A, '+n+'B, '+n+'C'];m['MON-D'+n+'R']=['b12','หน้าที่นั่ง '+n+'D, '+n+'E, '+n+'F']});return m})(),
   lines:[{mon:['MON-D1','MON-D2']}].concat([].concat.apply([],[9,10,11,12,14,15,16,17,18].map(function(n){
     var row={L:[n+'A',n+'B',n+'C'],R:[n+'D',n+'E',n+'F']};
-    return BIN_ROWS.indexOf(n)>=0?[{mon:['MON-D'+n+'L','MON-D'+n+'R']},row]:[row]})))}
+    return BIN_ROWS.indexOf(n)>=0?[{mon:['MON-D'+n+'L','MON-D'+n+'R']},row]:[row]})),[{fac:{L:[{lav:'D'}],R:[{lav:'E'}]}},{door:{code:'4',kind:'door'}},{fac:{C:[{gal:'AFT'}]}}])}
 ];
 var SEAT_NAME={CC1A:'Commander Center 1A'};
 var WIDE={CC1A:1};
 var ITEMS={}; // id -> {zone, seat:bool, mon:bool, label}
+
 var CFG=window.SEATPLAN_CONFIG||{}, API=String(CFG.API_URL||'').trim();
-var db=null, canWrite=true, cur=null, pick={s:0,m:0}, resetEnabled=false;
+var canWrite=true, cur=null, pick={s:0,m:0}, resetEnabled=false;
 var pinRequired=null; /* from the server; the PIN is asked on every SAVE and never stored */
 try{localStorage.removeItem('seat-a320-03-pin')}catch(e){}
 var accessPin=''; /* PIN typed at the entry screen, kept in memory only: reloading the page asks again */
 function apiGet(){return apiPost({action:'load',pin:accessPin})}
 function apiPost(body){return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(function(r){return r.json()})}
 
-function reg(id,zone,seat,mon,label){ITEMS[id]={zone:zone,seat:seat,mon:mon,label:label}}
-function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
 
+function reg(id,zone,seat,mon,label,kind){ITEMS[id]={zone:zone,seat:seat,mon:mon,label:label};if(kind)ITEMS[id].kind=kind;return ITEMS[id]}
+function el(tag,cls,txt){var e=document.createElement(tag);if(cls)e.className=cls;if(txt!=null)e.textContent=txt;return e}
 function seatLabel(id){return SEAT_NAME[id]||('ที่นั่ง '+id)}
 function seatBtn(id){
   var named=!!SEAT_NAME[id],b=el('button','seat'+(named?' txt':'')+(WIDE[id]?' wide':''));b.type='button';b.dataset.id=id;
   b.appendChild(el('span','s',named?SEAT_NAME[id]:id));return b;
 }
 function monLabel(id,v){MTYPE[id]=v[0];return MT[v[0]].name+' · '+v[1]}
-function monBtn(id){var bin=MTYPE[id].charAt(0)==='b',b=el('button','ovh'+(bin?' bin':''),bin?'OVHD':'Monitor');b.type='button';b.dataset.id=id;return b}
+function monBtn(id){var bin=MTYPE[id]==='b12',b=el('button','ovh t-'+MTYPE[id]+(bin?' bin':''),bin?'OVHD':'Monitor');b.type='button';b.dataset.id=id;return b}
 
+
+/* Galley / ห้องน้ำ: แถวเดียวกับที่นั่ง ฝั่งซ้าย (A-C) | ทางเดิน | ฝั่งขวา (D-F) หรือเต็มความกว้าง (C) */
+function lavBtn(k,seats){var L=LAVS[k],id='LAV-'+k;reg(id,L.zone,true,false,L.name,'lav');
+  var b=el('button','lav');b.type='button';b.dataset.id=id;b.innerHTML=WC_ICON+'<span>'+L.short+'</span>';
+  if(seats)b.style.width='calc('+seats+' * var(--sw) + '+(seats-1)+' * var(--sg))';  /* as wide as the seats it stands over */
+  return b}
+var PLUG_ICON='<svg class="plug" width="13" height="13" viewBox="0 0 24 24" aria-hidden="true"><path fill="#14212e" d="M8 2a1 1 0 0 1 1 1v4h6V3a1 1 0 1 1 2 0v4h1a1 1 0 0 1 1 1v3a6 6 0 0 1-5 5.9V20h2a1 1 0 1 1 0 2H8a1 1 0 1 1 0-2h2v-3.1A6 6 0 0 1 5 11V8a1 1 0 0 1 1-1h1V3a1 1 0 0 1 1-1z"/></svg>';
+function eqBtn(k,c,txt){
+  var id=k+'-'+c[0],it=reg(id,k,true,false,GALLEYS[k].name+' · '+c[2],'eq');it.gal=k;it.type=c[1];it.tname=TYPES[c[1]];it.short=c[2];
+  var n=numOf(c[2].replace(/\s*\(.*$/,'')),b=el('button','eq gc');b.type='button';b.dataset.id=id;
+  if(c[1]==='OUTLET'){b.classList.add('outlet');b.innerHTML=PLUG_ICON+'<span class="pv">220V</span>';return b}
+  b.innerHTML='<span class="t1">'+(txt||(c[1]==='BOILER'||c[1]==='FRIDGE'||c[1]==='WASTE'||c[1]==='CHILLER'?TBTN[c[1]]:TBTN[c[1]]+(n?' '+n:'')))+'</span><span class="t2">'+TCODE[c[1]]+n+'</span>';
+  return b}
+function galBox(k){
+  var G=GLAYOUT[k],box=el('div','gbox'),lab=el('div','glab',GALLEYS[k].name+' ('+GALLEYS[k].code+')');
+  if(G.cells){  /* explicit placement, as the galley drawing; each band = its own grid with its own column widths */
+    var bands=G.bands||[{r0:1,r1:G.nrows,w:Array(G.cols).fill(1)}],t=el('div');t.style.cssText='display:flex;flex-direction:column;gap:1px';
+    bands.forEach(function(B){
+    var bt=el('div','gtab');bt.style.gridTemplateColumns=B.w.map(function(w){return 'minmax(0,'+w+'fr)'}).join(' ');bt.style.gridTemplateRows='repeat('+(B.r1-B.r0+1)+',minmax('+(B.h||36)+'px,auto))';t.appendChild(bt);
+    G.cells.filter(function(x){return x.r>=B.r0&&x.r<=B.r1}).forEach(function(x){
+      var e=x.id?eqBtn(k,[x.id,x.type,x.label],x.b):el('span','gc ge',x.n||'');
+      if(x.id&&x.sub){e.classList.add('hassub');e.insertAdjacentHTML('beforeend','<small class="gsub">'+x.sub+'</small>')}  /* e.g. Faucet still shows it is the Sink */
+      if(!x.id&&x.n)e.classList.add('gn');
+      if(x.v)e.classList.add('vt');
+      e.style.gridColumn=x.c+' / span '+(x.cs||1);e.style.gridRow=(x.r-B.r0+1)+' / span '+(x.rs||1);bt.appendChild(e);
+    });
+    });
+  }else if(G.even){  /* rows spread evenly */
+    var t=el('div','gtab');t.style.display='flex';t.style.flexDirection='column';
+    G.rows.forEach(function(r){var row=el('div','grow');r.forEach(function(c){row.appendChild(eqBtn(k,c))});t.appendChild(row)});
+  }else{
+    var t=el('div','gtab');t.style.gridTemplateColumns='repeat('+G.cols+',minmax(0,1fr))';
+    G.rows.forEach(function(r){r.forEach(function(c){
+      if(typeof c==='number'){var e=el('span','gc ge');e.style.gridColumn='span '+c;t.appendChild(e);return}
+      var b=eqBtn(k,c);if(c[3]>1)b.style.gridColumn='span '+c[3];t.appendChild(b);
+    })});
+  }
+  box.appendChild(lab);box.appendChild(t);
+  return box;
+}
+/* Galley / LAV row on the seat tracks: left side (A-C) | aisle | right side (D-F); C = full cabin width */
+function facRow(f){
+  var r=el('div','row facrow');
+  if(f.C){var w=el('div','fullw');f.C.forEach(function(x){w.appendChild(x.gal?galBox(x.gal):lavBtn(x.lav,x.seats))});r.appendChild(w);return r}
+  ['L','R'].forEach(function(k,i){
+    if(i)r.appendChild(el('div','aisle'));
+    var side=el('div','side');(f[k]||[]).forEach(function(x){var lb;side.appendChild(x.gal?galBox(x.gal):(lb=lavBtn(x.lav,x.seats)));
+      if(x.room){lb.style.width='var(--ccw)';lb.style.maxWidth='100%'}  /* as wide as the Commander Center room below */
+    });r.appendChild(side);
+  });
+  return r;
+}
+/* door / emergency exit band; labels sit outside the seat columns. inner = optional row drawn in the same line (AFT exit + CENTER VIP LAV) */
+var DOOR_TXT={door:{lg:function(c,s){return 'DOOR '+c+s}},exit:{lg:function(c,s){return 'EMERGENCY EXIT (OVERWING) '+c+' '+s}}};
+function doorRow(d,inner){
+  var b=el('div','door'+(d.kind==='exit'?' exit':'')),mk=function(side){
+    var x=el('div',side==='L'?'dl':'dr'),arrow=side==='L'?'◀ ':' ▶';
+    var lg=el('span','lg',side==='L'?arrow+DOOR_TXT[d.kind].lg(d.code,side):DOOR_TXT[d.kind].lg(d.code,side)+arrow);
+    var sh=el('span','sh');sh.innerHTML=d.kind==='exit'?'<small>EXIT</small>'+d.code+' '+side:'<small>DOOR</small>'+d.code+side;
+    x.appendChild(lg);x.appendChild(sh);return x};
+  b.appendChild(mk('L'));var mid=el('div','dmid');if(inner)mid.appendChild(inner);b.appendChild(mid);b.appendChild(mk('R'));
+  b.setAttribute('aria-label',d.kind==='exit'?'Emergency exit (overwing) '+d.code+' L / R':'Door '+d.code+'L / '+d.code+'R');
+  return b;
+}
 function build(){
   var host=$('zones');host.style.display='flex';host.style.flexDirection='column';host.style.gap='16px';
   ZONES.forEach(function(z){
     var sec=el('section','zone'),h=el('header');h.appendChild(el('h2',null,z.title));h.appendChild(el('span',null,z.tag));sec.appendChild(h);
     var box=el('div','rows');
     z.lines.forEach(function(ln){
+      if(ln.door){box.appendChild(doorRow(ln.door,ln.fac?facRow(ln.fac):null));return}
+      if(ln.fac){box.appendChild(facRow(ln.fac));return}
       if(ln.tables){
         var rt=el('div','row');
         ln.tables.forEach(function(w,i){
@@ -477,7 +808,7 @@ function build(){
         r2.appendChild(right);box.appendChild(r2);return;
       }
       if(ln.mon){
-        var o=el('div','row ovhrow');
+        var o=el('div','row ovhrow'+(ln.mon.every(function(m){return !m||z.mons[m][0]==='b12'})?' binrow':''));
         ln.mon.forEach(function(id,i){
           if(i)o.appendChild(el('div','aisle'));
           var side=el('div','side');
@@ -500,8 +831,8 @@ function build(){
   host.addEventListener('click',function(e){var b=e.target.closest('[data-id]');if(b)openEditor(b.dataset.id)});
 }
 /* saved = last SAVE (shared db). draft = edits on this device not yet SAVEd (kept in this browser). */
-var saved={}, draft={}, lastSave=null, dl=null, useSaved=false; /* useSaved: exports read the last SAVE only */
-var DRAFT_KEY='seat-a320-03-draft';
+var saved={}, draft={}, lastSave=null, useSaved=false; /* useSaved: exports read the last SAVE only */
+var DRAFT_KEY=KEY+'-draft';
 try{draft=JSON.parse(localStorage.getItem(DRAFT_KEY)||'{}')||{}}catch(e){draft={}}
 function persistDraft(){try{localStorage.setItem(DRAFT_KEY,JSON.stringify(draft))}catch(e){}}
 function norm(d){d=d||{};return {s:d.s|0,m:d.m|0,note:d.note||'',by:d.by||'',at:d.at||''}}
@@ -524,16 +855,16 @@ function render(){
     if(it.mon)b.dataset.m=d.m;
     if(d.note)b.dataset.note='1';else delete b.dataset.note;
     if(draft[id])b.dataset.pending='1';else delete b.dataset.pending;
-    var a=it.label+(it.seat?' · '+S_LABEL[d.s]:'')+(it.mon?' · '+M_LABEL[d.m]:'')+(d.note?' · '+d.note:'')+(draft[id]?' · ยังไม่ SAVE':'');
+    var a=it.label+(it.seat?' · '+stLabel(it,d.s):'')+(it.mon?' · '+M_LABEL[d.m]:'')+(d.note?' · '+d.note:'')+(draft[id]?' · ยังไม่ SAVE':'');
     b.setAttribute('aria-label',a);
     if(it.mon){var p=it.label.split(' · ').slice(1).join(' · ');b.dataset.tip=MT[MTYPE[id]].short+'\n'+p+'\n'+M_LABEL[d.m]+(d.note?'\nหมายเหตุ: '+d.note:'')+(draft[id]?'\n(ยังไม่ SAVE)':'');b.removeAttribute('title')}
     else b.title=a;
   });
-  renderSummary();renderDefects();renderTools();
+  renderSummary();renderEqSummary();renderDefects();renderTools();
 }
 function summaryData(){
   var T={};ZONES.forEach(function(z){T[z.key]={t:0,s:[0,0,0],mt:0,m:[0,0,0]}});
-  Object.keys(ITEMS).forEach(function(id){var it=ITEMS[id],d=get(id),z=T[it.zone];
+  Object.keys(ITEMS).forEach(function(id){var it=ITEMS[id],d=get(id),z=T[it.zone];if(it.kind)return;
     if(it.seat){z.t++;z.s[d.s]++} if(it.mon){z.mt++;z.m[d.m]++}});
   var rows=[],sum={t:0,s:[0,0,0],mt:0,m:[0,0,0]};
   ZONES.forEach(function(z){var v=T[z.key];rows.push({name:z.name,v:v});sum.t+=v.t;sum.mt+=v.mt;for(var i=0;i<3;i++){sum.s[i]+=v.s[i];sum.m[i]+=v.m[i]}});
@@ -555,19 +886,56 @@ function mtHTML(){
   mtData().forEach(function(r){var z=r.v;h+='<tr><td>'+r.name+'</td><td class="n">'+z.t+'</td><td class="n">'+z.m[0]+'</td><td class="n w'+(z.m[1]?' nz':'')+'">'+z.m[1]+'</td><td class="n b'+(z.m[2]?' nz':'')+'">'+z.m[2]+'</td></tr>'});
   return h+'</tbody>';
 }
-function renderSummary(){$('summary').innerHTML=summaryHTML();$('mtsum').innerHTML=mtHTML()}
+function renderSummary(){
+  $('summary').innerHTML=summaryHTML();$('mtsum').innerHTML=mtHTML();
+  /* phone copy: columns 0-4 (seats) and 0+5-8 (monitors) of the same table */
+  var pick=function(cols){return Array.prototype.map.call($('summary').rows,function(tr){
+    var cells=Array.prototype.filter.call(tr.cells,function(c,i){return cols.indexOf(i)>=0}).map(function(c){var x=c.cloneNode(true);x.classList.remove('sep');return x.outerHTML}).join('');
+    return '<tr>'+cells+'</tr>'})};
+  var mk=function(cols){var r=pick(cols);return '<thead>'+r[0]+'</thead><tbody>'+r.slice(1).join('')+'</tbody>'};
+  $('summaryS').innerHTML=mk([0,1,2,3,4]);$('summaryMon').innerHTML=mk([0,5,6,7,8]);
+}
+/* Galley: หัวข้อต่อ Galley แล้วแถวต่อชนิดอุปกรณ์ (เหมือนตารางสถานภาพ Galley ใน Excel) · LAV: แถวต่อโซน */
+function galTypes(k){return TYPE_ORDER.filter(function(t){return Object.keys(ITEMS).some(function(id){var it=ITEMS[id];return it.gal===k&&it.type===t})})}
+function eqCount(filter){var c={t:0,s:[0,0,0]};Object.keys(ITEMS).forEach(function(id){var it=ITEMS[id];if(!it.kind||!filter(it))return;c.t++;c.s[get(id).s]++});return c}
+function eqHead(first){return '<thead><tr><th>'+first+'</th><th>จำนวน</th><th><i style="background:var(--ok)"></i>ใช้งานได้</th><th><i style="background:var(--warn)"></i>ใช้งานได้บางส่วน</th><th><i style="background:var(--bad)"></i>ใช้งานไม่ได้</th></tr></thead><tbody>'}
+function eqRow(name,c,cls,tdc){return '<tr'+(cls?' class="'+cls+'"':'')+'><td'+(tdc?' class="'+tdc+'"':'')+'>'+name+'</td><td class="n">'+c.t+'</td><td class="n">'+c.s[0]+'</td><td class="n w'+(c.s[1]?' nz':'')+'">'+c.s[1]+'</td><td class="n b'+(c.s[2]?' nz':'')+'">'+c.s[2]+'</td></tr>'}
+function galSumOne(k,withTotal){
+  var h=eqHead('GALLEY / อุปกรณ์');
+  h+=eqRow(GALLEYS[k].name,eqCount(function(it){return it.gal===k}),'gh');
+  galTypes(k).forEach(function(t){h+=eqRow(TYPES[t],eqCount(function(it){return it.gal===k&&it.type===t}),'','ind')});
+  if(withTotal)h+=eqRow('รวมทุก Galley',eqCount(function(it){return it.kind==='eq'}));
+  return h+'</tbody>';
+}
+function galSumHTML(){
+  var h=eqHead('GALLEY / อุปกรณ์');
+  GAL_ORDER.forEach(function(k){
+    h+=eqRow(GALLEYS[k].name,eqCount(function(it){return it.gal===k}),'gh');
+    galTypes(k).forEach(function(t){h+=eqRow(TYPES[t],eqCount(function(it){return it.gal===k&&it.type===t}),'','ind')})});
+  return h+eqRow('รวม',eqCount(function(it){return it.kind==='eq'}))+'</tbody>';
+}
+function lavZones(){return ZONES.map(function(z){return z.key}).filter(function(z){return Object.keys(LAVS).some(function(k){return LAVS[k].zone===z})})}
+function lavSumHTML(){
+  var h=eqHead('ZONE');
+  lavZones().forEach(function(z){
+    var names=Object.keys(LAVS).filter(function(k){return LAVS[k].zone===z}).map(function(k){return LAVS[k].short});
+    h+=eqRow(zoneName(z)+' <small>('+names.join(', ')+')</small>',eqCount(function(it){return it.kind==='lav'&&it.zone===z}))});
+  return h+eqRow('รวม',eqCount(function(it){return it.kind==='lav'}))+'</tbody>';
+}
+function renderEqSummary(){$('galSum').innerHTML=galSumHTML();$('lavSum').innerHTML=lavSumHTML()}
 function fmt(at){if(!at)return '';var d=new Date(at);if(isNaN(d))return '';
   try{return d.toLocaleString('th-TH',{day:'numeric',month:'short',year:'2-digit',hour:'2-digit',minute:'2-digit'})}catch(e){return d.toISOString().slice(0,16).replace('T',' ')}}
-function zoneName(k){for(var i=0;i<ZONES.length;i++)if(ZONES[i].key===k)return ZONES[i].name;return ''}
+function zoneName(k){if(GALLEYS[k])return GALLEYS[k].name;for(var i=0;i<ZONES.length;i++)if(ZONES[i].key===k)return ZONES[i].name;return ''}
 function defectIds(){return Object.keys(ITEMS).filter(function(id){var d=get(id);return d.s||d.m||d.note})}
+function shortId(id){var it=ITEMS[id];return id.indexOf('MON-')===0?'MON':it&&it.kind==='eq'?'GALLEY':it&&it.kind==='lav'?'LAV':id}
 function renderDefects(){
   var ul=$('dlist');ul.textContent='';var ids=defectIds();
   ids.forEach(function(id){var d=get(id),it=ITEMS[id];
     var isMon=id.indexOf('MON-')===0;
-    var li=el('li');li.dataset.id=id;li.appendChild(el('span','id',isMon?'MON':id));
+    var li=el('li');li.dataset.id=id;li.appendChild(el('span','id',shortId(id)));
     var body=el('div','txt'),tags=el('div','tags');
-    if(isMon||SEAT_NAME[id])tags.appendChild(el('span',null,it.label));
-    if(it.seat&&d.s)tags.appendChild(el('span','tag '+(d.s===1?'w':'b'),S_LABEL[d.s]));
+    if(isMon||SEAT_NAME[id]||it.kind)tags.appendChild(el('span',null,it.label));
+    if(it.seat&&d.s)tags.appendChild(el('span','tag '+(d.s===1?'w':'b'),stLabel(it,d.s)));
     if(it.mon&&d.m)tags.appendChild(el('span','tag '+(d.m===1?'w':'b'),M_LABEL[d.m]));
     if(draft[id])tags.appendChild(el('span','tag p','ยังไม่ SAVE'));
     body.appendChild(tags);if(d.note)body.appendChild(el('div',null,d.note));
@@ -600,7 +968,9 @@ function openEditor(id){
   var sv=saved[id]?norm(saved[id]):null;
   $('dSub').textContent=(draft[id]?'มีการแก้ไขที่ยังไม่ SAVE · ':'')+(sv&&sv.at?('SAVE ล่าสุด '+[sv.by,fmt(sv.at)].filter(Boolean).join(' · ')):'ยังไม่มีการบันทึก');
   $('fsSeat').hidden=!it.seat;$('fsMon').hidden=!it.mon;
-  optButtons($('optS'),S_LABEL,'s');optButtons($('optM'),M_LABEL,'m');
+  $('lgSeat').textContent=it.kind==='eq'?'สภาพอุปกรณ์':it.kind==='lav'?'สภาพห้องน้ำ':'สภาพที่นั่ง';
+  $('note').placeholder=it.kind==='eq'?'เช่น ไม่ร้อน, CB trip, รอพัสดุ, รอดำเนินการซ่อม …':it.kind==='lav'?'เช่น ก็อกน้ำไหลไม่หยุด, อ่างล้างมือตัน, Flush ไม่ทำงาน …':'เช่น Backrest ใช้งานไม่ได้, Travel Seat INOP, รออะไหล่ P/N …';
+  optButtons($('optS'),it.kind?E_LABEL:S_LABEL,'s');optButtons($('optM'),M_LABEL,'m');
   $('note').value=d.note;$('note').readOnly=!canWrite;$('dErr').hidden=true;
   $('dSave').hidden=!canWrite;$('dCancel').textContent=canWrite?'ยกเลิก':'ปิด';
   showDlg($('dlg'));
@@ -622,8 +992,8 @@ var toastT=null;
 function toast(msg,bad){var t=$('toast');t.textContent=msg;t.className='toast show'+(bad?' bad':'');clearTimeout(toastT);toastT=setTimeout(function(){t.className='toast'},4000)}
 
 var who=$('inspector');
-try{who.value=localStorage.getItem('seat-a320-03-inspector')||''}catch(e){}
-who.addEventListener('change',function(){try{localStorage.setItem('seat-a320-03-inspector',who.value.trim())}catch(e){}});
+try{who.value=localStorage.getItem(KEY+'-inspector')||''}catch(e){}
+who.addEventListener('change',function(){try{localStorage.setItem(KEY+'-inspector',who.value.trim())}catch(e){}});
 
 /* small yes/no dialog */
 var askCb=null;
@@ -735,23 +1105,28 @@ $('pinDlg').addEventListener('cancel',function(e){e.preventDefault();closePin(nu
 $('bSave').addEventListener('click',function(){doSave()});
 
 /* ---------- report (PREVIEW / PDF) ---------- */
-function stamp(){var d=new Date(),p=function(n){return String(n).padStart(2,'0')};return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate())+'_'+p(d.getHours())+p(d.getMinutes())}
+function stamp(){var t=new Date(Date.now()+7*3600e3),p=function(n){return String(n).padStart(2,'0')};
+  return p((t.getUTCFullYear()+543)%100)+p(t.getUTCMonth()+1)+p(t.getUTCDate())+' '+p(t.getUTCHours())+p(t.getUTCMinutes())+' TH-LT'}
 function reportNode(isPreview){
-  var r=el('div','report');if(isPreview)r.dataset.preview='1';
+  var r=el('div','report');
   var h=el('div','blk rhead');
-  h.appendChild(el('h1',null,'STATUS SEAT PLAN A320(03) · รายงานสภาพที่นั่งและ Monitor'));
+  h.appendChild(el('h1',null,'STATUS SEAT PLAN '+AC+' · รายงานสภาพที่นั่ง, Monitor, Galley และห้องน้ำ'));
   var meta=el('div','rmeta');
   meta.appendChild(el('div',null,'วันที่ออกรายงาน: '+fmt(new Date().toISOString())));
   meta.appendChild(el('div',null,'ผู้ตรวจ: '+(who.value.trim()||'-')));
   meta.appendChild(el('div',null,$('lastSave').textContent));
   h.appendChild(meta);
-  var n=useSaved?0:pendingIds().length,np=pendingIds().length;
-  if(r.dataset.preview&&np)h.appendChild(el('div','rwarn','ข้อมูลในตัวอย่างนี้เป็นข้อมูล SAVE ล่าสุด ยังไม่รวมการแก้ไข '+np+' รายการที่ยังไม่ได้ SAVE'));
+  var np=pendingIds().length;
+  if(isPreview&&np)h.appendChild(el('div','rwarn','ข้อมูลในตัวอย่างนี้เป็นข้อมูล SAVE ล่าสุด ยังไม่รวมการแก้ไข '+np+' รายการที่ยังไม่ได้ SAVE'));
   h.appendChild(el('h2',null,'สรุปตามโซน'));
   var t=el('table');t.innerHTML=summaryHTML();h.appendChild(t);
-  h.appendChild(el('h2',null,'สรุปตามชนิด Monitor'));var t2=el('table','mt');t2.innerHTML=mtHTML();h.appendChild(t2);
-  var lg=$('legend').cloneNode(true);lg.removeAttribute('id');h.appendChild(lg);
   r.appendChild(h);
+  /* each table its own block: EXPORT ALL PAGES moves a whole block to the next page instead of cutting it */
+  var sub=function(title,cls,html){var b=el('div','blk rsub');b.appendChild(el('h2',null,title));var t=el('table',cls);t.innerHTML=html;b.appendChild(t);r.appendChild(b);return b};
+  sub('สรุปตามชนิด Monitor','mt',mtHTML());
+  GAL_ORDER.forEach(function(k,i){var last=i===GAL_ORDER.length-1;sub('สรุป Galley · '+GALLEYS[k].name+' ('+GALLEYS[k].code+')',last?null:'nototal',galSumOne(k,last))});
+  var lb=sub('สรุปห้องน้ำ (LAVATORY)',null,lavSumHTML());
+  var lg=$('legend').cloneNode(true);lg.removeAttribute('id');lb.appendChild(lg);
   $('zones').querySelectorAll('section.zone').forEach(function(z){
     var c=z.cloneNode(true);c.classList.add('blk');c.setAttribute('inert','');c.removeAttribute('id');
     c.querySelectorAll('[data-id]').forEach(function(b){var id=b.dataset.id,it=ITEMS[id],d=get(id);
@@ -759,22 +1134,21 @@ function reportNode(isPreview){
     r.appendChild(c);
   });
   var ids=defectIds(),dsec=el('div','blk');
-  dsec.appendChild(el('h2',null,'รวมข้อขัดข้องคงค้าง ('+ids.length+')'));
+  dsec.appendChild(el('h2',null,'รายการข้อขัดข้องและหมายเหตุ ('+ids.length+')'));
   if(!ids.length)dsec.appendChild(el('p',null,'ไม่มีข้อขัดข้อง'));
   else{
     var dt=el('table','rdef'),th=el('tr');
-    ['ที่นั่ง / จุด','โซน','สภาพที่นั่ง','สภาพ Monitor','หมายเหตุ','ผู้บันทึก · เวลา'].forEach(function(x){th.appendChild(el('th',null,x))});
+    ['ที่นั่ง / จุด','โซน / GALLEY','สภาพ','สภาพ Monitor','หมายเหตุ','ผู้บันทึก · เวลา'].forEach(function(x){th.appendChild(el('th',null,x))});
     var thead=el('thead');thead.appendChild(th);dt.appendChild(thead);var tb=el('tbody');
     ids.forEach(function(id){var d=get(id),it=ITEMS[id],tr=el('tr');
-      tr.appendChild(el('td',null,(id.indexOf('MON-')===0||SEAT_NAME[id])?it.label:id+(pend(id)?' *':'')));
+      tr.appendChild(el('td',null,(id.indexOf('MON-')===0||SEAT_NAME[id]||it.kind)?it.label:id));
       tr.appendChild(el('td',null,zoneName(it.zone)));
-      var s=el('td',null,it.seat?S_LABEL[d.s]:'-');if(it.seat&&d.s)s.className=d.s===1?'w':'b';tr.appendChild(s);
+      var s=el('td',null,it.seat?stLabel(it,d.s):'-');if(it.seat&&d.s)s.className=d.s===1?'w':'b';tr.appendChild(s);
       var m=el('td',null,it.mon?M_LABEL[d.m]:'-');if(it.mon&&d.m)m.className=d.m===1?'w':'b';tr.appendChild(m);
       tr.appendChild(el('td',null,d.note||'-'));
       tr.appendChild(el('td',null,[d.by,fmt(d.at)].filter(Boolean).join(' · ')||'-'));
       tb.appendChild(tr)});
     dt.appendChild(tb);dsec.appendChild(dt);
-    if(n)dsec.appendChild(el('p','rnote','* = ยังไม่ได้ SAVE'));
   }
   r.appendChild(dsec);
   return r;
@@ -783,17 +1157,25 @@ function openPreview(){
   useSaved=true;var node;try{node=reportNode(true)}finally{useSaved=false}
   pvMode('std');
   var host=$('pvBody');host.textContent='';host.appendChild(node);showDlg($('pv'));
+  /* phone: shrink the whole page to the window width, as PREVIEW SUMMARY does */
+  var sc=Math.min(1,(host.clientWidth-28)/794);
+  if(sc<1){var box=el('div','pvfit'),h=node.offsetHeight;host.insertBefore(box,node);box.appendChild(node);
+    box.style.cssText='width:'+Math.round(794*sc)+'px;height:'+Math.round(h*sc)+'px;margin:0 auto;overflow:hidden';
+    node.style.transform='scale('+sc+')';node.style.transformOrigin='0 0';node.style.margin='0'}
 }
-/* PREVIEW of the A4 2PAGE report: the landscape pages scaled to fit the preview window */
+/* PREVIEW of the A4 2PAGE report: the landscape pages (A4 = 1123x794px with a 7 mm margin) scaled to fit the preview window */
 function openPreviewA4(){
-  useSaved=true;var pages;try{pages=a4Nodes()}finally{useSaved=false}
   pvMode('a4');
   var host=$('pvBody');host.textContent='';showDlg($('pv'));
+  var tmp=el('div','offscreen'),pages;document.body.appendChild(tmp);
+  useSaved=true;try{pages=buildPages(tmp)}finally{useSaved=false}   /* built unscaled so the defect rows split into pages exactly as in the PDF */
   var np=pendingIds().length;
   if(np){var w=el('div','report');w.style.cssText='width:auto;padding:0 0 10px;background:transparent';w.appendChild(el('div','rwarn','ข้อมูลในตัวอย่างนี้เป็นข้อมูล SAVE ล่าสุด ยังไม่รวมการแก้ไข '+np+' รายการที่ยังไม่ได้ SAVE'));host.appendChild(w)}
   var sc=Math.min(1,(host.clientWidth-28)/1123);
-  pages.forEach(function(pg){var box=el('div');box.style.cssText='width:'+Math.round(1123*sc)+'px;height:'+Math.round(794*sc)+'px;margin:0 auto 12px;box-shadow:0 1px 4px rgba(0,0,0,.25);overflow:hidden;background:#fff';
-    pg.style.transform='scale('+sc+')';pg.style.transformOrigin='0 0';box.appendChild(pg);host.appendChild(box)});
+  pages.forEach(function(pg){var box=el('div','pva4');box.style.width=Math.round(1123*sc)+'px';box.style.height=Math.round(794*sc)+'px';
+    var inner=el('div');inner.style.cssText='width:1123px;height:794px;position:relative;transform:scale('+sc+');transform-origin:0 0';
+    pg.style.position='absolute';pg.style.left='26px';pg.style.top='26px';inner.appendChild(pg);box.appendChild(inner);host.appendChild(box)});
+  tmp.remove();
 }
 /* switch between the two report layouts inside the PREVIEW window */
 function pvMode(m){$('pvModeStd').setAttribute('aria-pressed',String(m==='std'));$('pvModeA4').setAttribute('aria-pressed',String(m==='a4'))}
@@ -815,16 +1197,15 @@ $('bPreview').addEventListener('click',function(){guard('PREVIEW',openPreview)})
 $('pvClose').addEventListener('click',function(){hideDlg($('pv'))});
 $('pvSave').addEventListener('click',function(){hideDlg($('pv'));doSave()});
 $('pvPdf').addEventListener('click',function(){exportPdf()});
-$('pvPdf2').addEventListener('click',function(){exportPdfA4()});
+$('pvPdf2').addEventListener('click',function(){exportPdf2()});
 $('pvXls').addEventListener('click',function(){exportXlsx()});
-$('bPdf').addEventListener('click',function(){guard('EXPORT TO PDF',exportPdf)});
-$('bPdf2').addEventListener('click',function(){guard('EXPORT TO PDF A4 2PAGE',exportPdfA4)});
+$('bPdf').addEventListener('click',function(){guard('EXPORT TO PDF ALL PAGES',exportPdf)});
 $('bXls').addEventListener('click',function(){guard('EXPORT TO EXCEL',exportXlsx)});
 
 var libs={};
 function loadLib(src){if(!libs[src])libs[src]=new Promise(function(ok,no){var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=function(){delete libs[src];no(new Error('load'))};document.head.appendChild(s)});return libs[src]}
 function offerFile(name,data,mime){
-  var c=window.claude,p=(c&&c.use)?c.use('downloads'):Promise.resolve(null); /* outside Claude this resolves null and falls back to a normal download link */
+  var c=window.claude,p=(c&&c.use)?c.use('downloads'):Promise.resolve(null);
   return p.then(function(d){
     if(d)return d.save({filename:name,data:data}).then(function(){toast('ส่งไฟล์ '+name+' แล้ว')},function(e){
       if(e&&e.code==='declined')return;
@@ -836,164 +1217,293 @@ function offerFile(name,data,mime){
 }
 var busy=false;
 function exportNote(){return pendingIds().length?' (ข้อมูลก่อน SAVE)':''}
+/* PDF sharpness: render each block at 600 dpi for the width it gets on paper.
+   Phones / iPads cap one canvas at about 16 megapixels, so there the scale is lowered to what fits (about 400 dpi for a SUMMARY page) */
+var PDF_DPI=600;
+function pdfScale(node,mmWide){
+  var want=PDF_DPI/25.4*mmWide/node.offsetWidth;
+  var ios=/iPhone|iPad|iPod/.test(navigator.userAgent)||(navigator.platform==='MacIntel'&&navigator.maxTouchPoints>1);
+  var maxA=ios?16e6:(/Android/.test(navigator.userAgent)?30e6:120e6);
+  return Math.max(1,Math.min(want,Math.sqrt(maxA/(node.offsetWidth*Math.max(1,node.offsetHeight)))));
+}
 function exportPdf(){
   if(busy)return;busy=true;toast('กำลังสร้าง PDF…'+exportNote());
   useSaved=true;var wrap=el('div','offscreen'),node=reportNode();useSaved=false;wrap.appendChild(node);document.body.appendChild(wrap);
   Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),document.fonts?document.fonts.ready:null])
   .then(function(){
     var blks=[].slice.call(node.querySelectorAll(':scope > .blk'));
-    return blks.reduce(function(p,b){return p.then(function(arr){return html2canvas(b,{scale:2,backgroundColor:'#ffffff',logging:false}).then(function(cv){arr.push(cv);return arr})})},Promise.resolve([]));
-  })
-  .then(function(cvs){
     var pdf=new window.jspdf.jsPDF({orientation:'p',unit:'mm',format:'a4'});
     var M=10,W=210-2*M,H=297-2*M,y=M,first=true;
-    cvs.forEach(function(cv){
+    /* safe places to cut a block taller than a page: below a seat / galley row, a door band or a table row (css px) */
+    blks.forEach(function(b){var top=b.getBoundingClientRect().top;
+      b._cuts=[].slice.call(b.querySelectorAll('.rows > *, tr, .zone > *')).map(function(e){return e.getBoundingClientRect().bottom-top+2}).sort(function(a,c){return a-c})});
+    var place=function(cv,sc,cuts){
       var mmPerPx=W/cv.width,hmm=cv.height*mmPerPx;
       if(hmm<=H){
         if(y+hmm>M+H&&!first){pdf.addPage();y=M}
-        pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',M,y,W,hmm);y+=hmm+4;first=false;return;
+        pdf.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',M,y,W,hmm);y+=hmm+4;first=false;return;
       }
-      /* taller than a page: slice */
+      /* taller than a page: slice at a row boundary */
       var pxPage=Math.floor(H/mmPerPx),off=0;
       if(!first){pdf.addPage();y=M}
       while(off<cv.height){
-        var h=Math.min(pxPage,cv.height-off),s=document.createElement('canvas');s.width=cv.width;s.height=h;
+        var h=Math.min(pxPage,cv.height-off);
+        if(off+h<cv.height){var ok=cuts.map(function(c){return c*sc}).filter(function(c){return c>off+pxPage*0.3&&c<=off+pxPage});if(ok.length)h=Math.round(ok[ok.length-1]-off)}
+        var s=document.createElement('canvas');s.width=cv.width;s.height=h;
         s.getContext('2d').drawImage(cv,0,off,cv.width,h,0,0,cv.width,h);
         if(off>0){pdf.addPage();y=M}
-        pdf.addImage(s.toDataURL('image/jpeg',0.92),'JPEG',M,y,W,h*mmPerPx);y+=h*mmPerPx+4;off+=h;
+        pdf.addImage(s.toDataURL('image/jpeg',0.95),'JPEG',M,y,W,h*mmPerPx);y+=h*mmPerPx+4;off+=h;s.width=s.height=0;
       }
       first=false;
-    });
-    return offerFile('STATUS_SEAT_PLAN_A320-03_'+stamp()+'.pdf',pdf.output('arraybuffer'),'application/pdf');
+    };
+    return blks.reduce(function(p,b){return p.then(function(){var sc=pdfScale(b,W);
+      return html2canvas(b,{scale:sc,backgroundColor:'#ffffff',logging:false}).then(function(cv){place(cv,sc,b._cuts);cv.width=cv.height=0})})},Promise.resolve())
+    .then(function(){return pdf});
+  })
+  .then(function(pdf){
+    return offerFile(stamp()+' A320-03_STATUS_SEAT_PLAN_ALL PAGES.pdf',pdf.output('arraybuffer'),'application/pdf');
   })
   .catch(function(){toast('สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง',true)})
   .then(function(){wrap.remove();busy=false});
 }
+/* ---------- EXPORT TO PDF A4 2PAGE ---------- */
+function thLT(at){if(!at)return '-';var d=new Date(at);if(isNaN(d))return '-';var t=new Date(d.getTime()+7*3600e3),p=function(n){return String(n).padStart(2,'0')};
+  return p(t.getUTCDate())+' '+['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][t.getUTCMonth()]+p(t.getUTCFullYear()%100)+' ('+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+' TH-LT)'}
+function pgTop(sub){
+  var top=el('div','top'),tl=el('div');tl.appendChild(el('h1',null,'STATUS SEAT PLAN '+AC));tl.appendChild(el('div','sub',sub));top.appendChild(tl);
+  var meta=el('div','meta');
+  [['ผู้ตรวจ',who.value.trim()||'-'],['SAVE ล่าสุด',lastSave&&lastSave.at?thLT(lastSave.at)+(lastSave.by?' · '+lastSave.by:''):'ยังไม่เคย SAVE'],['ออกรายงาน',thLT(new Date().toISOString())]]
+    .forEach(function(x){meta.appendChild(el('span',null,x[0]));meta.appendChild(el('b',null,x[1]))});
+  top.appendChild(meta);return top;
+}
+function pgFoot(){var f=el('div','foot');f.appendChild(el('span',null,'ข้อมูลจาก SAVE ล่าสุดใน Google Sheet'));f.appendChild(el('span','pgno',''));return f}
+function legItem(host,css,text,cls){var s=el('span'),i=el('i',cls||null);i.style.cssText=css;s.appendChild(i);s.appendChild(document.createTextNode(text));host.appendChild(s)}
+/* page 1, long layout: one horizontal cabin strip, tables and legend underneath */
+function hCols(z){
+  var cols=[],no=function(ids){var m=String(ids.filter(Boolean)[0]||'').match(/^\d+/);return m?m[0]:''},rev=function(a){return (a||[]).slice().reverse()};
+  z.lines.forEach(function(ln){
+    if(ln.door){cols.push({k:'door',d:ln.door});return}
+    if(ln.fac)return;
+    if(ln.room){cols.push({k:'mon',top:[ln.R.mon],bot:[ln.room.mon],room:true});cols.push({k:'seat',no:no(ln.R.seats),top:rev(ln.R.seats),bot:rev(ln.room.seats),room:true});return}
+    if(ln.mon){cols.push({k:'mon',top:ln.mon[1]?[ln.mon[1]]:[],bot:ln.mon[0]?[ln.mon[0]]:[]});return}
+    if(ln.tables){cols.push({k:'seat',top:['#T'],bot:['#T']});return}
+    if(ln.L2&&ln.sofa){ln.L2.forEach(function(id,i){cols.push({k:'seat',no:no([id]),top:i===0?['#SOFA']:[],bot:[id],sofa:i===0?ln.L2.length:0})});return}
+    if(ln.L2){ln.L2.forEach(function(id,i){cols.push(id==='#TABLE'?{k:'seat',no:no(ln.R2),top:rev(ln.R2),bot:['#T']}:{k:'seat',no:no([id]),top:i===1?rev(ln.R2):[],bot:[id]})});return}
+    cols.push({k:'seat',no:no((ln.L||[]).concat(ln.R||[])),top:rev(ln.R),bot:rev(ln.L)});
+  });
+  return cols;
+}
+function hCell(ids,k){
+  var band=el('div','hband');
+  ids.forEach(function(id){
+    if(id==='#T'){band.appendChild(el('div','htbl','TABLE'));return}
+    if(id==='#SOFA'){var sf=el('div','htbl','SOFA');sf.style.height='calc(2 * var(--hw) + var(--hg))';sf.style.width='100%';sf.style.boxSizing='border-box';band.appendChild(sf);return}
+    var it=ITEMS[id],d=get(id),x;
+    if(k==='mon'){x=el('div','hm t-'+MTYPE[id]);if(d.m)x.dataset.m=d.m;
+      /* bar as long as the seats it serves on that side (from its name, e.g. "หน้าที่นั่ง 3D, 3F" = 2) */
+      var n=Math.max(1,(it.label.split('ที่นั่ง ')[1]||'').split(',').length);
+      x.style.height='calc('+n+' * var(--hw) + '+(n-1)+' * var(--hg))'}
+    else{x=el('div','hs'+(SEAT_NAME[id]?' cc':''),SEAT_NAME[id]?'CC 1A':id);if(d.s)x.dataset.s=d.s}
+    if(d.note)x.dataset.note='1';band.appendChild(x);
+  });
+  return band;
+}
+function hZone(z){
+  var box=el('div','hz'),h=el('header');h.appendChild(el('h2',null,z.title));h.appendChild(el('span',null,z.tag));box.appendChild(h);
+  var cols=hCols(z),g=el('div','hg');
+  g.style.gridTemplateColumns=cols.map(function(c){return c.k==='mon'?'14px':c.k==='door'?'12px':'var(--hw)'}).join(' ');
+  g.style.gridTemplateRows='14px auto 12px auto'+(cols.some(function(c){return c.room})?' 21px':'');
+  cols.forEach(function(c,i){
+    var col=i+1,put=function(node,row){node.style.gridColumn=String(col);node.style.gridRow=String(row);g.appendChild(node)};
+    if(c.k==='door'){var dd=el('div','hdoor'+(c.d.kind==='exit'?' ex':''));dd.innerHTML='<span>'+(c.d.kind==='exit'?c.d.code+' R':c.d.code+'R')+'</span><i></i><span>'+(c.d.kind==='exit'?c.d.code+' L':c.d.code+'L')+'</span>';
+      dd.title=c.d.kind==='exit'?'EMERGENCY EXIT (OVERWING) '+c.d.code:'DOOR '+c.d.code;dd.style.gridColumn=String(col);dd.style.gridRow='1 / 5';g.appendChild(dd);return}
+    put(el('div','hno',c.no||''),1);if(c.sofa){var sb=hCell(c.top,c.k);sb.style.gridColumn=col+' / span '+c.sofa;sb.style.justifySelf='stretch';sb.style.width='100%';sb.style.gridRow='2';g.appendChild(sb)}else if(!cols.some(function(x,k){return x.sofa&&k<i&&k+x.sofa>i}))put(hCell(c.top,c.k),2);put(el('div','haisle'),3);put(hCell(c.bot,c.k),4);
+  });
+  var rc=cols.map(function(c,i){return c.room?i+1:0}).filter(Boolean);
+  if(rc.length){var fr=el('div','hroom');fr.style.gridColumn=rc[0]+' / '+(rc[rc.length-1]+1);fr.style.gridRow='4';g.appendChild(fr);
+    var nm=el('div','hroomname','ห้อง Commander Center');nm.style.gridColumn=rc[0]+' / '+(rc[rc.length-1]+1);nm.style.gridRow='5';g.appendChild(nm)}
+  box.appendChild(g);return box;
+}
+function mapPageH(nDef){
+  var r=el('div','report op1 pg pg1h');r.appendChild(pgTop('รายงานสภาพที่นั่งและ Monitor · ฝ่ายการช่าง / ฝ่ายสื่อสาร'));
+  var nose=el('div','noseh');nose.appendChild(el('span',null,'◀ หัวเครื่อง (NOSE)'));nose.appendChild(el('span',null,'ด้านบน = ที่นั่งฝั่งขวา (D-F) · ด้านล่าง = ฝั่งซ้าย (A-C)'));nose.appendChild(el('span',null,'ท้ายเครื่อง (TAIL) ▶'));r.appendChild(nose);
+  var map=el('div','hmap');ZONES.forEach(function(z){map.appendChild(hZone(z))});r.appendChild(map);
+  /* legend as one line under the map, so the two tables below get the full width */
+  var lg=el('div','hleg');
+  legItem(lg,'background:var(--ok)','ใช้งานได้ปกติ');
+  legItem(lg,'background:var(--warn)','ขัดข้องแต่ใช้ได้ / Manual ได้ (!) · จอเสื่อมสภาพ');
+  legItem(lg,'background:var(--bad)','ใช้งานไม่ได้ (×) · จอเสีย');
+  legItem(lg,'background:var(--mon21);width:6px;height:13px;vertical-align:-3px','Monitor 21.5"');
+  legItem(lg,'background:var(--monb);width:5px;height:13px;vertical-align:-3px','OVHD Monitor 12.0"');
+  legItem(lg,'background:var(--ok);border-bottom:3px solid var(--ink);box-sizing:border-box','ขีดล่าง = มีหมายเหตุ');
+  legItem(lg,'background:#33475c;width:12px','DOOR 1 / 4');
+  legItem(lg,'background:#c4600f;width:12px','EMERGENCY EXIT (OVERWING) FWD / AFT');
+  r.appendChild(lg);
+  var below=el('div','hbelow');
+  var sb=el('div');sb.appendChild(el('h3',null,'สรุปตามโซน'));var t=el('table','sum');t.innerHTML=summaryHTML();sb.appendChild(t);below.appendChild(sb);
+  var mb=el('div');mb.appendChild(el('h3',null,'สรุปตามชนิด Monitor'));var t2=el('table','sum mt');t2.innerHTML=mtHTML();mb.appendChild(t2);
+  var note=el('p','defsnote');
+  if(nDef){note.appendChild(el('b',null,'รวมข้อขัดข้องคงค้าง (ที่นั่ง / Monitor) '+nDef+' รายการ'));note.appendChild(document.createTextNode(' · รายละเอียดอยู่หน้า 2'))}
+  else note.appendChild(el('b',null,'ไม่มีข้อขัดข้องคงค้าง'));
+  mb.appendChild(note);below.appendChild(mb);r.appendChild(below);
+  r.appendChild(el('div','fill'));r.appendChild(pgFoot());return r;
+}
+function defRows(){
+  var SS=['ปกติ','ขัดข้อง-ใช้ได้','ใช้ไม่ได้'],MM=['ปกติ','เสื่อม','เสีย'];
+  return defectIds().filter(function(id){return !ITEMS[id].kind}).map(function(id,k){var d=get(id),it=ITEMS[id],tr=el('tr');
+    tr.appendChild(el('td','n',String(k+1)));
+    tr.appendChild(el('td','id',(id.indexOf('MON-')===0||SEAT_NAME[id])?it.label:id));
+    tr.appendChild(el('td','nw',zoneName(it.zone)));
+    tr.appendChild(el('td','nw'+(it.seat&&d.s?(d.s===1?' w':' b'):''),it.seat?SS[d.s]:'-'));
+    tr.appendChild(el('td','nw'+(it.mon&&d.m?(d.m===1?' w':' b'):''),it.mon?MM[d.m]:'-'));
+    tr.appendChild(el('td',null,d.note||'-'));
+    tr.appendChild(el('td','nw',[d.by,d.at?thLT(d.at).replace(' TH-LT',''):''].filter(Boolean).join(' · ')||'-'));
+    return tr});
+}
+function eqDefRows(){
+  return defectIds().filter(function(id){return ITEMS[id].kind}).map(function(id,k){var d=get(id),it=ITEMS[id],tr=el('tr');
+    tr.appendChild(el('td','n',String(k+1)));
+    tr.appendChild(el('td','id',it.kind==='lav'?it.label:it.short));
+    tr.appendChild(el('td','nw',it.kind==='lav'?'ห้องน้ำ · '+zoneName(it.zone):GALLEYS[it.gal].name));
+    tr.appendChild(el('td','nw'+(d.s?(d.s===1?' w':' b'):''),E_LABEL[d.s]));
+    tr.appendChild(el('td',null,d.note||'-'));
+    tr.appendChild(el('td','nw',[d.by,d.at?thLT(d.at).replace(' TH-LT',''):''].filter(Boolean).join(' · ')||'-'));
+    return tr});
+}
+function defPage(total,eq,fromPage){
+  var r=el('div','report op1 pg pgd');
+  r.appendChild(pgTop(eq?'รวมข้อขัดข้องคงค้าง Galley และห้องน้ำ · ต่อจากหน้า '+fromPage:'รวมข้อขัดข้องคงค้าง · ต่อจากหน้า 1'));
+  var ds=el('div');ds.appendChild(el('h3',null,(eq?'รวมข้อขัดข้องคงค้าง Galley และห้องน้ำ (':'รวมข้อขัดข้องคงค้าง (')+total+' รายการ)'));
+  var dt=el('table','def'),hr=el('tr');
+  (eq?['#','อุปกรณ์ / ห้องน้ำ','GALLEY / โซน','สภาพ','หมายเหตุ','ผู้บันทึก · เวลา']:['#','ที่นั่ง / จุด','โซน','ที่นั่ง','Monitor','หมายเหตุ','ผู้บันทึก · เวลา']).forEach(function(x){hr.appendChild(el('th',null,x))});
+  var th=el('thead');th.appendChild(hr);dt.appendChild(th);var tb=el('tbody');dt.appendChild(tb);ds.appendChild(dt);r.appendChild(ds);
+  r.appendChild(el('div','fill'));r.appendChild(pgFoot());r._tb=tb;return r;
+}
+/* หน้า Galley และห้องน้ำ: ลำตัวเครื่องแนวนอน หัวซ้าย -> ท้ายขวา, บน = ฝั่งขวา (D-F), ล่าง = ฝั่งซ้าย (A-C) เหมือนหน้า 1 */
+var EQ_CABIN=[
+ {z:'FRONT',R:[{gal:'FWD'}],L:[{lav:'A'}]},
+ {z:'FRONT',door:{code:'1',kind:'door'}},
+ {z:'CREW',seat:'FRONT CREW',sub:'CC 1A · 1D 1F'},
+ {z:'VVIP OA',R:[{lav:'FV'}]},
+ {z:'VVIP OA',seat:'VVIP OA',sub:'2A 3A · SOFA'},
+ {z:'VIP OB',seat:'VIP OB',sub:'แถว 5-6'},
+ {z:'VIP OB',door:{code:'FWD',kind:'exit'}},
+ {z:'VVIP OC',door:{code:'AFT',kind:'exit'},R:[{lav:'CV'}]},   /* exit in line with CENTER VIP LAV */
+ {z:'VVIP OC',seat:'VVIP OC',sub:'แถว 7-8'},
+ {z:'PASSENGER OD',seat:'PASSENGER OD',sub:'แถว 9-18 · 54 ที่นั่ง'},
+ {z:'PASSENGER OD',R:[{lav:'E'}],L:[{lav:'D'}],pad:true},
+ {z:'AFT',door:{code:'4',kind:'door'}},
+ {z:'AFT',X:[{gal:'AFT'}]}
+];
+function eqMapPage(nDef,defFrom){
+  var r=el('div','report op1 pg pg1 pg3');r.appendChild(pgTop('รายงานสภาพ Galley และห้องน้ำ (LAVATORY) · ฝ่ายการช่าง'));
+  var C=['var(--ok)','var(--warn)','var(--bad)'],T=['var(--panel)','var(--warn-soft)','var(--bad-soft)'],SFX=['','!','×'];
+  var ecell=function(gal,c,extra,txt){var id=gal+'-'+c[0],d=get(id),n=numOf(c[2]),lab=txt||(TSHORT[c[1]]+(n?' '+n:''));if(c[1]==='OUTLET')lab=PLUG_ICON+'220V';  /* same plug mark as the entry page */
+    return '<div class="ec'+(d.note?' nt':'')+'" style="border-left-color:'+C[d.s]+';background:'+T[d.s]+extra+'">'+lab+(d.s?'<b style="color:'+C[d.s]+'">'+SFX[d.s]+'</b>':'')+'</div>'};
+  var block=function(x){
+    if(x.lav){var id='LAV-'+x.lav,d=get(id);
+      var hp={A:84,FV:80,CV:80,D:100,E:100}[x.lav]||100,nm={FV:'FWD VIP<br>LAV',CV:'CENTER VIP<br>LAV'}[x.lav]||LAVS[x.lav].short;
+      return '<div class="el v'+(d.note?' nt':'')+'" style="height:'+hp+'%;border-color:'+C[d.s]+';background:'+(d.s?T[d.s]:'var(--lavbg)')+'">'+WC_ICON+'<span>'+nm+(d.s?' <b style="color:'+C[d.s]+'">'+SFX[d.s]+'</b>':'')+'</span></div>'}
+    var G=GLAYOUT[x.gal],cells='';
+    if(G.cells){var bands=G.bands||[{r0:1,r1:G.nrows,w:Array(G.cols).fill(1)}];
+      return '<div class="eg"><div class="egh">'+GALLEYS[x.gal].name+' ('+GALLEYS[x.gal].code+')</div>'+bands.map(function(B){
+        var tot=B.w.reduce(function(a,b){return a+b},0),W=G.pw||0;  /* bands share one width so the columns keep the drawing's proportions */
+        return '<div class="egt" style="'+(W?'width:'+W+'px;grid-template-columns:'+B.w.map(function(w){return 'minmax(min-content,'+w+'fr)'}).join(' '):'grid-template-columns:repeat('+G.cols+',auto)')+';grid-template-rows:repeat('+(B.r1-B.r0+1)+',16px)">'+
+        G.cells.filter(function(z){return z.r>=B.r0&&z.r<=B.r1}).map(function(z){var pos=';grid-column:'+z.c+' / span '+(z.cs||1)+';grid-row:'+(z.r-B.r0+1)+' / span '+(z.rs||1);
+          if(!z.id)return '<div class="ec ee" style="'+pos.slice(1)+'">'+(z.n?z.n.replace('Elec. Panel','Elec.'):'')+'</div>';
+          return ecell(x.gal,[z.id,z.type,z.label],pos,z.b.replace('Work Light','WL').replace('Faucet','Sink/Fct').replace('Refrigerator','Fridge').replace('Steam Oven','Oven').replace('Air Chiller','Air Chl').replace('Trolley','Trl').replace(G.cols>5?/^Stow /:/^$/,'S').replace(G.cols>5?/^Trl /:/^$/,'T').replace(G.cols>5?/^Oven /:/^$/,'Ov').replace(G.cols>5?/^Boiler$/:/^$/,'WB').replace(G.cols>5?/^Water Heater$/:/^$/,'WH'))}).join('')+'</div>'}).join('')+'</div>'}
+    if(!G.even)G.rows.forEach(function(row){row.forEach(function(c){
+      if(typeof c==='number'){cells+='<div class="ec ee" style="grid-column:span '+c+'"></div>';return}
+      cells+=ecell(x.gal,c,c[3]>1?';grid-column:span '+c[3]:'')})});
+    if(G.even)return '<div class="eg"><div class="egh">'+GALLEYS[x.gal].name+'</div><div class="egt" style="display:flex;flex-direction:column">'+
+      G.rows.map(function(row){return '<div class="egr">'+row.map(function(c){return ecell(x.gal,c,'')}).join('')+'</div>'}).join('')+'</div></div>';
+    return '<div class="eg"><div class="egh">'+GALLEYS[x.gal].name+'</div><div class="egt" style="grid-template-columns:repeat('+G.cols+',auto)">'+cells+'</div></div>'};
+  var html='<div class="ldir"><span>◀ หัวเครื่อง (NOSE)</span><span>มองจากด้านบน · บน = ฝั่งขวา (D-F) · ล่าง = ฝั่งซ้าย (A-C)</span><span>ท้ายเครื่อง (TAIL) ▶</span></div>';
+  var segs='',zones='',cols=[];
+  EQ_CABIN.forEach(function(S,i){var c=i+1;cols.push('auto');
+    if(S.door){var ex=S.door.kind==='exit',t=ex?S.door.code+' R':S.door.code+'R',bt=ex?S.door.code+' L':S.door.code+'L';
+      /* exit in line with a LAV: the dashed line runs only through the free lane, the LAV keeps its lane */
+      segs+='<div class="fdoor'+(ex?' ex':'')+'" style="grid-column:'+c+'"><span>'+(ex?'EXIT ':'DOOR ')+t+'</span><i></i><span>'+(ex?'EXIT ':'DOOR ')+bt+'</span></div>'}
+    if(S.seat){segs+='<div class="fseat" style="grid-column:'+c+'"><b>'+S.seat+'</b><span>'+S.sub+'</span></div>';}
+    else{['R','L','X'].forEach(function(k){if(S[k])segs+='<div class="fl '+k+(S[k].every(function(x){return x.lav})?' lv':'')+'" style="grid-column:'+c+(S.pad?';padding-inline:10px':'')+(S.door?';background:var(--cabin);z-index:3;position:relative':'')+'">'+S[k].map(block).join('')+'</div>'})}
+  });
+  var z0=null,start=1;
+  EQ_CABIN.concat([{z:null}]).forEach(function(S,i){if(S.z!==z0){if(z0)zones+='<div class="fz" style="grid-column:'+start+' / '+(i+1)+'">'+z0+'</div>';z0=S.z;start=i+1}});
+  html+='<div class="fuse" style="grid-template-columns:'+cols.join(' ')+'"><div class="fais"><span>ทางเดิน (AISLE)</span></div>'+segs+zones+'</div>';
+  html+='<div class="lleg"><span><i style="background:#33475c"></i>DOOR</span><span><i style="background:#c4600f"></i>EMERGENCY EXIT (OVERWING)</span><span><i style="background:var(--ok)"></i>ใช้งานได้</span><span><i style="background:var(--warn)"></i>ใช้งานได้บางส่วน (!)</span><span><i style="background:var(--bad)"></i>ใช้งานไม่ได้ (×)</span><span><i class="lge"></i>แถบซ้าย = สภาพอุปกรณ์</span><span><i class="lgl"></i>กรอบ = สภาพห้องน้ำ</span><span><i class="lgn"></i>ขีดล่าง = มีหมายเหตุ</span><span>CM = Coffee Maker · HC = Hot Cup · MW = Microwave · Stor = Storage · Stow = Stowage · Trl = Trolley Stowage · Air Chl = Air Chiller · WL = Work Light · Sink/Fct = Faucet ที่ Sink · 220V = 220VAC Power Outlet · AFT: S = Stowage · T = Trolley · Ov = Steam Oven · WB = Water Boiler · WH = Water Heater</span></div>';
+  var cell=function(v,c){return '<td class="'+(v?c+' nz':'')+'">'+v+'</td>'};
+  var row=function(name,c){return '<tr><td>'+name+'</td><td>'+c.t+'</td><td>'+c.s[0]+'</td>'+cell(c.s[1],'w')+cell(c.s[2],'b')+'</tr>'};
+  var head=function(first){return '<thead><tr><th>'+first+'</th><th>จำนวน</th><th><i style="background:var(--ok)"></i>ใช้งานได้</th><th><i style="background:var(--warn)"></i>บางส่วน</th><th><i style="background:var(--bad)"></i>ใช้ไม่ได้</th></tr></thead><tbody>'};
+  var gsum='<table class="lsum">'+head('GALLEY')+GAL_ORDER.map(function(k){return row(GALLEYS[k].name,eqCount(function(it){return it.gal===k}))}).join('')+row('รวม',eqCount(function(it){return it.kind==='eq'}))+'</tbody></table>';
+  var lsum='<table class="lsum">'+head('ห้องน้ำ · ZONE')+lavZones().map(function(z){var names=Object.keys(LAVS).filter(function(k){return LAVS[k].zone===z}).map(function(k){return LAVS[k].short});
+    return row(zoneName(z)+' <span class="sm">('+names.join(', ')+')</span>',eqCount(function(it){return it.kind==='lav'&&it.zone===z}))}).join('')+row('รวม',eqCount(function(it){return it.kind==='lav'}))+'</tbody></table>';
+  var tsum='<table class="lsum"><thead><tr><th>ชนิดอุปกรณ์</th>'+GAL_ORDER.map(function(k){return '<th>'+k+'</th>'}).join('')+'<th>รวม</th><th><i style="background:var(--warn)"></i>บางส่วน</th><th><i style="background:var(--bad)"></i>ใช้ไม่ได้</th></tr></thead><tbody>'+
+    TYPE_ORDER.filter(function(t){return eqCount(function(it){return it.type===t}).t>0}).map(function(t){var all=eqCount(function(it){return it.type===t});
+      return '<tr><td>'+TYPES[t]+'</td>'+GAL_ORDER.map(function(k){var c=eqCount(function(it){return it.gal===k&&it.type===t});return c.t?'<td class="'+(c.s[2]?'b nz':c.s[1]?'w nz':'')+'">'+c.s[0]+'/'+c.t+'</td>':'<td class="na">-</td>'}).join('')+
+        '<td>'+all.t+'</td>'+cell(all.s[1],'w')+cell(all.s[2],'b')+'</tr>'}).join('')+'</tbody></table>';
+  html+='<div class="lbot"><div><h3>สรุปตาม Galley</h3>'+gsum+'</div><div><h3>สรุปห้องน้ำตามโซน</h3>'+lsum+
+    '<p class="defsnote">'+(nDef?'<b>ข้อขัดข้องคงค้าง Galley และห้องน้ำ '+nDef+' รายการ</b> · รายละเอียดอยู่หน้า '+defFrom:'<b>ไม่มีข้อขัดข้องคงค้างของ Galley และห้องน้ำ</b>')+'</p></div><div><h3>สรุปตามชนิดอุปกรณ์ (ใช้งานได้ / ทั้งหมด)</h3>'+tsum+'</div></div>';
+  var b=el('div','lbody');b.innerHTML=html;r.appendChild(b);
+  r.appendChild(el('div','fill'));r.appendChild(pgFoot());return r;
+}
+/* fills defect rows into as many pages as needed (rows that do not fit move to the next page) */
+function fillDefPages(host,pages,rows,eq,fromPage){
+  var i=0;
+  while(i<rows.length){
+    var pg=defPage(rows.length,eq,fromPage);host.appendChild(pg);pages.push(pg);
+    var fill=pg.querySelector('.fill'),placed=0;
+    while(i<rows.length){
+      pg._tb.appendChild(rows[i]);
+      if(fill.getBoundingClientRect().height<1&&placed>0){pg._tb.removeChild(rows[i]);break}
+      placed++;i++;
+    }
+  }
+}
+/* 1 ผังที่นั่ง · 2.. ข้อขัดข้องที่นั่ง/Monitor · ผัง Galley และห้องน้ำ · ข้อขัดข้อง Galley และห้องน้ำ (เหมือน A340) */
+function buildPages(host){
+  var rows=defRows(),pages=[mapPageH(rows.length)];host.appendChild(pages[0]);
+  fillDefPages(host,pages,rows,false,1);
+  var erows=eqDefRows(),mapNo=pages.length+1,ep=eqMapPage(erows.length,mapNo+1);host.appendChild(ep);pages.push(ep);
+  fillDefPages(host,pages,erows,true,mapNo);
+  pages.forEach(function(p,k){p.querySelector('.pgno').textContent='STATUS SEAT PLAN '+AC+' · หน้า '+(k+1)+'/'+pages.length});
+  return pages;
+}
+function exportPdf2(){
+  if(busy)return;busy=true;toast('กำลังสร้าง PDF SUMMARY…'+exportNote());
+  var wrap=el('div','offscreen'),pages;document.body.appendChild(wrap);
+  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),document.fonts?document.fonts.ready:null])
+  .then(function(){
+    useSaved=true;try{pages=buildPages(wrap)}finally{useSaved=false}
+    var pdf=new window.jspdf.jsPDF({orientation:'l',unit:'mm',format:'a4'});
+    var M=7,W=297-2*M,H=210-2*M;
+    return pages.reduce(function(p,pg,k){return p.then(function(){
+      return html2canvas(pg,{scale:pdfScale(pg,W),backgroundColor:'#ffffff',logging:false}).then(function(cv){
+        if(k)pdf.addPage();var w=W,h=cv.height*W/cv.width;if(h>H){w=w*H/h;h=H}
+        pdf.addImage(cv.toDataURL('image/jpeg',0.95),'JPEG',M+(W-w)/2,M,w,h);cv.width=cv.height=0})})},Promise.resolve()).then(function(){return pdf});
+  })
+  .then(function(pdf){
+    return offerFile(stamp()+' A320-03_STATUS_SEAT_PLAN_SUMMARY_4PAGES.pdf',pdf.output('arraybuffer'),'application/pdf');
+  })
+  .catch(function(){toast('สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง',true)})
+  .then(function(){wrap.remove();busy=false});
+}
+$('bPdf2').addEventListener('click',function(){guard('EXPORT SUMMARY 4 PAGES',exportPdf2)});
+
+
 function exportXlsx(){
   if(busy)return;busy=true;toast('กำลังสร้าง Excel…'+exportNote());
   /* history comes from the Google Sheet; an older Apps Script without it still exports the other sheets */
   var hist=API?apiPost({action:'history',pin:accessPin}).then(function(r){return r&&r.ok?r.rows:null},function(){return null}):Promise.resolve(null);
-  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'),loadLib('export-excel.js?v='+window.SEATPLAN_BUST),hist]).then(function(res){
+  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'),loadLib('layout.js?v='+window.SEATPLAN_BUST),loadLib('export-excel.js?v='+window.SEATPLAN_BUST),hist]).then(function(res){
     var st={};Object.keys(ITEMS).forEach(function(id){st[id]=norm(saved[id])});
-    var wb=window.buildSeatWorkbook(window.ExcelJS,{state:st,lastSave:lastSave,inspector:who.value.trim(),history:res[2]});
+    var wb=window.buildSeatWorkbook(window.ExcelJS,{state:st,lastSave:lastSave,inspector:who.value.trim(),history:res[3]});
     return wb.xlsx.writeBuffer();
   }).then(function(buf){
-    return offerFile('STATUS_SEAT_PLAN_A320-03_'+stamp()+'.xlsx',buf,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
+    return offerFile(stamp()+' A320-03_STATUS_SEAT_PLAN.xlsx',buf,'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
   })
   .catch(function(){toast('สร้าง Excel ไม่สำเร็จ ลองอีกครั้ง',true)})
   .then(function(){busy=false});
 }
-
-/* ---------- EXPORT TO PDF A4 2PAGE: landscape A4, cabin drawn nose-to-tail ----------
-   Each zone is a grid: row 1 = row numbers, row 2 = right side (F at top .. D), row 3 = left side (C .. A at bottom).
-   cols: 'm' = Monitor bar, 's' = seat column, 'f' = furniture column. Items: {c: column, h: 't'|'b', ...} */
-var A4_ZONES=[
- {key:'F',cols:['m','s'],labels:{2:'1'},items:[
-   {c:1,h:'t',m:'MON-F2',n:2},{c:2,h:'t',s:['1F','1D']},
-   {c:1,h:'b',room:2,label:'ห้อง Commander Center'},{c:1,h:'b',m:'MON-F1',n:1},{c:2,h:'b',s:['CC1A']}]},
- {key:'A',cols:['m','s','s','m'],labels:{2:'2',3:'3'},items:[
-   {c:2,h:'t',f:'SOFA',span:2,n:2},{c:4,h:'t',m:'MON-A3',sofa:1},
-   {c:1,h:'b',m:'MON-A1',n:1},{c:2,h:'b',s:['2A']},{c:3,h:'b',s:['3A']},{c:4,h:'b',m:'MON-A2',n:1}]},
- {key:'B',cols:['m','s','f','s','m'],labels:{2:'5',4:'6'},items:[
-   {c:1,h:'t',m:'MON-B2',n:2},{c:2,h:'t',s:['5F','5D']},{c:3,h:'t',f:'TABLE',n:2},{c:4,h:'t',s:['6F','6D']},{c:5,h:'t',m:'MON-B4',n:2},
-   {c:1,h:'b',m:'MON-B1',n:1},{c:2,h:'b',s:['5B']},{c:3,h:'b',f:'TABLE',n:1},{c:4,h:'b',s:['6B']},{c:5,h:'b',m:'MON-B3',n:1}]},
- {key:'C',cols:['m','s','s','m'],labels:{2:'7',3:'8'},items:[
-   {c:1,h:'t',m:'MON-C2',n:2},{c:2,h:'t',s:['7F','7D']},{c:3,h:'t',s:['8F','8D']},{c:4,h:'t',m:'MON-C4',n:2},
-   {c:1,h:'b',m:'MON-C1',n:2},{c:2,h:'b',s:['7C','7B']},{c:3,h:'b',s:['8C','8B']},{c:4,h:'b',m:'MON-C3',n:2}]},
- {key:'D',grow:1,cols:[],labels:{},items:[]}
-];
-(function(){ /* Passenger OD: Monitor before row 9, OVHD Monitor before rows 10, 12, 15, 17 */
-  var z=A4_ZONES[4],c=0;
-  function mon(t,b){c++;z.cols.push('m');z.items.push({c:c,h:'t',m:t,n:3},{c:c,h:'b',m:b,n:3})}
-  mon('MON-D2','MON-D1');
-  [9,10,11,12,14,15,16,17,18].forEach(function(n){
-    if(BIN_ROWS.indexOf(n)>=0)mon('MON-D'+n+'R','MON-D'+n+'L');
-    c++;z.cols.push('s');z.labels[c]=String(n);
-    z.items.push({c:c,h:'t',s:[n+'F',n+'E',n+'D']},{c:c,h:'b',s:[n+'C',n+'B',n+'A']});
-  });
-})();
-var A4_SEAT_TEXT={CC1A:'CC 1A'};
-/* a Monitor bar is as long as the seats it serves (n seats), never longer; the sofa (as wide as 2A+3A, 2 seats deep) and its Monitor are 2 seats long;
-   VIP OB tables are as long as the seats on their side */
-var A4_SEAT_H=30,A4_SEAT_GAP=4,A4_SOFA_H=64;
-function a4Len(n){return n*A4_SEAT_H+(n-1)*A4_SEAT_GAP}
-function thStamp(at){var d=new Date(at);if(isNaN(d))return '-';var t=new Date(d.getTime()+7*3600e3),p=function(n){return String(n).padStart(2,'0')};
-  return p(t.getUTCDate())+' '+['JAN','FEB','MAR','APR','MAY','JUN','JUL','AUG','SEP','OCT','NOV','DEC'][t.getUTCMonth()]+p(t.getUTCFullYear()%100)+' ('+p(t.getUTCHours())+':'+p(t.getUTCMinutes())+' TH-LT)'}
-function a4Zone(hz){
-  var z=null;ZONES.forEach(function(x){if(x.key===hz.key)z=x});
-  var box=el('section','hz'+(hz.grow?' grow':'')),h=el('header');h.appendChild(el('div',null,z.title));h.appendChild(el('span',null,z.tag));box.appendChild(h);
-  var g=el('div','hg');g.style.gridTemplateColumns=hz.cols.map(function(k){return k==='m'?'8px':'29px'}).join(' ');
-  Object.keys(hz.labels).forEach(function(c){var l=el('div','hl',hz.labels[c]);l.style.gridColumn=c;l.style.gridRow=1;g.appendChild(l)});
-  hz.items.forEach(function(it){
-    var row=it.h==='t'?2:3,e;
-    if(it.room){e=el('div','room');e.appendChild(el('em',null,it.label));e.style.gridColumn=it.c+' / span '+it.room}
-    else if(it.m){var d=get(it.m);e=el('div','m'+(MTYPE[it.m].charAt(0)==='b'?' r':''));e.dataset.m=d.m;if(d.note)e.dataset.note='1';
-      e.style.height=(it.sofa?A4_SOFA_H:a4Len(it.n||1))+'px'}
-    else if(it.f){e=el('div','f',it.f);if(it.span)e.style.gridColumn=it.c+' / span '+it.span;e.style.height=a4Len(it.n||1)+'px'}
-    else{e=el('div','st');it.s.forEach(function(id){var d=get(id),s=el('div','s'+(A4_SEAT_TEXT[id]?' cc':''),A4_SEAT_TEXT[id]||id);s.dataset.s=d.s;if(d.note)s.dataset.note='1';e.appendChild(s)})}
-    if(!e.style.gridColumn)e.style.gridColumn=it.c;e.style.gridRow=row;g.appendChild(e);
-  });
-  box.appendChild(g);return box;
-}
-function a4Page(n,total){
-  var p=el('div','a4');
-  var top=el('div','top'),l=el('div');l.appendChild(el('h1',null,'STATUS SEAT PLAN '+AC));l.appendChild(el('div','sub','รายงานสภาพที่นั่งและ Monitor · ฝ่ายการช่าง / ฝ่ายสื่อสาร'));top.appendChild(l);
-  var meta=el('div','meta');
-  [['ผู้ตรวจ',who.value.trim()||'-'],['SAVE ล่าสุด',lastSave&&lastSave.at?[lastSave.by,thStamp(lastSave.at)].filter(Boolean).join(' · '):'ยังไม่เคย SAVE'],['ออกรายงาน',thStamp(new Date())]]
-    .forEach(function(x){meta.appendChild(el('span',null,x[0]));meta.appendChild(el('b',null,x[1]))});
-  top.appendChild(meta);p.appendChild(top);p.appendChild(el('div','rule'));
-  var foot=el('div','foot');foot.appendChild(el('span',null,'ข้อมูลจาก SAVE ล่าสุดใน Google Sheet'));foot.appendChild(el('span',null,'STATUS SEAT PLAN '+AC+' · หน้า '+n+'/'+total));
-  return {page:p,foot:foot};
-}
-function defText(id){var d=get(id),it=ITEMS[id],a=[];
-  if(it.seat&&d.s)a.push(S_LABEL[d.s]);if(it.mon&&d.m)a.push(M_LABEL[d.m]);if(d.note)a.push(d.note);return a.join(' · ')}
-function defName(id){var it=ITEMS[id];return id.indexOf('MON-')===0?MT[MTYPE[id]].short+' '+it.label.split(' · ').slice(1).join(' · '):(SEAT_NAME[id]?it.label:id)}
-function a4Nodes(){
-  var ids=defectIds(),total=ids.length?2:1; /* any defect: page 1 gives the count, page 2 lists every item */
-  var p1=a4Page(1,total),p=p1.page;
-  var dir=el('div','dir');dir.appendChild(el('span',null,'◀ หัวเครื่อง (NOSE)'));dir.appendChild(el('span',null,'ด้านบน = ที่นั่งฝั่งขวา (D-F) · ด้านล่าง = ฝั่งซ้าย (A-C)'));dir.appendChild(el('span',null,'ท้ายเครื่อง (TAIL) ▶'));p.appendChild(dir);
-  var cab=el('div','cab');A4_ZONES.forEach(function(hz){cab.appendChild(a4Zone(hz))});p.appendChild(cab);
-  var lg=el('div','legend');
-  [['var(--ok)','','ใช้งานได้ปกติ'],['var(--warn)','','ขัดข้องแต่ใช้ได้ / Manual ได้ (!) · จอเสื่อมสภาพ'],['var(--bad)','','ใช้งานไม่ได้ (×) · จอเสีย'],
-   ['var(--mon-wall)','bar','Monitor 21.5"'],['var(--ovh-ok)','bar','OVHD Monitor 12.0"']].forEach(function(x){var s=el('span'),i=el('i',x[1]);i.style.background=x[0];s.appendChild(i);s.appendChild(el('span',null,x[2]));lg.appendChild(s)});
-  var ns=el('span'),ni=el('i');ni.style.background='var(--ok)';ni.style.borderBottom='3px solid var(--ink)';ns.appendChild(ni);ns.appendChild(el('span',null,'ขีดล่าง = มีหมายเหตุ'));lg.appendChild(ns);
-  p.appendChild(lg);
-  var tabs=el('div','tabs'),a=el('div'),b=el('div');
-  a.appendChild(el('h2',null,'สรุปตามโซน'));var t1=el('table');t1.innerHTML=summaryHTML();a.appendChild(t1);
-  b.appendChild(el('h2',null,'สรุปตามชนิด Monitor'));var t2=el('table');t2.innerHTML=mtHTML();b.appendChild(t2);
-  var dbx=el('div','defs');
-  if(!ids.length)dbx.appendChild(el('h3',null,'ไม่มีข้อขัดข้องคงค้าง'));
-  else{dbx.appendChild(el('h3',null,'รวมข้อขัดข้องคงค้าง '+ids.length+' รายการ'));dbx.appendChild(el('div','more','รายละเอียดอยู่หน้า 2'));}
-  b.appendChild(dbx);tabs.appendChild(a);tabs.appendChild(b);p.appendChild(tabs);p.appendChild(p1.foot);
-  var pages=[p];
-  if(total===2){
-    var p2=a4Page(2,2),q=p2.page;q.appendChild(el('h2',null,'รวมข้อขัดข้องคงค้าง ('+ids.length+')'));
-    var dt=el('table','dtab'),th=el('tr');['ที่นั่ง / จุด','โซน','สภาพที่นั่ง','สภาพ Monitor','หมายเหตุ','ผู้บันทึก · เวลา'].forEach(function(x){th.appendChild(el('th',null,x))});
-    var hd=el('thead');hd.appendChild(th);dt.appendChild(hd);var tb=el('tbody');
-    ids.forEach(function(id){var d=get(id),it=ITEMS[id],tr=el('tr');
-      tr.appendChild(el('td',null,defName(id)));tr.appendChild(el('td',null,zoneName(it.zone)));
-      var s=el('td',null,it.seat?S_LABEL[d.s]:'-');if(it.seat&&d.s)s.className=d.s===1?'w':'b';tr.appendChild(s);
-      var m=el('td',null,it.mon?M_LABEL[d.m]:'-');if(it.mon&&d.m)m.className=d.m===1?'w':'b';tr.appendChild(m);
-      tr.appendChild(el('td',null,d.note||'-'));tr.appendChild(el('td',null,[d.by,thStamp(d.at)].filter(function(x){return x&&x!=='-'}).join(' · ')||'-'));tb.appendChild(tr)});
-    dt.appendChild(tb);q.appendChild(dt);q.appendChild(p2.foot);pages.push(q);
-  }
-  return pages;
-}
-function exportPdfA4(){
-  if(busy)return;busy=true;toast('กำลังสร้าง PDF A4…'+exportNote());
-  useSaved=true;var wrap=el('div','offscreen'),pages;try{pages=a4Nodes()}finally{useSaved=false}
-  pages.forEach(function(x){wrap.appendChild(x)});document.body.appendChild(wrap);
-  Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),document.fonts?document.fonts.ready:null])
-  .then(function(){return pages.reduce(function(pr,pg){return pr.then(function(arr){return html2canvas(pg,{scale:2,backgroundColor:'#ffffff',logging:false}).then(function(cv){arr.push(cv);return arr})})},Promise.resolve([]))})
-  .then(function(cvs){
-    var pdf=new window.jspdf.jsPDF({orientation:'l',unit:'mm',format:'a4'});
-    cvs.forEach(function(cv,i){if(i)pdf.addPage('a4','l');pdf.addImage(cv.toDataURL('image/jpeg',0.92),'JPEG',0,0,297,210)});
-    return offerFile('A4 2P STATUS_SEAT_PLAN_A320-03_'+stamp()+'.pdf',pdf.output('arraybuffer'),'application/pdf');
-  })
-  .catch(function(){toast('สร้าง PDF ไม่สำเร็จ ลองอีกครั้ง',true)})
-  .then(function(){wrap.remove();busy=false});
-}
-window.__a4Nodes=a4Nodes; /* used by the layout preview test */
 
 /* owner-only: wipe the shared record */
 $('resetBtn').addEventListener('click',function(){$('resetAsk').hidden=false;$('resetBtn').hidden=true});
@@ -1046,5 +1556,6 @@ function offline(){$('sync').textContent='ยังไม่ได้ตั้�
 start();
 })();
 </script>
+
 </body>
 </html>

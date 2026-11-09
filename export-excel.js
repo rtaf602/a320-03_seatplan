@@ -1,44 +1,32 @@
-/* STATUS SEAT PLAN A320(03) — EXPORT TO EXCEL
- * buildSeatWorkbook(ExcelJS, data) returns an ExcelJS workbook with 4 sheets:
+/* STATUS SEAT PLAN A320-03 — EXPORT TO EXCEL
+ * buildSeatWorkbook(ExcelJS, data) returns an ExcelJS workbook with 5 sheets (same as A340):
+ *   ผังที่นั่ง | Galley และห้องน้ำ | รวมข้อขัดข้องคงค้าง | ทุกที่นั่ง และ Monitor | ประวัติการแก้ไข
+ * (old note:
  *   ผังที่นั่ง | รวมข้อขัดข้องคงค้าง | ทุกที่นั่ง และ Monitor | ประวัติการแก้ไข
  * data = {
- *   state:   { id: {s:0|1|2, m:0|1|2, note:'', by:'', at:ISO} }   id = 'CC1A', '12E', 'MON-D12L' ...
- *   lastSave:{ by, at:ISO } | null,
+ *   state:    { id: {s:0|1|2, m:0|1|2, note:'', by:'', at:ISO} }   id = 'CC1A', '12E', 'MON-D12R' ...
+ *   lastSave: { by, at:ISO } | null,
  *   inspector: '',
- *   history: [[atISO|text, email, inspector, label, field, oldValue, newValue], ...] | null
+ *   history:  [[atISO|text, email, inspector, label, field, oldValue, newValue], ...] | null
  * }
- * The "ผังที่นั่ง" layout here is the same as the tab in the Google Sheet (two columns per seat),
- * and wb.seatCells / wb.seatOrder give every seat and Monitor with its cells.
- * apps-script/Code.gs carries a copy of this file (tools/build-code-gs.js) and builds the Google Sheet tab from it,
- * so after changing the layout here run:  node tools/build-code-gs.js
+ * The "ผังที่นั่ง" sheet is drawn from planSheet() in layout.js, the same plan the Apps Script uses
+ * to build the Google Sheet, so both look the same.
  */
 (function (root) {
-  var S = ['ปกติ', 'ขัดข้อง-ใช้ได้', 'ใช้ไม่ได้'];
-  var M = ['จอปกติ', 'จอเสื่อม', 'จอเสีย'];
-  var C = { GREEN: 'FF00FF00', MGREEN: 'FF8ED873', YEL: 'FFFFFF00', RED: 'FFFF0000', CABIN: 'FFCAEDFB', ROWNO: 'FF6D9EEB',
-    ZONEH: 'FFC1E4F5', TAG: 'FF45B0E1', WHITE: 'FFFFFFFF', BLUE: 'FF00B0F0', GREY: 'FFF2F2F2', MUTED: 'FF566575',
-    OVHD: 'FFB4A7D6', FURN: 'FFD9D9D9' };
-  var ZN = { F: 'FRONT CREW ZONE', A: 'VVIP OA', B: 'VIP OB', C: 'VVIP OC', D: 'PASSENGER OD' };
-  var ZKEYS = ['F', 'A', 'B', 'C', 'D'];
-  var MTYPE = { W: 'Monitor', R: 'OVHD Monitor' };
-  var MTYPE_CELL = { W: 'Monitor 21.5"', R: 'OVHD 12.0"' }; /* label on the plan, with screen size */
-  var MTYPE_FULL = { W: 'Wall Mounted Monitor 21.5 Inch', R: 'Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch' };
-  var LIST = 'ทุกที่นั่ง และ Monitor';
   var FONT = 'Tahoma';
-  var CENTER = { horizontal: 'center', vertical: 'middle', wrapText: true };
   var thin = { style: 'thin', color: { argb: 'FF000000' } };
   var BOX = { top: thin, left: thin, bottom: thin, right: thin };
-  /* seat columns: left A B C, right D E F (each seat spans 2 columns) */
-  var COLS = { A: 3, B: 5, C: 7, D: 14, E: 16, F: 18 };
-  var MON_L = 4, MON_R = 15; /* Monitor cells span 4 columns, centred over each side */
 
-  function col(n) { var s = ''; while (n > 0) { var m = (n - 1) % 26; s = String.fromCharCode(65 + m) + s; n = (n - m - 1) / 26; } return s; }
-  function fill(argb) { return { type: 'pattern', pattern: 'solid', fgColor: { argb: argb } }; }
-  function font(o) { var f = { name: FONT, size: 9, color: { argb: 'FF000000' } }; for (var k in (o || {})) f[k] = o[k]; return f; }
-
+  function argb(hex) { return 'FF' + String(hex || '#FFFFFF').replace('#', '').toUpperCase(); }
+  function fill(hex) { return { type: 'pattern', pattern: 'solid', fgColor: { argb: argb(hex) } }; }
+  function font(o) {
+    o = o || {};
+    var f = { name: FONT, size: o.sz || 9, color: { argb: argb(o.color || '#000000') } };
+    if (o.b) f.bold = true; if (o.i) f.italic = true; return f;
+  }
   /* Excel stores dates without a time zone: shift so the cell shows Thailand time (UTC+7) */
   function th(d) { if (!(d instanceof Date)) d = new Date(d); if (isNaN(d)) return null; return new Date(d.getTime() + 7 * 3600e3); }
-  function thText(d) { /* 13 OCT26 (15:49 TH-LT) */
+  function thText(d) { /* 14 OCT26 (10:52 TH-LT) */
     var t = th(d); if (!t) return '-';
     var mon = ['JAN', 'FEB', 'MAR', 'APR', 'MAY', 'JUN', 'JUL', 'AUG', 'SEP', 'OCT', 'NOV', 'DEC'][t.getUTCMonth()];
     var p = function (n) { return String(n).padStart(2, '0'); };
@@ -48,288 +36,202 @@
   function buildSeatWorkbook(ExcelJS, data) {
     data = data || {};
     var state = data.state || {};
+    var L = root.seatPlanLayout(), P = root.planSheet(L), S = root.SEAT_S, M = root.SEAT_M, E = root.SEAT_E, C = root.SEAT_COLOR;
     var wb = new ExcelJS.Workbook();
-    wb.creator = 'STATUS SEAT PLAN A320(03)';
+    wb.creator = 'STATUS SEAT PLAN A320-03';
     wb.calcProperties = { fullCalcOnLoad: true };
     var ws = wb.addWorksheet('ผังที่นั่ง', {
       views: [{ showGridLines: false }],
       pageSetup: { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: 0 }
     });
-    ws.getColumn(1).width = 2; ws.getColumn(2).width = 8;
-    for (var c = 3; c <= 20; c++) ws.getColumn(c).width = 6;
-    for (c = 9; c <= 13; c++) ws.getColumn(c).width = 3.5;
-    ws.getColumn(20).width = 2.5;
+    /* Excel width is in characters: a character is 7 px plus 5 px cell padding, so (px - 5) / 7 gives the same pixel width as the Google Sheet */
+    Object.keys(P.widths).forEach(function (c) { ws.getColumn(Number(c)).width = Math.max(1, (P.widths[c] - 5) / 7); });
+    Object.keys(P.heights).forEach(function (r) { ws.getRow(Number(r)).height = P.heights[r] * 0.75; });
 
-    function put(r, c, v, o) {
-      o = o || {};
-      var span = o.span === undefined ? 2 : o.span, rows = o.rows || 1;
-      if (span > 1 || rows > 1) ws.mergeCells(r, c, r + rows - 1, c + span - 1);
-      var cell = ws.getCell(r, c);
-      if (v !== undefined && v !== null) cell.value = v;
-      cell.font = o.font || font();
-      cell.alignment = o.align || CENTER;
+    function count(q) {
+      var n = 0;
+      q.ids.forEach(function (id) { var d = state[id] || {}; if (q.vals.indexOf((d[q.f] | 0)) >= 0) n++; });
+      return n;
+    }
+    P.ops.forEach(function (o) {
+      var r2 = o.r + o.rs - 1, c2 = o.c + o.cs - 1, rr, cc;
+      if (o.cabin) {
+        for (rr = o.r; rr <= r2; rr++) for (cc = o.c; cc <= c2; cc++) ws.getCell(rr, cc).fill = fill(o.fill);
+        return;
+      }
+      if (o.rs > 1 || o.cs > 1) ws.mergeCells(o.r, o.c, r2, c2);
+      var cell = ws.getCell(o.r, o.c);
+      if (o.v !== undefined && o.v !== null) {
+        cell.value = String(o.v).charAt(0) === '=' ? { formula: o.v.slice(1), result: o.q ? count(o.q) : undefined } : o.v;
+      }
+      cell.font = font(o.font);
+      var a = o.align || {};
+      cell.alignment = { horizontal: a.h, vertical: a.v || 'middle', wrapText: !!a.wrap };
       if (o.fmt) cell.numFmt = o.fmt;
-      for (var rr = r; rr < r + rows; rr++) for (var cc = c; cc < c + span; cc++) {
+      for (rr = o.r; rr <= r2; rr++) for (cc = o.c; cc <= c2; cc++) {
         var x = ws.getCell(rr, cc);
         if (o.fill) x.fill = fill(o.fill);
-        if (o.border !== false) x.border = BOX;
+        if (o.border) x.border = BOX;
       }
+      if (o.dv) cell.dataValidation = { type: 'list', allowBlank: true, formulae: ['"' + (o.dv === 'M' ? M : o.dv === 'E' ? E : S).join(',') + '"'] };
+    });
+    var med = { style: 'medium', color: { argb: argb(C.MUTED) } };
+    P.boxes.forEach(function (b) {
+      for (var rr = b.r1; rr <= b.r2; rr++) for (var cc = b.c1; cc <= b.c2; cc++) {
+        if (rr !== b.r1 && rr !== b.r2 && cc !== b.c1 && cc !== b.c2) continue;
+        var x = ws.getCell(rr, cc), bd = Object.assign({}, x.border || {});
+        if (rr === b.r1) bd.top = med; if (rr === b.r2) bd.bottom = med; if (cc === b.c1) bd.left = med; if (cc === b.c2) bd.right = med;
+        x.border = bd;
+      }
+    });
+    var rules = P.cf.map(function (c, i) {
+      var st = { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: argb(c.fill) } } };
+      if (c.font) st.font = { color: { argb: argb(c.font) } };
+      return c.text !== undefined
+        ? { type: 'cellIs', operator: 'equal', priority: i + 1, formulae: ['"' + c.text + '"'], style: st }
+        : { type: 'expression', priority: i + 1, formulae: [c.f.slice(1)], style: st };
+    });
+    ws.addConditionalFormatting({ ref: P.cf[0].range, rules: rules });
+
+    /* header and current state */
+    var ls = data.lastSave || {};
+    ws.getCell('D2').value = ls.by || '-';
+    ws.getCell('M2').value = ls.at ? thText(ls.at) : '-';
+    if (data.inspector) ws.getCell('D3').value = data.inspector;
+    ws.getCell('B4').value = 'บันทึกสภาพที่นั่ง, Monitor, Galley และห้องน้ำ · Export จากหน้าเว็บ ' + thText(new Date()) + ' · เวลาทั้งหมดเป็นเวลาประเทศไทย (TH-LT)';
+    L.order.forEach(function (id) {
+      var it = L.items[id], p = P.pos[id], d = state[id]; if (!d || !p) return;
+      ws.getCell(p.status[0], p.status[1]).value = it.kind === 'mon' ? M[d.m | 0] : (it.kind === 'eq' || it.kind === 'lav') ? E[d.s | 0] : S[d.s | 0];
+      if (d.note) ws.getCell(p.note[0], p.note[1]).value = d.note;
+    });
+
+    var ZN = {}; root.SEAT_ZONES.forEach(function (z) { ZN[z.key] = z.name; });
+    /* ---------- Galley และห้องน้ำ (as A340): summary tables (COUNTIFS over the list below) + the list linked to the map ---------- */
+    var isEq = function (id) { var k = L.items[id].kind; return k === 'eq' || k === 'lav'; };
+    var eqIds = L.order.filter(isEq), MS = "'ผังที่นั่ง'!";
+    var eqGroup = function (it) { return it.kind === 'eq' ? it.group : ZN[it.zone]; };
+    var lavZones = root.SEAT_ZONES.filter(function (z) { return eqIds.some(function (id) { var it = L.items[id]; return it.kind === 'lav' && it.zone === z.key; }); });
+    var galleys = Object.keys(root.SEAT_GAL).map(function (k) {
+      return { key: k, name: root.SEAT_GAL[k], types: root.SEAT_ETYPE_ORDER.filter(function (t) { return eqIds.some(function (id) { var it = L.items[id]; return it.gal === k && it.type === t; }); }) };
+    });
+    var g = wb.addWorksheet('Galley และห้องน้ำ', { views: [{ showGridLines: false }], pageSetup: { paperSize: 9, orientation: 'portrait', fitToPage: true, fitToWidth: 1, fitToHeight: 0 } });
+    [30, 18, 18, 18, 40, 22, 20].forEach(function (w, j) { g.getColumn(j + 1).width = w; });
+    function gput(r, c, v, o) {
+      o = o || {}; var cell = g.getCell(r, c);
+      if (v !== undefined && v !== null) cell.value = v;
+      cell.font = o.font || font(); cell.alignment = o.align || { horizontal: 'center', vertical: 'middle', wrapText: true }; cell.border = BOX;
+      if (o.fill) cell.fill = fill(o.fill); if (o.fmt) cell.numFmt = o.fmt;
       return cell;
     }
-    function dv(cell, list) { ws.getCell(cell).dataValidation = { type: 'list', allowBlank: true, formulae: ['"' + list.join(',') + '"'] }; }
-    function small(r, c, txt, valign) {
-      ws.getCell(r, c).value = txt; ws.getCell(r, c).font = font({ size: 6, bold: txt !== 'NOTE', color: { argb: C.MUTED } });
-      ws.getCell(r, c).alignment = { horizontal: 'right', vertical: valign || 'top' };
+    g.mergeCells('A1:G1'); g.getCell('A1').value = 'สถานภาพ Galley และห้องน้ำ (LAVATORY) A320-03';
+    g.getCell('A1').font = font({ sz: 14, b: true }); g.getCell('A1').alignment = { horizontal: 'center', vertical: 'middle' }; g.getCell('A1').fill = fill(C.TAG); g.getRow(1).height = 28;
+    g.mergeCells('A2:G2'); g.getCell('A2').value = 'แก้สภาพ Galley / ห้องน้ำได้ที่แผ่นงาน "ผังที่นั่ง" (dropdown ใต้ชื่ออุปกรณ์) · รายการและตารางสรุปในแผ่นนี้ดึงค่ามาเอง · Export ' + thText(new Date());
+    g.getCell('A2').font = font({ sz: 8, i: true }); g.getCell('A2').alignment = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    var nGalRows = 0; galleys.forEach(function (G) { nGalRows += 1 + G.types.length; });
+    var GS = 4, GE = GS + nGalRows + 1, LS = GE + 2, LE = LS + lavZones.length + 1, L0 = LE + 2, L1 = L0 + eqIds.length;
+    var rng = function (c) { return '$' + c + '$' + (L0 + 1) + ':$' + c + '$' + Math.max(L1, L0 + 1); };
+    var rB = rng('B'), rC = rng('C'), rD = rng('D');
+    function q(t) { return '"' + String(t).replace(/"/g, '""') + '"'; }
+    function cnt(f) { var c = { t: 0, s: [0, 0, 0] }; eqIds.forEach(function (id) { var it = L.items[id]; if (!f(it)) return; var d = state[id] || {}; c.t++; c.s[d.s | 0]++; }); return c; }
+    function sumHeader(r, first) {
+      [first, 'จำนวน', E[0], E[1], E[2]].forEach(function (t, j) { gput(r, j + 1, t, { font: font({ sz: 9, b: true }), fill: [C.ZONEH, C.ZONEH, C.GREEN, C.YEL, C.RED][j] }); });
+      g.getRow(r).height = 22;
     }
-    function statusColor(ref, statusCell, list) {
-      ws.addConditionalFormatting({ ref: ref, rules: [
-        { type: 'expression', priority: 1, formulae: [statusCell + '="' + list[2] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.RED } }, font: { color: { argb: 'FFFFFFFF' } } } },
-        { type: 'expression', priority: 2, formulae: [statusCell + '="' + list[1] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.YEL } } } }
+    function sumRow(r, name, crit, c, o) {
+      o = o || {};
+      gput(r, 1, name, { font: font({ b: !!o.bold }), align: { vertical: 'middle', horizontal: 'left', indent: o.indent ? 2 : 0 }, fill: o.fill });
+      gput(r, 2, { formula: 'COUNTIFS(' + crit + ')', result: c.t }, { font: font({ b: !!o.bold }), fill: o.fill });
+      E.forEach(function (t, j) { gput(r, 3 + j, { formula: 'COUNTIFS(' + crit + ',' + rD + ',' + q(t) + ')', result: c.s[j] }, { font: font({ b: !!o.bold }), fill: o.fill }); });
+    }
+    function totRow(r, rows, c) {
+      gput(r, 1, 'รวม', { font: font({ b: true }), align: { vertical: 'middle', horizontal: 'left' }, fill: C.GREY });
+      [c.t, c.s[0], c.s[1], c.s[2]].forEach(function (v, j) {
+        var Lc = col(2 + j); gput(r, 2 + j, { formula: rows.map(function (x) { return Lc + x; }).join('+') || '0', result: v }, { font: font({ b: true }), fill: C.GREY });
+      });
+    }
+    sumHeader(GS, 'GALLEY / อุปกรณ์');
+    var rr2 = GS + 1, galHeads = [];
+    galleys.forEach(function (G) {
+      galHeads.push(rr2);
+      sumRow(rr2++, G.name, rB + ',' + q(G.name), cnt(function (it) { return it.kind === 'eq' && it.gal === G.key; }), { bold: true, fill: C.CABIN });
+      G.types.forEach(function (t) {
+        sumRow(rr2++, root.SEAT_ETYPE[t], rB + ',' + q(G.name) + ',' + rC + ',' + q(root.SEAT_ETYPE[t]), cnt(function (it) { return it.kind === 'eq' && it.gal === G.key && it.type === t; }), { indent: true });
+      });
+    });
+    totRow(GE, galHeads, cnt(function (it) { return it.kind === 'eq'; }));
+    sumHeader(LS, 'ห้องน้ำ (LAVATORY) · ZONE');
+    var lavRows = [];
+    lavZones.forEach(function (z, i) {
+      var r = LS + 1 + i; lavRows.push(r);
+      var names = eqIds.filter(function (id) { var it = L.items[id]; return it.kind === 'lav' && it.zone === z.key; }).map(function (id) { return L.items[id].label; });
+      sumRow(r, z.name + ' (' + names.join(', ') + ')', rB + ',' + q(z.name) + ',' + rC + ',' + q('LAVATORY'), cnt(function (it) { return it.kind === 'lav' && it.zone === z.key; }));
+    });
+    totRow(LE, lavRows, cnt(function (it) { return it.kind === 'lav'; }));
+    ['รายการ', 'GALLEY / โซน', 'ประเภท', 'สภาพ', 'หมายเหตุ', 'ผู้บันทึกล่าสุด', 'วัน/เวลาล่าสุด (TH-LT)'].forEach(function (t, j) {
+      gput(L0, j + 1, t, { font: font({ sz: 9, b: true }), fill: C.ZONEH });
+    });
+    g.getRow(L0).height = 22;
+    eqIds.forEach(function (id, i) {
+      var r = L0 + 1 + i, it = L.items[id], d = state[id] || {}, p = P.pos[id];
+      var stA = col(p.status[1]) + p.status[0], ntA = col(p.note[1]) + p.note[0];
+      [it.full || it.label, eqGroup(it), it.tname, { formula: MS + stA, result: E[d.s | 0] }, { formula: 'IF(' + MS + ntA + '="","",' + MS + ntA + ')', result: d.note || '' }, d.by || '', d.at ? th(d.at) : ''].forEach(function (v, j) {
+        gput(r, j + 1, v, { align: { horizontal: (j === 0 || j === 4 || j === 5) ? 'left' : 'center', vertical: 'top', wrapText: j === 4 } });
+      });
+      g.getCell(r, 7).numFmt = 'dd/mm/yyyy hh:mm';
+    });
+    if (eqIds.length) {
+      g.addConditionalFormatting({ ref: 'D' + (L0 + 1) + ':D' + L1, rules: [
+        { type: 'cellIs', operator: 'equal', priority: 1, formulae: ['"' + E[1] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: argb(C.YEL) } } } },
+        { type: 'cellIs', operator: 'equal', priority: 2, formulae: ['"' + E[2] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: argb(C.RED) } }, font: { color: { argb: 'FFFFFFFF' } } } }
       ] });
+      g.autoFilter = 'A' + L0 + ':G' + L1;
     }
-
-    /* header */
-    ws.mergeCells('B1:T1');
-    ws.getCell('B1').value = 'STATUS SEAT PLAN A320(03)';
-    ws.getCell('B1').font = font({ size: 18, bold: true }); ws.getCell('B1').alignment = CENTER;
-    for (c = 2; c <= 20; c++) ws.getCell(1, c).fill = fill(C.TAG);
-    ws.getRow(1).height = 32;
-    var ls = data.lastSave || {};
-    put(2, 2, 'SAVE ล่าสุด', { font: font({ bold: true }), fill: C.ZONEH });
-    put(2, 4, ls.by || '-', { span: 7, fill: C.GREY });
-    put(2, 11, 'วัน/เวลาที่ SAVE (TH-LT)', { span: 3, font: font({ size: 8, bold: true }), fill: C.ZONEH });
-    put(2, 14, ls.at ? thText(ls.at) : '-', { span: 6, fill: C.GREY });
-    put(3, 2, 'ผู้ตรวจ', { font: font({ bold: true }), fill: C.ZONEH });
-    put(3, 4, data.inspector || null, { span: 7, fill: C.YEL });
-    put(3, 11, 'วัน/เวลาที่ตรวจ', { span: 3, font: font({ size: 8, bold: true }), fill: C.ZONEH });
-    put(3, 14, null, { span: 6, fill: C.YEL, fmt: 'dd/mm/yyyy hh:mm' });
-    ws.getRow(2).height = 26; ws.getRow(3).height = 26;
-    ws.mergeCells('B4:T4');
-    ws.getCell('B4').value = 'บันทึกสภาพที่นั่งและ Monitor · Export จากหน้าเว็บ ' + thText(new Date()) + ' · เวลาทั้งหมดเป็นเวลาประเทศไทย (TH-LT)';
-    ws.getCell('B4').font = font({ size: 8, italic: true }); ws.getCell('B4').alignment = CENTER;
-
-    var SUM0 = 5, TYP0 = 13;
-    [['ZONE', 2, 3, null], ['ที่นั่งรวม', 5, 2, null], ['ใช้งานได้ปกติ', 7, 2, C.GREEN], ['มีข้อขัดข้อง\nแต่ใช้งานได้', 9, 2, C.YEL],
-     ['ใช้งานไม่ได้', 11, 2, C.RED], ['Monitor รวม', 13, 2, C.BLUE], ['Monitor\nใช้งานได้', 15, 2, C.MGREEN],
-     ['Monitor\nเสื่อมสภาพ', 17, 2, C.YEL], ['Monitor\nเสีย', 19, 2, C.RED]].forEach(function (h) {
-      put(SUM0, h[1], h[0], { span: h[2], font: font({ size: 8, bold: true }), fill: h[3] });
-    });
-    ws.getRow(SUM0).height = 30;
-    [['ชนิด Monitor', 2, 9, null], ['จำนวน', 11, 2, C.BLUE], ['ใช้งานได้', 13, 2, C.MGREEN], ['เสื่อมสภาพ', 15, 2, C.YEL], ['เสีย', 17, 2, C.RED]].forEach(function (h) {
-      put(TYP0, h[1], h[0], { span: h[2], font: font({ size: 8, bold: true }), fill: h[3] });
-    });
-    ws.getRow(TYP0).height = 22;
-    ws.getCell('B18').value = 'วิธีใช้'; ws.getCell('B18').font = font({ size: 8, bold: true });
-    ws.mergeCells('C18:T18');
-    ws.getCell('C18').value = 'เลือกสภาพจาก dropdown ใต้ชื่อที่นั่งและใต้ป้าย Monitor · พิมพ์รายละเอียดในช่อง NOTE · สีและตารางสรุปเปลี่ยนเอง · Monitor = จอติดผนัง 21.5 นิ้ว, OVHD Monitor = จอพับเหนือที่นั่ง 12.0 นิ้ว';
-    ws.getCell('C18').font = font({ size: 8 }); ws.getCell('C18').alignment = { wrapText: true, vertical: 'middle' };
-    ws.getRow(18).height = 30;
-
-    var r = 20, cells = {}, order = [];
-    function zoneHeader(title, tag) {
-      ws.mergeCells(r, 2, r, 16); ws.getCell(r, 2).value = title;
-      ws.getCell(r, 2).font = font({ size: 11, bold: true }); ws.getCell(r, 2).alignment = { vertical: 'middle' };
-      for (var cc = 2; cc <= 16; cc++) ws.getCell(r, cc).fill = fill(C.ZONEH);
-      ws.mergeCells(r, 17, r, 20); ws.getCell(r, 17).value = tag;
-      ws.getCell(r, 17).font = font({ size: 10, bold: true }); ws.getCell(r, 17).alignment = CENTER;
-      for (cc = 17; cc <= 20; cc++) ws.getCell(r, cc).fill = fill(C.TAG);
-      ws.getRow(r).height = 22; r++; ws.getRow(r).height = 6; r++;
-    }
-    function cabin(r0, r1) {
-      for (var rr = r0; rr <= r1; rr++) for (var cc = 2; cc <= 20; cc++) {
-        var x = ws.getCell(rr, cc);
-        if (!x.fill || !x.fill.fgColor) x.fill = fill(C.CABIN);
-      }
-    }
-    function gapRow(h) { ws.getRow(r).height = h || 5; r++; }
-    /* seats: [[id, column, span, text]] all in one cabin row */
-    function seatRow(zone, num, seats) {
-      if (num !== null) put(r, 2, num, { span: 1, font: font({ size: 10, bold: true, color: { argb: 'FFFFFFFF' } }), fill: C.ROWNO });
-      seats.forEach(function (s) {
-        var id = s[0], c = s[1], span = s[2] || 2, a = col(c);
-        put(r, c, s[3] || id, { span: span, font: font({ size: s[3] ? 10 : 11, bold: true }), fill: C.GREEN });
-        put(r + 1, c, S[0], { span: span, font: font({ size: 7 }), fill: C.WHITE }); dv(a + (r + 1), S);
-        put(r + 2, c, null, { span: span, font: font({ size: 7 }), fill: C.WHITE, align: { wrapText: true, vertical: 'top', horizontal: 'left' } });
-        statusColor(a + r + ':' + col(c + span - 1) + r, '$' + a + '$' + (r + 1), S);
-        cells[id] = { zone: zone, kind: 'seat', label: s[3] ? 'Commander Center 1A' : id, seat: a + (r + 1), mon: null, note: a + (r + 2) };
-        order.push(id);
-      });
-      ws.getRow(r).height = 22; ws.getRow(r + 1).height = 14; ws.getRow(r + 2).height = 30;
-      small(r + 2, 2, 'NOTE');
-      r += 3;
-    }
-    /* monitors: [left, right], each null or [id, type 'W'|'R', position text, first column (optional)]
-     * the 4-column Monitor cell sits centred over the seats it serves */
-    function monRow(zone, pair) {
-      pair.forEach(function (m, i) {
-        if (!m) return;
-        var c = m[3] || (i ? MON_R : MON_L), a = col(c), id = m[0], label = MTYPE[m[1]] + ' ' + m[2];
-        put(r, c, MTYPE_CELL[m[1]], { span: 4, font: font({ size: 7, bold: true }), fill: m[1] === 'R' ? C.OVHD : C.MGREEN });
-        put(r + 1, c, M[0], { span: 4, font: font({ size: 7 }), fill: C.WHITE }); dv(a + (r + 1), M);
-        put(r + 2, c, null, { span: 4, font: font({ size: 7 }), fill: C.WHITE, align: { wrapText: true, vertical: 'top', horizontal: 'left' } });
-        statusColor(a + r + ':' + col(c + 3) + r, '$' + a + '$' + (r + 1), M);
-        cells[id] = { zone: zone, kind: 'mon', type: m[1], label: label, seat: null, mon: a + (r + 1), note: a + (r + 2) };
-        order.push(id);
-      });
-      small(r, 2, 'Monitor', 'middle');
-      ws.getRow(r).height = 14; ws.getRow(r + 1).height = 14; ws.getRow(r + 2).height = 24;
-      small(r + 2, 2, 'NOTE');
-      r += 3;
-    }
-    function furniture(r0, c0, rows, span, txt) {
-      put(r0, c0, txt, { span: span, rows: rows, font: font({ size: 9, bold: true, color: { argb: C.MUTED } }), fill: C.FURN });
-    }
-    function frame(r0, r1, c0, c1) {
-      var med = { style: 'medium', color: { argb: C.MUTED } };
-      frames.push([r0, r1, c0, c1]);
-      for (var rr = r0; rr <= r1; rr++) for (var cc = c0; cc <= c1; cc++) {
-        var b = Object.assign({}, ws.getCell(rr, cc).border || {});
-        if (cc === c0) b.left = med; if (cc === c1) b.right = med; if (rr === r0) b.top = med; if (rr === r1) b.bottom = med;
-        ws.getCell(rr, cc).border = b;
-      }
-    }
-    var z0, zr = {}, rr0, frames = [];
-
-    /* FRONT CREW ZONE: Commander Center room on the left, 1D/1F on the right */
-    z0 = r; zoneHeader('Front Crew Zone (3 Seats)', 'CREW');
-    rr0 = r;
-    ws.mergeCells(r, 3, r, 8); ws.getCell(r, 3).value = 'ห้อง Commander Center';
-    ws.getCell(r, 3).font = font({ size: 8, bold: true, color: { argb: C.MUTED } }); ws.getCell(r, 3).alignment = CENTER; r++;
-    monRow('F', [['MON-F1', 'W', 'หน้าที่นั่ง CC 1A'], ['MON-F2', 'W', 'หน้าที่นั่ง 1D, 1F']]);
-    /* Commander Center 1A: 4 columns (4-7), the same width and line as 7B+7C and their Monitor */
-    seatRow('F', 1, [['CC1A', 4, 4, 'Commander Center 1A'], ['1D', COLS.D], ['1F', COLS.F]]);
-    frame(rr0, r - 1, 3, 8);
-    zr.F = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
-
-    /* VVIP OA: 2A and 3A on the left, sofa on the right */
-    z0 = r; zoneHeader('VVIP OA (2 Seats)', 'VVIP OA');
-    monRow('A', [['MON-A1', 'W', 'หน้าที่นั่ง 2A'], null]);
-    var sofa0 = r;
-    /* 2A and 3A sit in the middle column of the left side so they line up under the Monitor */
-    seatRow('A', 2, [['2A', COLS.B]]); gapRow();
-    seatRow('A', 3, [['3A', COLS.B]]);
-    furniture(sofa0, 14, r - sofa0, 6, 'SOFA');
-    monRow('A', [['MON-A2', 'W', 'หลังที่นั่ง 3A'], ['MON-A3', 'W', 'หลังโซฟา']]);
-    zr.A = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
-
-    /* VIP OB: Meeting Area */
-    z0 = r; zoneHeader('VIP OB (6 Seats)', 'VIP OB');
-    monRow('B', [['MON-B1', 'W', 'หน้าที่นั่ง 5B'], ['MON-B2', 'W', 'หน้าที่นั่ง 5D, 5F']]);
-    /* right side: 5D/5F and 6D/6F sit side by side under their Monitor (columns 15-18), table as wide as the 2 seats */
-    seatRow('B', 5, [['5B', COLS.B], ['5D', 15], ['5F', 17]]); gapRow();
-    furniture(r, COLS.B, 1, 2, 'TABLE'); furniture(r, 15, 1, 4, 'TABLE'); ws.getRow(r).height = 22; r++; gapRow();
-    seatRow('B', 6, [['6B', COLS.B], ['6D', 15], ['6F', 17]]);
-    monRow('B', [['MON-B3', 'W', 'หลังที่นั่ง 6B'], ['MON-B4', 'W', 'หลังที่นั่ง 6D, 6F']]);
-    zr.B = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
-
-    /* VVIP OC: Business Class */
-    z0 = r; zoneHeader('VVIP OC (8 Seats)', 'VVIP OC');
-    monRow('C', [['MON-C1', 'W', 'หน้าที่นั่ง 7B, 7C'], ['MON-C2', 'W', 'หน้าที่นั่ง 7D, 7F']]);
-    /* seat pairs sit side by side under their Monitor, lined up with VVIP OA / OB: left columns 4-7, right columns 15-18 */
-    seatRow('C', 7, [['7B', 4], ['7C', 6], ['7D', 15], ['7F', 17]]); gapRow();
-    seatRow('C', 8, [['8B', 4], ['8C', 6], ['8D', 15], ['8F', 17]]);
-    monRow('C', [['MON-C3', 'W', 'หลังที่นั่ง 8B, 8C'], ['MON-C4', 'W', 'หลังที่นั่ง 8D, 8F']]);
-    zr.C = [z0, r]; cabin(z0 + 1, r); gapRow(); r++;
-
-    /* PASSENGER OD: Economy, OVHD Monitors in front of rows 10, 12, 15, 17 */
-    z0 = r; zoneHeader('Passenger OD (54 Seats)', 'ECONOMY');
-    monRow('D', [['MON-D1', 'W', 'หน้าที่นั่ง 9A, 9B, 9C'], ['MON-D2', 'W', 'หน้าที่นั่ง 9D, 9E, 9F']]);
-    [9, 10, 11, 12, 14, 15, 16, 17, 18].forEach(function (n, i) {
-      if ([10, 12, 15, 17].indexOf(n) >= 0) monRow('D', [['MON-D' + n + 'L', 'R', 'หน้าที่นั่ง ' + n + 'A, ' + n + 'B, ' + n + 'C'], ['MON-D' + n + 'R', 'R', 'หน้าที่นั่ง ' + n + 'D, ' + n + 'E, ' + n + 'F']]);
-      else if (i) gapRow();
-      seatRow('D', n, 'ABCDEF'.split('').map(function (L) { return [n + L, COLS[L]]; }));
-    });
-    zr.D = [z0, r]; cabin(z0 + 1, r);
-    var LAST = r;
-
-    var area = 'C20:T' + LAST;
-    ws.addConditionalFormatting({ ref: area, rules: [
-      { type: 'cellIs', operator: 'equal', priority: 3, formulae: ['"' + S[1] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.YEL } } } },
-      { type: 'cellIs', operator: 'equal', priority: 4, formulae: ['"' + M[1] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.YEL } } } },
-      { type: 'cellIs', operator: 'equal', priority: 5, formulae: ['"' + S[2] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.RED } }, font: { color: { argb: 'FFFFFFFF' } } } },
-      { type: 'cellIs', operator: 'equal', priority: 6, formulae: ['"' + M[2] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.RED } }, font: { color: { argb: 'FFFFFFFF' } } } }
-    ] });
-
-    /* summary formulas count the list sheet (with cached results so every viewer shows numbers at once) */
-    var q = "'" + LIST + "'!";
-    function cnt(pred) {
-      var o = { t: 0, s: [0, 0, 0], mt: 0, m: [0, 0, 0] };
-      order.forEach(function (id) { var it = cells[id], d = state[id] || {}; if (!pred(it)) return;
-        if (it.seat) { o.t++; o.s[d.s | 0]++; } if (it.mon) { o.mt++; o.m[d.m | 0]++; } });
-      return o;
-    }
-    var tot = cnt(function () { return true; });
-    ZKEYS.forEach(function (k, i) {
-      var row = SUM0 + 1 + i, n = cnt(function (it) { return it.zone === k; });
-      put(row, 2, ZN[k], { span: 3, font: font({ size: 8, bold: true }), align: { vertical: 'middle' } });
-      put(row, 5, { formula: 'G' + row + '+I' + row + '+K' + row, result: n.t });
-      S.forEach(function (t, j) { put(row, 7 + 2 * j, { formula: 'COUNTIFS(' + q + '$C:$C,$B' + row + ',' + q + '$D:$D,"' + t + '")', result: n.s[j] }, { fill: [C.GREEN, C.YEL, C.RED][j] }); });
-      put(row, 13, { formula: 'O' + row + '+Q' + row + '+S' + row, result: n.mt }, { fill: C.BLUE });
-      M.forEach(function (t, j) { put(row, 15 + 2 * j, { formula: 'COUNTIFS(' + q + '$C:$C,$B' + row + ',' + q + '$E:$E,"' + t + '")', result: n.m[j] }, { fill: [C.MGREEN, C.YEL, C.RED][j] }); });
-    });
-    var rt = SUM0 + 6;
-    put(rt, 2, 'รวม', { span: 3, font: font({ size: 8, bold: true }), align: { vertical: 'middle' } });
-    [[5, null, tot.t], [7, C.GREEN, tot.s[0]], [9, C.YEL, tot.s[1]], [11, C.RED, tot.s[2]], [13, C.BLUE, tot.mt], [15, C.MGREEN, tot.m[0]], [17, C.YEL, tot.m[1]], [19, C.RED, tot.m[2]]].forEach(function (x) {
-      put(rt, x[0], { formula: 'SUM(' + col(x[0]) + (SUM0 + 1) + ':' + col(x[0]) + (SUM0 + 5) + ')', result: x[2] }, { font: font({ bold: true }), fill: x[1] });
-    });
-    /* summary by Monitor type */
-    ['W', 'R'].forEach(function (k, i) {
-      var row = TYP0 + 1 + i, n = cnt(function (it) { return it.type === k; });
-      put(row, 2, MTYPE_FULL[k] + ' (' + MTYPE[k] + ')', { span: 9, font: font({ size: 8, bold: true }), align: { vertical: 'middle', wrapText: true } });
-      put(row, 11, { formula: 'M' + row + '+O' + row + '+Q' + row, result: n.mt }, { fill: C.BLUE });
-      M.forEach(function (t, j) { put(row, 13 + 2 * j, { formula: 'COUNTIFS(' + q + '$B:$B,"' + MTYPE[k] + '",' + q + '$E:$E,"' + t + '")', result: n.m[j] }, { fill: [C.MGREEN, C.YEL, C.RED][j] }); });
-      ws.getRow(row).height = 24;
-    });
-    var rt2 = TYP0 + 3;
-    put(rt2, 2, 'รวม', { span: 9, font: font({ size: 8, bold: true }), align: { vertical: 'middle' } });
-    [[11, C.BLUE, tot.mt], [13, C.MGREEN, tot.m[0]], [15, C.YEL, tot.m[1]], [17, C.RED, tot.m[2]]].forEach(function (x) {
-      put(rt2, x[0], { formula: 'SUM(' + col(x[0]) + (TYP0 + 1) + ':' + col(x[0]) + (TYP0 + 2) + ')', result: x[2] }, { font: font({ bold: true }), fill: x[1] });
-    });
-
-    /* current state */
-    order.forEach(function (id) {
-      var it = cells[id], d = state[id]; if (!d) return;
-      if (it.seat) ws.getCell(it.seat).value = S[d.s | 0];
-      if (it.mon) ws.getCell(it.mon).value = M[d.m | 0];
-      if (d.note) ws.getCell(it.note).value = d.note;
-    });
 
     /* list sheets */
-    var HDR = ['ที่นั่ง / จุด', 'ประเภท', 'โซน', 'สภาพที่นั่ง', 'สภาพ Monitor', 'หมายเหตุ', 'ผู้บันทึกล่าสุด', 'วัน/เวลาล่าสุด (TH-LT)'];
-    var WID = [34, 14, 18, 16, 14, 44, 24, 20];
+    var HDR = ['ที่นั่ง / จุด', 'ประเภท', 'โซน', 'สภาพที่นั่ง / อุปกรณ์', 'สภาพ Monitor', 'หมายเหตุ', 'ผู้บันทึกล่าสุด', 'วัน/เวลาล่าสุด (TH-LT)'];
+    var WID = [52, 10, 18, 16, 14, 44, 24, 20];
+    var CENTER = { horizontal: 'center', vertical: 'middle', wrapText: true };
+    function col(n) { return root.seatColName(n); }
     function statusCF(s, end) {
       if (end < 2) return;
+      var red = { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: argb(C.RED) } }, font: { color: { argb: 'FFFFFFFF' } } };
+      var yel = { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: argb(C.YEL) } } };
       s.addConditionalFormatting({ ref: 'D2:E' + end, rules: [
-        { type: 'cellIs', operator: 'equal', priority: 1, formulae: ['"' + S[1] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.YEL } } } },
-        { type: 'cellIs', operator: 'equal', priority: 2, formulae: ['"' + M[1] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.YEL } } } },
-        { type: 'cellIs', operator: 'equal', priority: 3, formulae: ['"' + S[2] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.RED } }, font: { color: { argb: 'FFFFFFFF' } } } },
-        { type: 'cellIs', operator: 'equal', priority: 4, formulae: ['"' + M[2] + '"'], style: { fill: { type: 'pattern', pattern: 'solid', bgColor: { argb: C.RED } }, font: { color: { argb: 'FFFFFFFF' } } } }
+        { type: 'cellIs', operator: 'equal', priority: 1, formulae: ['"' + S[1] + '"'], style: yel },
+        { type: 'cellIs', operator: 'equal', priority: 2, formulae: ['"' + M[1] + '"'], style: yel },
+        { type: 'cellIs', operator: 'equal', priority: 3, formulae: ['"' + S[2] + '"'], style: red },
+        { type: 'cellIs', operator: 'equal', priority: 4, formulae: ['"' + M[2] + '"'], style: red },
+        { type: 'cellIs', operator: 'equal', priority: 5, formulae: ['"' + E[1] + '"'], style: yel },
+        { type: 'cellIs', operator: 'equal', priority: 6, formulae: ['"' + E[2] + '"'], style: red }
       ] });
     }
     function header(s, titles, widths) {
       titles.forEach(function (t, j) {
-        var c = s.getCell(1, j + 1); c.value = t; c.font = font({ size: 10, bold: true }); c.fill = fill(C.ZONEH); c.border = BOX; c.alignment = CENTER;
+        var c = s.getCell(1, j + 1); c.value = t; c.font = font({ sz: 10, b: true }); c.fill = fill(C.ZONEH); c.border = BOX; c.alignment = CENTER;
         s.getColumn(j + 1).width = widths[j];
       });
       s.views = [{ state: 'frozen', ySplit: 1 }];
     }
     function listSheet(title, ids, live) {
       var s = wb.addWorksheet(title); header(s, HDR, WID);
-      var qm = "'ผังที่นั่ง'!";
+      var q = "'ผังที่นั่ง'!";
       ids.forEach(function (id, i) {
-        var row = 2 + i, it = cells[id], d = state[id] || {};
-        var vals = [it.label, it.seat ? 'ที่นั่ง' : MTYPE[it.type], ZN[it.zone]];
-        if (live) {
-          vals.push(it.seat ? { formula: qm + it.seat, result: S[d.s | 0] } : '-');
-          vals.push(it.mon ? { formula: qm + it.mon, result: M[d.m | 0] } : '-');
-          vals.push({ formula: 'IF(' + qm + it.note + '="",""' + ',' + qm + it.note + ')', result: d.note || '' });
+        var row = 2 + i, it = L.items[id], p = P.pos[id], d = state[id] || {}, isMon = it.kind === 'mon';
+        var st = col(p.status[1]) + p.status[0], nt = col(p.note[1]) + p.note[0];
+        var vals = [it.name, isMon ? 'Monitor' : it.kind === 'eq' ? 'Galley' : it.kind === 'lav' ? 'ห้องน้ำ' : 'ที่นั่ง', it.kind === 'eq' ? it.group : ZN[it.zone]];
+        if (isEq(id)) {
+          vals.push(E[d.s | 0], '-', d.note || '');
+        } else if (live) {
+          vals.push(isMon ? '-' : { formula: q + st, result: S[d.s | 0] });
+          vals.push(isMon ? { formula: q + st, result: M[d.m | 0] } : '-');
+          vals.push({ formula: 'IF(' + q + nt + '="",""' + ',' + q + nt + ')', result: d.note || '' });
         } else {
-          vals.push(it.seat ? S[d.s | 0] : '-', it.mon ? M[d.m | 0] : '-', d.note || '');
+          vals.push(isMon ? '-' : S[d.s | 0], isMon ? M[d.m | 0] : '-', d.note || '');
         }
         vals.push(d.by || '', d.at ? th(d.at) : '');
         vals.forEach(function (v, j) {
           var c = s.getCell(row, j + 1); c.value = v; c.font = font(); c.border = BOX;
-          c.alignment = { horizontal: (j === 0 || j === 5 || j === 6) ? 'left' : 'center', vertical: 'top', wrapText: j === 5 };
+          c.alignment = { horizontal: (j === 0 || j === 5 || j === 6) ? 'left' : 'center', vertical: 'top', wrapText: j === 0 || j === 5 };
         });
         s.getCell(row, 8).numFmt = 'dd/mm/yyyy hh:mm';
       });
@@ -337,14 +239,14 @@
       if (end >= 2) s.autoFilter = 'A1:H' + end;
       return s;
     }
-    var bad = order.filter(function (id) { var d = state[id] || {}; return (d.s | 0) || (d.m | 0) || d.note; });
+    var bad = L.order.filter(function (id) { var d = state[id] || {}; return (d.s | 0) || (d.m | 0) || d.note; });
     var sBad = listSheet('รวมข้อขัดข้องคงค้าง', bad, false);
     if (!bad.length) { sBad.getCell('A2').value = 'ไม่มีข้อขัดข้องคงค้าง'; sBad.getCell('A2').font = font(); }
-    listSheet(LIST, order, true);
+    listSheet('ทุกที่นั่ง และ Monitor', L.order.filter(function (id) { return !isEq(id); }), true);
 
     /* history: every cell centred (horizontal + vertical) */
     var h = wb.addWorksheet('ประวัติการแก้ไข');
-    header(h, ['วัน/เวลา (TH-LT)', 'อีเมลผู้แก้ไข', 'ผู้ตรวจ', 'ที่นั่ง / จุด', 'รายการ', 'ค่าเดิม', 'ค่าใหม่'], [20, 30, 24, 34, 14, 36, 36]);
+    header(h, ['วัน/เวลา (TH-LT)', 'อีเมลผู้แก้ไข', 'ผู้ตรวจ', 'ที่นั่ง / จุด', 'รายการ', 'ค่าเดิม', 'ค่าใหม่'], [20, 30, 24, 52, 14, 36, 36]);
     var hist = data.history;
     if (!hist) {
       h.mergeCells('A2:G2'); h.getCell('A2').value = 'ไม่สามารถดึงประวัติการแก้ไขได้ ดูในแท็บ "ประวัติการแก้ไข" ของ Google Sheet';
@@ -360,10 +262,9 @@
       });
       if (hist.length) h.autoFilter = 'A1:G' + (1 + hist.length);
     }
-    wb.seatCells = cells; wb.seatOrder = order; wb.seatZoneRows = zr; wb.seatFrames = frames; wb.seatLastRow = LAST;
     return wb;
   }
 
   root.buildSeatWorkbook = buildSeatWorkbook;
   root.seatThText = thText;
-})(typeof window !== 'undefined' ? window : (typeof globalThis !== 'undefined' ? globalThis : this));
+})(typeof window !== 'undefined' ? window : this);
