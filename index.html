@@ -398,6 +398,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
 .op1 .hdoor i{flex:1;border-left:1.5px dashed #33475c;margin:2px 0}
 .op1 .hdoor span{display:inline-block;background:#33475c;color:#fff;border-radius:2px;padding:2px 2px 3px;line-height:1;white-space:nowrap}
 .op1 .hdoor.ex i{border-color:#c4600f}.op1 .hdoor.ex span{background:#c4600f}
+.op1 .hdoor.ex span{text-align:center;line-height:1.1;padding:1px 2px 2px}
 .op1 .hbelow{display:grid;grid-template-columns:1.5fr 1fr;gap:16px;align-items:start}
 .op1 .hleg{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 18px;font-size:10px;color:var(--muted);padding:5px 8px;border:1px solid var(--line);border-radius:5px}
 .op1 .hleg i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
@@ -469,7 +470,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
     <span><i class="sw" style="background:var(--bad)"></i>ใช้งานไม่ได้ (×)</span>
     <span><i class="sw" style="background:var(--panel);box-shadow:inset 5px 0 0 var(--ok);border:1px solid var(--gline);width:24px"></i>อุปกรณ์ Galley: แถบสีด้านซ้าย = สภาพ</span>
     <span><i class="sw" style="border-block:2px dashed var(--gline);width:24px;height:10px;border-radius:0"></i>ประตู (DOOR)</span>
-    <span><i class="sw" style="border-block:2px dashed #e07b24;width:24px;height:10px;border-radius:0"></i>ทางออกฉุกเฉิน (OVERWING EXIT)</span>
+    <span><i class="sw" style="border-block:2px dashed #e07b24;width:24px;height:10px;border-radius:0"></i>ทางออกฉุกเฉิน (EMER EXIT L / R)</span>
     <span>ตัวย่อ Galley: CM = Coffee Maker (Beverage Maker) · MW = Microwave · HC = Hot Cup · REF = Refrigerator · WB = Water Boiler · WH = Water Heater · FCT = Faucet (Sink) · WL = Work Light · ปลั๊ก 220V = 220VAC Power Outlet · STO / Stor = Storage · STW / Stow = Stowage · TRL = Trolley Stowage · ACH = Air Chiller · WST = Waste · ช่องลายเส้น = ไม่ได้ตรวจ (Elec. Panel, Sink)</span>
     <span><i class="sw" style="background:var(--lavbg);border:2px solid var(--ok);width:24px;box-sizing:border-box"></i>ห้องน้ำ (LAV): สีกรอบ = สภาพ</span>
     <span><i class="sw mon" style="background:var(--mon21)"></i>Monitor 21.5"</span>
@@ -670,10 +671,10 @@ var ZONES=[
          {tables:[1,2]},
          {L:['6B'],R:['6D','6F']},
          {mon:['MON-B3','MON-B4']},
-         {door:{code:'FWD',kind:'exit'}}]},
+         {door:{code:'',kind:'exit'}}]},
  {key:'C',name:'VVIP OC',title:'VVIP OC (8 Seats)',tag:'VVIP OC',
   mons:{'MON-C1':['w21','หน้าที่นั่ง 7B, 7C'],'MON-C2':['w21','หน้าที่นั่ง 7D, 7F'],'MON-C3':['w21','หลังที่นั่ง 8B, 8C'],'MON-C4':['w21','หลังที่นั่ง 8D, 8F']},
-  lines:[{door:{code:'AFT',kind:'exit'},fac:{R:[{lav:'CV',seats:2}]}},{mon:['MON-C1','MON-C2']},
+  lines:[{fac:{R:[{lav:'CV',seats:2}]}},{mon:['MON-C1','MON-C2']},
          {L:['7B','7C'],R:['7D','7F']},
          {L:['8B','8C'],R:['8D','8F']},
          {mon:['MON-C3','MON-C4']}]},
@@ -759,16 +760,16 @@ function facRow(f){
   });
   return r;
 }
-/* door / emergency exit band; labels sit outside the seat columns. inner = optional row drawn in the same line (AFT exit + CENTER VIP LAV) */
-var DOOR_TXT={door:{lg:function(c,s){return 'DOOR '+c+s}},exit:{lg:function(c,s){return 'EMERGENCY EXIT (OVERWING) '+c+' '+s}}};
+/* door / emergency exit band; labels sit outside the seat columns. inner = optional row drawn in the same line. Exit = EMER EXIT L / R (one pair, behind row 6) */
+var DOOR_TXT={door:{lg:function(c,s){return 'DOOR '+c+s}},exit:{lg:function(c,s){return 'EMER EXIT '+s}}};
 function doorRow(d,inner){
   var b=el('div','door'+(d.kind==='exit'?' exit':'')),mk=function(side){
     var x=el('div',side==='L'?'dl':'dr'),arrow=side==='L'?'◀ ':' ▶';
     var lg=el('span','lg',side==='L'?arrow+DOOR_TXT[d.kind].lg(d.code,side):DOOR_TXT[d.kind].lg(d.code,side)+arrow);
-    var sh=el('span','sh');sh.innerHTML=d.kind==='exit'?'<small>EXIT</small>'+d.code+' '+side:'<small>DOOR</small>'+d.code+side;
+    var sh=el('span','sh');sh.innerHTML=d.kind==='exit'?'<small>EMER</small>EXIT '+side:'<small>DOOR</small>'+d.code+side;
     x.appendChild(lg);x.appendChild(sh);return x};
   b.appendChild(mk('L'));var mid=el('div','dmid');if(inner)mid.appendChild(inner);b.appendChild(mid);b.appendChild(mk('R'));
-  b.setAttribute('aria-label',d.kind==='exit'?'Emergency exit (overwing) '+d.code+' L / R':'Door '+d.code+'L / '+d.code+'R');
+  b.setAttribute('aria-label',d.kind==='exit'?'EMER EXIT L / R':'Door '+d.code+'L / '+d.code+'R');
   return b;
 }
 function build(){
@@ -1316,8 +1317,8 @@ function hZone(z){
   g.style.gridTemplateRows='14px auto 12px auto'+(cols.some(function(c){return c.room})?' 21px':'');
   cols.forEach(function(c,i){
     var col=i+1,put=function(node,row){node.style.gridColumn=String(col);node.style.gridRow=String(row);g.appendChild(node)};
-    if(c.k==='door'){var dd=el('div','hdoor'+(c.d.kind==='exit'?' ex':''));dd.innerHTML='<span>'+(c.d.kind==='exit'?c.d.code+' R':c.d.code+'R')+'</span><i></i><span>'+(c.d.kind==='exit'?c.d.code+' L':c.d.code+'L')+'</span>';
-      dd.title=c.d.kind==='exit'?'EMERGENCY EXIT (OVERWING) '+c.d.code:'DOOR '+c.d.code;dd.style.gridColumn=String(col);dd.style.gridRow='1 / 5';g.appendChild(dd);return}
+    if(c.k==='door'){var dd=el('div','hdoor'+(c.d.kind==='exit'?' ex':''));dd.innerHTML='<span>'+(c.d.kind==='exit'?'EMER<br>EXIT R':c.d.code+'R')+'</span><i></i><span>'+(c.d.kind==='exit'?'EMER<br>EXIT L':c.d.code+'L')+'</span>';
+      dd.title=c.d.kind==='exit'?'EMER EXIT L / R':'DOOR '+c.d.code;dd.style.gridColumn=String(col);dd.style.gridRow='1 / 5';g.appendChild(dd);return}
     put(el('div','hno',c.no||''),1);if(c.sofa){var sb=hCell(c.top,c.k);sb.style.gridColumn=col+' / span '+c.sofa;sb.style.justifySelf='stretch';sb.style.width='100%';sb.style.gridRow='2';g.appendChild(sb)}else if(!cols.some(function(x,k){return x.sofa&&k<i&&k+x.sofa>i}))put(hCell(c.top,c.k),2);put(el('div','haisle'),3);put(hCell(c.bot,c.k),4);
   });
   var rc=cols.map(function(c,i){return c.room?i+1:0}).filter(Boolean);
@@ -1338,7 +1339,7 @@ function mapPageH(nDef){
   legItem(lg,'background:var(--monb);width:5px;height:13px;vertical-align:-3px','OVHD Monitor 12.0"');
   legItem(lg,'background:var(--ok);border-bottom:3px solid var(--ink);box-sizing:border-box','ขีดล่าง = มีหมายเหตุ');
   legItem(lg,'background:#33475c;width:12px','DOOR 1 / 4');
-  legItem(lg,'background:#c4600f;width:12px','EMERGENCY EXIT (OVERWING) FWD / AFT');
+  legItem(lg,'background:#c4600f;width:12px','EMER EXIT L / R');
   r.appendChild(lg);
   var below=el('div','hbelow');
   var sb=el('div');sb.appendChild(el('h3',null,'สรุปตามโซน'));var t=el('table','sum');t.innerHTML=summaryHTML();sb.appendChild(t);below.appendChild(sb);
@@ -1388,8 +1389,8 @@ var EQ_CABIN=[
  {z:'VVIP OA',R:[{lav:'FV'}]},
  {z:'VVIP OA',seat:'VVIP OA',sub:'2A 3A · SOFA'},
  {z:'VIP OB',seat:'VIP OB',sub:'แถว 5-6'},
- {z:'VIP OB',door:{code:'FWD',kind:'exit'}},
- {z:'VVIP OC',door:{code:'AFT',kind:'exit'},R:[{lav:'CV'}]},   /* exit in line with CENTER VIP LAV */
+ {z:'VIP OB',door:{code:'',kind:'exit'}},
+ {z:'VVIP OC',R:[{lav:'CV'}]},
  {z:'VVIP OC',seat:'VVIP OC',sub:'แถว 7-8'},
  {z:'PASSENGER OD',seat:'PASSENGER OD',sub:'แถว 9-18 · 54 ที่นั่ง'},
  {z:'PASSENGER OD',R:[{lav:'E'}],L:[{lav:'D'}],pad:true},
@@ -1426,14 +1427,14 @@ function eqMapPage(nDef,defFrom){
   EQ_CABIN.forEach(function(S,i){var c=i+1;cols.push('auto');
     if(S.door){var ex=S.door.kind==='exit',t=ex?S.door.code+' R':S.door.code+'R',bt=ex?S.door.code+' L':S.door.code+'L';
       /* exit line runs the full width; a LAV in the same column sits on top of it */
-      segs+='<div class="fdoor'+(ex?' ex':'')+'" style="grid-column:'+c+'"><span>'+(ex?'EXIT ':'DOOR ')+t+'</span><i></i><span>'+(ex?'EXIT ':'DOOR ')+bt+'</span></div>'}
+      segs+='<div class="fdoor'+(ex?' ex':'')+'" style="grid-column:'+c+'"><span>'+(ex?'EMER EXIT R':'DOOR '+t)+'</span><i></i><span>'+(ex?'EMER EXIT L':'DOOR '+bt)+'</span></div>'}
     if(S.seat){segs+='<div class="fseat" style="grid-column:'+c+'"><b>'+S.seat+'</b><span>'+S.sub+'</span></div>';}
     else{['R','L','X'].forEach(function(k){if(S[k])segs+='<div class="fl '+k+(S[k].every(function(x){return x.lav})&&!S.door?' lv':'')+'" style="grid-column:'+c+(S.pad?';padding-inline:10px':'')+(S.door?';z-index:3;position:relative':'')+'">'+S[k].map(function(x){return block(S.door?Object.assign({h:1},x):x)}).join('')+'</div>'})}
   });
   var z0=null,start=1;
   EQ_CABIN.concat([{z:null}]).forEach(function(S,i){if(S.z!==z0){if(z0)zones+='<div class="fz" style="grid-column:'+start+' / '+(i+1)+'">'+z0+'</div>';z0=S.z;start=i+1}});
   html+='<div class="fuse" style="grid-template-columns:'+cols.join(' ')+'"><div class="fais"><span>ทางเดิน (AISLE)</span></div>'+segs+zones+'</div>';
-  html+='<div class="lleg"><span><i style="background:#33475c"></i>DOOR</span><span><i style="background:#c4600f"></i>EMERGENCY EXIT (OVERWING)</span><span><i style="background:var(--ok)"></i>ใช้งานได้</span><span><i style="background:var(--warn)"></i>ใช้งานได้บางส่วน (!)</span><span><i style="background:var(--bad)"></i>ใช้งานไม่ได้ (×)</span><span><i class="lge"></i>แถบซ้าย = สภาพอุปกรณ์</span><span><i class="lgl"></i>กรอบ = สภาพห้องน้ำ</span><span><i class="lgn"></i>ขีดล่าง = มีหมายเหตุ</span><span>CM = Coffee Maker · HC = Hot Cup · MW = Microwave · Stor = Storage · Stow = Stowage · Trl = Trolley Stowage · Air Chl = Air Chiller · WL = Work Light · Sink/Fct = Faucet ที่ Sink · 220V = 220VAC Power Outlet · AFT: S = Stowage · T = Trolley · Ov = Steam Oven · WB = Water Boiler · WH = Water Heater</span></div>';
+  html+='<div class="lleg"><span><i style="background:#33475c"></i>DOOR</span><span><i style="background:#c4600f"></i>EMER EXIT</span><span><i style="background:var(--ok)"></i>ใช้งานได้</span><span><i style="background:var(--warn)"></i>ใช้งานได้บางส่วน (!)</span><span><i style="background:var(--bad)"></i>ใช้งานไม่ได้ (×)</span><span><i class="lge"></i>แถบซ้าย = สภาพอุปกรณ์</span><span><i class="lgl"></i>กรอบ = สภาพห้องน้ำ</span><span><i class="lgn"></i>ขีดล่าง = มีหมายเหตุ</span><span>CM = Coffee Maker · HC = Hot Cup · MW = Microwave · Stor = Storage · Stow = Stowage · Trl = Trolley Stowage · Air Chl = Air Chiller · WL = Work Light · Sink/Fct = Faucet ที่ Sink · 220V = 220VAC Power Outlet · AFT: S = Stowage · T = Trolley · Ov = Steam Oven · WB = Water Boiler · WH = Water Heater</span></div>';
   var cell=function(v,c){return '<td class="'+(v?c+' nz':'')+'">'+v+'</td>'};
   var row=function(name,c){return '<tr><td>'+name+'</td><td>'+c.t+'</td><td>'+c.s[0]+'</td>'+cell(c.s[1],'w')+cell(c.s[2],'b')+'</tr>'};
   var head=function(first){return '<thead><tr><th>'+first+'</th><th>จำนวน</th><th><i style="background:var(--ok)"></i>ใช้งานได้</th><th><i style="background:var(--warn)"></i>บางส่วน</th><th><i style="background:var(--bad)"></i>ใช้ไม่ได้</th></tr></thead><tbody>'};

@@ -131,14 +131,14 @@ function seatPlanLayout() {
   blk('B', '', [{ text: 'TABLE', c: L1 }, { text: 'TABLE', c: R2S, span: 4 }]);
   seat('6B', 'B'); seat('6D', 'B'); seat('6F', 'B'); blk('B', '6', [{ id: '6B', c: L1 }, { id: '6D', c: R2S }, { id: '6F', c: R2S + 2 }]);
   blk('B', 'Monitor', [{ id: 'MON-B3', c: L1 }, { id: 'MON-B4', c: R2S, span: 4 }]);
-  door('B', '', '', true, 'FWD');
+  door('B', '', '', true, '');
 
   zone('C', 'VVIP OC (8 Seats)', 'VVIP OC');
   mon('MON-C1', 'C', 'w21', 'หน้าที่นั่ง 7B, 7C', 'หน้า 7B-7C');
   mon('MON-C2', 'C', 'w21', 'หน้าที่นั่ง 7D, 7F', 'หน้า 7D-7F');
   mon('MON-C3', 'C', 'w21', 'หลังที่นั่ง 8B, 8C', 'หลัง 8B-8C');
   mon('MON-C4', 'C', 'w21', 'หลังที่นั่ง 8D, 8F', 'หลัง 8D-8F');
-  blk('C', '', [{ text: '◀ EMER\nEXIT\nAFT L', c: 1, span: 1, fill: SEAT_COLOR.EXIT, bold: true }, { id: lav('CV', 'C', 'CENTER VIP LAVATORY'), c: R2S, span: 4 }, { text: 'EMER\nEXIT\nAFT R ▶', c: 16, span: 1, fill: SEAT_COLOR.EXIT, bold: true }]);
+  blk('C', '', [{ id: lav('CV', 'C', 'CENTER VIP LAVATORY'), c: R2S, span: 4 }]);
   blk('C', 'Monitor', [{ id: 'MON-C1', c: L2, span: 4 }, { id: 'MON-C2', c: R2S, span: 4 }]);
   [7, 8].forEach(function (n) {
     ['B', 'C', 'D', 'F'].forEach(function (x) { seat(n + x, 'C'); });
@@ -235,9 +235,9 @@ function planSheet(L) {
     }
     if (b.t === 'door' && b.exit) {
       var ef = { b: true, sz: 8, color: '#A33A00' };
-      op({ r: r, c: 1, v: '◀ EMER\nEXIT\n' + b.code + ' L', fill: C.EXIT, font: ef, align: { h: 'left', v: 'middle', wrap: true }, border: false });
-      op({ r: r, c: 16, v: 'EMER\nEXIT\n' + b.code + ' R ▶', fill: C.EXIT, font: ef, align: { h: 'right', v: 'middle', wrap: true }, border: false });
-      heights[r] = 46; heights[r + 1] = 6; r += 2;   // 3 short lines, all visible
+      op({ r: r, c: 1, v: '◀ EMER\nEXIT L', fill: C.EXIT, font: ef, align: { h: 'left', v: 'middle', wrap: true }, border: false });
+      op({ r: r, c: 16, v: 'EMER\nEXIT R ▶', fill: C.EXIT, font: ef, align: { h: 'right', v: 'middle', wrap: true }, border: false });
+      heights[r] = 34; heights[r + 1] = 6; r += 2;   // 2 short lines, all visible
       return;
     }
     if (b.t === 'door') {

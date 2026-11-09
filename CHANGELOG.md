@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-09 · ทางออกฉุกเฉินเหลือคู่เดียว
+- เหลือ EMER EXIT คู่เดียว (หลังแถว 6) ชื่อ **EMER EXIT L / EMER EXIT R** ตัด EXIT AFT ออก
+- แก้ทั้งหน้าเว็บ, PDF ทุกแบบ, EXPORT TO EXCEL และแท็บ "ผังที่นั่ง" ใน Google Sheet (วาง Code.gs ใหม่, รัน setupSheet, Deploy New version)
+
 ## 2026-11-09 · เพิ่ม Galley, ห้องน้ำ และประตู (ยกแบบจาก A320-05)
 
 ### หน้าเว็บ

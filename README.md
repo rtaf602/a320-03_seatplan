@@ -28,8 +28,8 @@
 |---|---|---|---|
 | FRONT CREW ZONE (3) | Commander Center 1A (ห้อง), 1D 1F | Wall 21.5" หน้า CC 1A, หน้า 1D 1F | LAV A (ซ้าย), FWD GALLEY G1 (ขวา), DOOR 1L / 1R หน้าห้อง Commander Center |
 | VVIP OA (2) | 2A 3A, SOFA (ฝั่งขวา) | Wall 21.5" หน้า 2A, หลัง 3A, หลังโซฟา | FWD VIP LAV (ฝั่งขวา เหนือโซฟา) |
-| VIP OB (6) | 5B 5D 5F, 6B 6D 6F (โต๊ะระหว่างแถว 5-6) | Wall 21.5" หน้า 5B, หน้า 5D-5F, หลัง 6B, หลัง 6D-6F | EMERGENCY EXIT (OVERWING) FWD L / R หลังแถว 6 |
-| VVIP OC (8) | 7B 7C 7D 7F, 8B 8C 8D 8F | Wall 21.5" หน้า 7B-7C, 7D-7F, หลัง 8B-8C, 8D-8F | CENTER VIP LAV (ฝั่งขวา) + EMERGENCY EXIT (OVERWING) AFT L / R แถวเดียวกัน |
+| VIP OB (6) | 5B 5D 5F, 6B 6D 6F (โต๊ะระหว่างแถว 5-6) | Wall 21.5" หน้า 5B, หน้า 5D-5F, หลัง 6B, หลัง 6D-6F | EMER EXIT L / R หลังแถว 6 |
+| VVIP OC (8) | 7B 7C 7D 7F, 8B 8C 8D 8F | Wall 21.5" หน้า 7B-7C, 7D-7F, หลัง 8B-8C, 8D-8F | CENTER VIP LAV (ฝั่งขวา) |
 | PASSENGER OD (54) | แถว 9–18 (ไม่มีแถว 13) A–F | Wall 21.5" หน้า 9A-9C, 9D-9F · OVHD Monitor 12.0" หน้าแถว 10, 12, 15, 17 (ซ้าย/ขวา) | LAV D / LAV E หลังแถว 18, DOOR 4L / 4R, AFT GALLEY G5 |
 
 ชนิดจอ: Wall Mounted Monitor 21.5 Inch (15 จอ), Bin Mounted Retractable Monitors (OVHD Monitor) 12.0 Inch (8 จอ)
