@@ -232,6 +232,7 @@ td small{font-weight:400;color:var(--muted)}
 .op1.pg3 .el.v{width:24px;padding:4px 0;flex-direction:column;justify-content:flex-start;gap:0}
 .op1.pg3 .el.v span{position:absolute;left:50%;top:calc(50% + 7px);transform:translate(-50%,-50%) rotate(-90deg);white-space:nowrap;font-size:7px;line-height:1.1;text-align:center}
 .op1.pg3 .el.v .wc{margin-top:1px}
+.op1.pg3 .el.h{white-space:nowrap;padding:4px 7px;gap:5px;font-size:8px}
 .op1.pg3 .lleg{display:flex;flex-wrap:wrap;justify-content:center;gap:3px 16px;font-size:9.5px;color:var(--muted);border:1px solid var(--line);border-radius:5px;padding:4px 8px}
 .op1.pg3 .lleg i{display:inline-block;width:10px;height:10px;border-radius:2px;vertical-align:-1px;margin-right:4px}
 .op1.pg3 .lleg i.lge{background:#fff;border-left:4px solid var(--ok);box-sizing:border-box;width:14px;outline:1px solid var(--gline)}
@@ -1401,6 +1402,8 @@ function eqMapPage(nDef,defFrom){
   var ecell=function(gal,c,extra,txt){var id=gal+'-'+c[0],d=get(id),n=numOf(c[2]),lab=txt||(TSHORT[c[1]]+(n?' '+n:''));if(c[1]==='OUTLET')lab=PLUG_ICON+'220V';  /* same plug mark as the entry page */
     return '<div class="ec'+(d.note?' nt':'')+'" style="border-left-color:'+C[d.s]+';background:'+T[d.s]+extra+'">'+lab+(d.s?'<b style="color:'+C[d.s]+'">'+SFX[d.s]+'</b>':'')+'</div>'};
   var block=function(x){
+    if(x.lav&&x.h){var d=get('LAV-'+x.lav),nm={FV:'FWD VIP LAV',CV:'CENTER VIP LAV'}[x.lav]||LAVS[x.lav].short;  /* lav on an exit line: lies across the full dashed line */
+      return '<div class="el h'+(d.note?' nt':'')+'" style="border-color:'+C[d.s]+';background:'+(d.s?T[d.s]:'var(--lavbg)')+'">'+WC_ICON+'<span>'+nm+(d.s?' <b style="color:'+C[d.s]+'">'+SFX[d.s]+'</b>':'')+'</span></div>'}
     if(x.lav){var id='LAV-'+x.lav,d=get(id);
       var hp={A:84,FV:80,CV:80,D:100,E:100}[x.lav]||100,nm={FV:'FWD VIP<br>LAV',CV:'CENTER VIP<br>LAV'}[x.lav]||LAVS[x.lav].short;
       return '<div class="el v'+(d.note?' nt':'')+'" style="height:'+hp+'%;border-color:'+C[d.s]+';background:'+(d.s?T[d.s]:'var(--lavbg)')+'">'+WC_ICON+'<span>'+nm+(d.s?' <b style="color:'+C[d.s]+'">'+SFX[d.s]+'</b>':'')+'</span></div>'}
@@ -1422,10 +1425,10 @@ function eqMapPage(nDef,defFrom){
   var segs='',zones='',cols=[];
   EQ_CABIN.forEach(function(S,i){var c=i+1;cols.push('auto');
     if(S.door){var ex=S.door.kind==='exit',t=ex?S.door.code+' R':S.door.code+'R',bt=ex?S.door.code+' L':S.door.code+'L';
-      /* exit in line with a LAV: the dashed line runs only through the free lane, the LAV keeps its lane */
+      /* exit line runs the full width; a LAV in the same column sits on top of it */
       segs+='<div class="fdoor'+(ex?' ex':'')+'" style="grid-column:'+c+'"><span>'+(ex?'EXIT ':'DOOR ')+t+'</span><i></i><span>'+(ex?'EXIT ':'DOOR ')+bt+'</span></div>'}
     if(S.seat){segs+='<div class="fseat" style="grid-column:'+c+'"><b>'+S.seat+'</b><span>'+S.sub+'</span></div>';}
-    else{['R','L','X'].forEach(function(k){if(S[k])segs+='<div class="fl '+k+(S[k].every(function(x){return x.lav})?' lv':'')+'" style="grid-column:'+c+(S.pad?';padding-inline:10px':'')+(S.door?';background:var(--cabin);z-index:3;position:relative':'')+'">'+S[k].map(block).join('')+'</div>'})}
+    else{['R','L','X'].forEach(function(k){if(S[k])segs+='<div class="fl '+k+(S[k].every(function(x){return x.lav})&&!S.door?' lv':'')+'" style="grid-column:'+c+(S.pad?';padding-inline:10px':'')+(S.door?';z-index:3;position:relative':'')+'">'+S[k].map(function(x){return block(S.door?Object.assign({h:1},x):x)}).join('')+'</div>'})}
   });
   var z0=null,start=1;
   EQ_CABIN.concat([{z:null}]).forEach(function(S,i){if(S.z!==z0){if(z0)zones+='<div class="fz" style="grid-column:'+start+' / '+(i+1)+'">'+z0+'</div>';z0=S.z;start=i+1}});
