@@ -11,7 +11,7 @@
 |---|---|
 | Admin | ทุกอย่างของ Editor และ "ล้างข้อมูลทั้งหมดเพื่อเริ่มรอบตรวจใหม่" (แทน `ADMIN_PIN` เดิม) |
 | Editor | ดู แก้ไข SAVE CLEAR PREVIEW และส่งออก PDF / Excel |
-| Viewer | ดู และส่งออก PDF ทั้ง 2 แบบ / Excel ได้ (ผู้ใช้สั่ง 12 พ.ย. 2026) ไม่มี SAVE CLEAR PREVIEW |
+| Viewer | ดูอย่างเดียว ไม่มี SAVE CLEAR PREVIEW และส่งออก |
 | ไม่มีสิทธิ์ / เว็บถูกปิด | เข้าไม่ได้ เห็นข้อความ "บัญชีนี้ไม่มีสิทธิ์ใช้งานเว็บนี้ ให้ติดต่อ Admin" |
 
 ## ส่วนที่เป็นของระบบ Login (ห้ามแก้ ห้ามถอด)
@@ -19,13 +19,13 @@
 หน้าเว็บ `index.html`
 - `<script src="/eadmin/assets/config.js">` และ `<script src="/eadmin/assets/app.js">` (`window.App`)
 - `AUTH`, `SESS()`, `getPass()`, `PASSV()`, `apiPost()`: ขอ "บัตรผ่าน" ของเว็บนี้จาก `App.enterWeb(CFG.webCode)` แล้วส่ง `pass` ไปกับ**ทุก**คำขอ **ห้ามส่ง session ของ Login ไป Apps Script ของเว็บนี้**
-- `denied()`, `viewer()` (ซ่อนเฉพาะ SAVE CLEAR PREVIEW), `mayExport()` (ทุก Role ส่งออกได้), `logExport()`, `#gate`, `#gateBtn`, ปุ่ม `#bOut` (ออกจากระบบทุกเว็บ)
+- `denied()`, `viewer()`, `mayExport()`, `logExport()`, `#gate`, `#gateBtn`, ปุ่ม `#bOut` (ออกจากระบบทุกเว็บ)
 - `start()`: ไม่มีการ Login → `App.toLogin()` มีแล้ว → `App.watch()` (หมดเวลา 1 ชั่วโมง, Login ซ้อน, ออกจากระบบในแท็บอื่น) แล้วขอบัตรผ่าน
 - ช่อง `#inspector` อ่านอย่างเดียว ค่ามาจาก `load` → `me.name` (คอลัมน์ ชื่อ-สกุล ของระบบ Login)
 
 Apps Script `apps-script/server.js` (`Code.gs` สร้างจาก server.js + layout.js ด้วย `sh tools/build-code-gs.sh` ห้ามแก้ Code.gs ตรง ๆ)
 - `LOGIN = { LOGIN_URL, WEB_CODE, CHECK_SEC }` (`LOGIN_URL` จำใน Script Property ตอน `setup`; `WEB_CODE` ต้องตรงกับ `webCode` ใน `config.js`)
-- `doPost`: **ทุก** action ผ่าน `auth_(body.pass, FRESH[act])` แล้วตรวจ `EDIT` (Admin / Editor: `save`, `reset`; ส่วน `history` และ `exported` ทุก Role ของเว็บนี้ใช้ได้ เพื่อให้ Viewer ส่งออกได้) และ `reset` ตรวจ `who.admin`
+- `doPost`: **ทุก** action ผ่าน `auth_(body.pass, FRESH[act])` แล้วตรวจ `EDIT` (Admin / Editor) และ `reset` ตรวจ `who.admin`
 - `doGet` ไม่ส่งข้อมูลแล้ว
 - ชื่อผู้ตรวจในประวัติและ `lastSave` = `who.name` จากระบบ Login **ไม่ใช่ `body.by`**
 - `exported`: EXPORT TO PDF ALL PAGES / EXPORT PDF SUMMARY 4 PAGES / EXPORT TO EXCEL ลงแท็บ **ประวัติการส่งออก** (`EXPORT_SHEET` แยกจากประวัติการแก้ไข)
