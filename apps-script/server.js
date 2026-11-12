@@ -33,8 +33,9 @@ function doGet(e) {
   return json_({ ok: true, app: 'a320-03_seatplan' });
 }
 
-// Editor and Admin only: these write the sheet, or give a file out (EXPORT TO EXCEL reads the whole history)
-const EDIT = { save: 1, reset: 1, history: 1, exported: 1 };
+// Editor and Admin only: these write the map. Viewer may also export PDF / Excel (user, 12 Nov 2026):
+// history (EXPORT TO EXCEL reads it) and exported (the export log) are open to every role of this web
+const EDIT = { save: 1, reset: 1 };
 // these ask the login system afresh, not from the copy kept for LOGIN.CHECK_SEC
 const FRESH = { save: 1, reset: 1, history: 1, exported: 1 };
 const EXPORTS = ['EXPORT TO PDF ALL PAGES', 'EXPORT PDF SUMMARY 4 PAGES', 'EXPORT TO EXCEL'];
