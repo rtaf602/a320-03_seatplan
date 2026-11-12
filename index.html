@@ -41,6 +41,7 @@ button,input,textarea{font:inherit;color:inherit}
 .bar h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .who{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:0}
 .who label{font-size:12px;color:var(--muted);white-space:nowrap}
+#role{font-size:12px;color:var(--muted);white-space:nowrap}
 .who input{width:170px;max-width:46vw;padding:7px 10px;border:1px solid var(--line);border-radius:6px;background:var(--panel)}
 .sync{font-size:12px;color:var(--muted);width:100%}
 .sync b{color:var(--ink);font-weight:600}
@@ -420,13 +421,16 @@ dialog.wide[open]{display:flex;flex-direction:column}
 </style>
 <!-- config.js, layout.js and export-excel.js load with a time stamp so a browser never keeps an old copy after an update -->
 <script>window.SEATPLAN_BUST=Date.now();document.write('<script src="config.js?v='+window.SEATPLAN_BUST+'"><\/script>')</script>
+<!-- the login system of ฝูง.602 (repo eadmin, same GitHub Pages site): one login for every web -->
+<script src="/eadmin/assets/config.js"></script>
+<script src="/eadmin/assets/app.js"></script>
 </head>
 <body>
 
 <div class="wrap" id="app">
   <div class="bar">
     <h1>STATUS SEAT PLAN A320-03<small>บันทึกสภาพที่นั่ง, Monitor, Galley และห้องน้ำ · ฝ่ายการช่าง / ฝ่ายสื่อสาร</small></h1>
-    <div class="who"><label for="inspector">ชื่อผู้ตรวจ</label><input id="inspector" maxlength="60" placeholder="พิมพ์ชื่อของคุณ" autocomplete="off"></div>
+    <div class="who"><label for="inspector">ชื่อผู้ตรวจ</label><input id="inspector" maxlength="60" readonly tabindex="-1" title="ชื่อ-สกุลของบัญชีที่ Login (ระบบ Login กลาง)" autocomplete="off"><span id="role"></span><button class="btn" id="bOut" type="button">ออกจากระบบ</button></div>
     <div class="tools">
       <button class="btn" id="bClear" type="button">CLEAR</button>
       <button class="btn" id="bPreview" type="button">PREVIEW</button>
@@ -489,7 +493,7 @@ dialog.wide[open]{display:flex;flex-direction:column}
 
   <div class="foot" id="foot" hidden>
     <button class="btn danger" id="resetBtn" type="button">ล้างข้อมูลทั้งหมดเพื่อเริ่มรอบตรวจใหม่</button>
-    <span id="resetAsk" hidden>ตั้งทุกที่นั่ง, Galley และห้องน้ำกลับเป็นปกติและล้างหมายเหตุ (ประวัติยังอยู่) <input id="adminPin" type="password" placeholder="รหัส Admin" autocomplete="off"> <button class="btn danger" id="resetYes" type="button">ยืนยันลบ</button> <button class="btn" id="resetNo" type="button">ยกเลิก</button></span>
+    <span id="resetAsk" hidden>ตั้งทุกที่นั่ง, Galley และห้องน้ำกลับเป็นปกติและล้างหมายเหตุ (ประวัติยังอยู่) <input id="adminPin" type="hidden" placeholder="รหัส Admin" autocomplete="off"> <button class="btn danger" id="resetYes" type="button">ยืนยันลบ</button> <button class="btn" id="resetNo" type="button">ยกเลิก</button></span>
   </div>
 </div>
 
@@ -533,13 +537,12 @@ dialog.wide[open]{display:flex;flex-direction:column}
   <div class="pvbody" id="pvBody"></div>
 </dialog>
 
+<!-- shown instead of the page when this account may not use this web. Decided by the login system of ฝูง.602 (eadmin). -->
 <div class="gate" id="gate" hidden>
   <div class="gatebox" role="dialog" aria-modal="true" aria-labelledby="gateT">
     <h2 id="gateT">STATUS SEAT PLAN A320-03</h2>
-    <p>ใส่รหัสเพื่อเข้าใช้งาน</p>
-    <input id="gatePin" type="password" autocomplete="off" placeholder="รหัส">
-    <p class="err" id="gateErr" hidden></p>
-    <button class="btn pri" id="gateBtn" type="button">เข้าใช้งาน</button>
+    <p class="err" id="gateErr">กำลังตรวจสิทธิ์…</p>
+    <button class="btn pri" id="gateBtn" type="button" hidden>กลับหน้าเข้าสู่ระบบ</button>
   </div>
 </div>
 
@@ -691,11 +694,35 @@ var ITEMS={}; // id -> {zone, seat:bool, mon:bool, label}
 
 var CFG=window.SEATPLAN_CONFIG||{}, API=String(CFG.API_URL||'').trim();
 var canWrite=true, cur=null, pick={s:0,m:0}, resetEnabled=false;
-var pinRequired=null; /* from the server; the PIN is asked on every SAVE and never stored */
-try{localStorage.removeItem('seat-a320-03-pin')}catch(e){}
-var accessPin=''; /* PIN typed at the entry screen, kept in memory only: reloading the page asks again */
-function apiGet(){return apiPost({action:'load',pin:accessPin})}
-function apiPost(body){return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(function(r){return r.json()})}
+var pinRequired=false; /* no PIN any more: the login system of ฝูง.602 decides */
+try{localStorage.removeItem('seat-a320-03-pin');localStorage.removeItem('seat-a320-03-inspector')}catch(e){}
+/* The login of this browser (ระบบ Login กลาง). The page gets from the login system a pass for this web (CFG.webCode)
+   and sends it with every request; the Apps Script asks the login system whether it may go on, and as what
+   (Admin / Editor write, Viewer looks only). The session itself never goes to the Apps Script of this web. */
+var AUTH=window.App||null, ROLE='', PASS='', PASS_OF='';
+function SESS(){var s=AUTH&&AUTH.session();return s?s.token:''}
+function PASSV(){return PASS_OF&&PASS_OF===SESS()?PASS:''}
+function getPass(){
+  var s=SESS();if(!s)return Promise.resolve('');if(PASS_OF===s&&PASS)return Promise.resolve(PASS);
+  return AUTH.enterWeb(CFG.webCode||'').then(function(r){PASS=r.pass||'';PASS_OF=s;ROLE=(r.web&&r.web.role)||ROLE;return PASS});
+}
+function apiGet(){return apiPost({action:'load'})}
+function apiPost(body){body=Object.assign({},body,{pass:PASSV()});
+  return fetch(API,{method:'POST',headers:{'Content-Type':'text/plain;charset=utf-8'},body:JSON.stringify(body)}).then(function(r){return r.json()}).then(function(res){
+    var e=res&&!res.ok?res.error:'';
+    /* the login is over: the login system is asked directly, and sends this browser to the login page with the reason */
+    if(e==='auth'){if(!SESS())AUTH.toLogin();else AUTH.api('me').then(function(){PASS_OF='';return getPass()}).catch(function(){})}
+    else if(e==='no_web'||e==='web_closed'||e==='wrong_web')denied(res.message);
+    else if(e==='forbidden'&&canWrite&&!(ROLE==='Admin'||ROLE==='Editor'))viewer();
+    return res})}
+/* this account has no access to this web, or the web is closed (ข้อ 1.14.3.1) */
+function denied(msg){var g=$('gate');g.hidden=false;$('app').hidden=true;$('gateErr').textContent=msg||'บัญชีนี้ไม่มีสิทธิ์ใช้งานเว็บนี้ ให้ติดต่อ Admin';$('gateBtn').hidden=false}
+/* Viewer: looks only, no SAVE, no PREVIEW or export (ข้อ 1.3); the Apps Script refuses them too */
+function viewer(){setReadOnly('บัญชีนี้มีสิทธิ์ดูอย่างเดียว (Viewer) แก้ไข SAVE และส่งออกไฟล์ไม่ได้');['bSave','bClear','bPreview','bPdf','bPdf2','bXls'].forEach(function(id){if($(id))$(id).hidden=true})}
+function mayExport(){if(canWrite)return true;toast('บัญชีนี้มีสิทธิ์ดูอย่างเดียว (Viewer) ส่งออกไฟล์ไม่ได้',true);return false}
+/* EXPORT TO PDF / EXCEL: one line in the tab ประวัติการส่งออก, with the account (written by the Apps Script) */
+function logExport(name){var k=/ALL PAGES/.test(name)?'EXPORT TO PDF ALL PAGES':/SUMMARY/.test(name)?'EXPORT PDF SUMMARY 4 PAGES':/\.xlsx$/.test(name)?'EXPORT TO EXCEL':'';
+  if(k&&API)apiPost({action:'exported',kind:k,filename:name}).catch(function(){})}
 
 
 function reg(id,zone,seat,mon,label,kind){ITEMS[id]={zone:zone,seat:seat,mon:mon,label:label};if(kind)ITEMS[id].kind=kind;return ITEMS[id]}
@@ -993,9 +1020,8 @@ function setReadOnly(msg){canWrite=false;$('app').classList.add('ro');$('dSave')
 var toastT=null;
 function toast(msg,bad){var t=$('toast');t.textContent=msg;t.className='toast show'+(bad?' bad':'');clearTimeout(toastT);toastT=setTimeout(function(){t.className='toast'},4000)}
 
-var who=$('inspector');
-try{who.value=localStorage.getItem(KEY+'-inspector')||''}catch(e){}
-who.addEventListener('change',function(){try{localStorage.setItem(KEY+'-inspector',who.value.trim())}catch(e){}});
+var who=$('inspector'); /* the name of the account (column ชื่อ-สกุล), filled in from the Apps Script on load */
+$('bOut').addEventListener('click',function(){if(pendingIds().length&&!confirm('มีรายการที่ยังไม่ SAVE จะออกจากระบบหรือไม่'))return;if(AUTH)AUTH.signOut('')});
 
 /* small yes/no dialog */
 var askCb=null;
@@ -1016,7 +1042,7 @@ var saving=false;
 function doSave(){
   if(saving)return Promise.resolve(false);var ids=pendingIds();if(!ids.length){toast('ไม่มีรายการที่ต้อง SAVE');return Promise.resolve(true)}
   if(!API){toast('ยังไม่ได้ตั้งค่า API_URL ใน config.js จึง SAVE ไม่ได้',true);return Promise.resolve(false)}
-  var by=who.value.trim();if(!by){toast('กรุณาใส่ชื่อผู้ตรวจก่อน SAVE',true);who.focus();return Promise.resolve(false)}
+  var by=who.value.trim();if(!by){toast('ยังไม่ได้ชื่อผู้ตรวจจากระบบ Login ลองโหลดหน้าใหม่',true);return Promise.resolve(false)}
   var pinStep=pinRequired===false?Promise.resolve(''):askPin(ids.length);
   return pinStep.then(function(pin){
     if(pin===null)return false;
@@ -1028,10 +1054,10 @@ function sendSave(pin,by){
     saving=true;$('bSave').disabled=true;$('bSave').textContent='กำลัง SAVE…';
     var changes=ids.map(function(id){var r=get(id),b=baseOf(id);
       return {id:id,s:r.s,m:r.m,note:r.note,fields:draftFields(id),base:{s:b.s,m:b.m,note:b.note}}});
-    return apiPost({action:'save',by:by,pin:pin,changes:changes}).then(function(res){
+    return apiPost({action:'save',changes:changes}).then(function(res){
       if(!res||!res.ok){
         if(res&&res.error==='pin'){pinRequired=true;toast(pin?'รหัสไม่ถูกต้อง กด SAVE แล้วใส่รหัสอีกครั้ง':'ระบบนี้ต้องใส่รหัส กด SAVE อีกครั้ง',true);return false}
-        if(res&&res.error==='no_name'){toast('กรุณาใส่ชื่อผู้ตรวจก่อน SAVE',true);return false}
+        if(res&&res.error==='no_name'){toast('ยังไม่ได้ชื่อผู้ตรวจจากระบบ Login ลองโหลดหน้าใหม่',true);return false}
         toast('SAVE ไม่สำเร็จ'+(res&&res.message?' ('+res.message+')':'')+' ลองกด SAVE อีกครั้ง',true);return false;
       }
       var conflicts=res.conflicts||[],cur=res.current||{},hit={};
@@ -1207,6 +1233,7 @@ $('bXls').addEventListener('click',function(){guard('EXPORT TO EXCEL',exportXlsx
 var libs={};
 function loadLib(src){if(!libs[src])libs[src]=new Promise(function(ok,no){var s=document.createElement('script');s.src=src;s.onload=ok;s.onerror=function(){delete libs[src];no(new Error('load'))};document.head.appendChild(s)});return libs[src]}
 function offerFile(name,data,mime){
+  logExport(name);
   var c=window.claude,p=(c&&c.use)?c.use('downloads'):Promise.resolve(null);
   return p.then(function(d){
     if(d)return d.save({filename:name,data:data}).then(function(){toast('ส่งไฟล์ '+name+' แล้ว')},function(e){
@@ -1229,7 +1256,7 @@ function pdfScale(node,mmWide){
   return Math.max(1,Math.min(want,Math.sqrt(maxA/(node.offsetWidth*Math.max(1,node.offsetHeight)))));
 }
 function exportPdf(){
-  if(busy)return;busy=true;toast('กำลังสร้าง PDF…'+exportNote());
+  if(busy||!mayExport())return;busy=true;toast('กำลังสร้าง PDF…'+exportNote());
   useSaved=true;var wrap=el('div','offscreen'),node=reportNode();useSaved=false;wrap.appendChild(node);document.body.appendChild(wrap);
   Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),document.fonts?document.fonts.ready:null])
   .then(function(){
@@ -1473,7 +1500,7 @@ function buildPages(host){
   return pages;
 }
 function exportPdf2(){
-  if(busy)return;busy=true;toast('กำลังสร้าง PDF SUMMARY…'+exportNote());
+  if(busy||!mayExport())return;busy=true;toast('กำลังสร้าง PDF SUMMARY…'+exportNote());
   var wrap=el('div','offscreen'),pages;document.body.appendChild(wrap);
   Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js'),loadLib('https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'),document.fonts?document.fonts.ready:null])
   .then(function(){
@@ -1495,9 +1522,9 @@ $('bPdf2').addEventListener('click',function(){guard('EXPORT SUMMARY 4 PAGES',ex
 
 
 function exportXlsx(){
-  if(busy)return;busy=true;toast('กำลังสร้าง Excel…'+exportNote());
+  if(busy||!mayExport())return;busy=true;toast('กำลังสร้าง Excel…'+exportNote());
   /* history comes from the Google Sheet; an older Apps Script without it still exports the other sheets */
-  var hist=API?apiPost({action:'history',pin:accessPin}).then(function(r){return r&&r.ok?r.rows:null},function(){return null}):Promise.resolve(null);
+  var hist=API?apiPost({action:'history'}).then(function(r){return r&&r.ok?r.rows:null},function(){return null}):Promise.resolve(null);
   Promise.all([loadLib('https://cdnjs.cloudflare.com/ajax/libs/exceljs/4.4.0/exceljs.min.js'),loadLib('layout.js?v='+window.SEATPLAN_BUST),loadLib('export-excel.js?v='+window.SEATPLAN_BUST),hist]).then(function(res){
     var st={};Object.keys(ITEMS).forEach(function(id){st[id]=norm(saved[id])});
     var wb=window.buildSeatWorkbook(window.ExcelJS,{state:st,lastSave:lastSave,inspector:who.value.trim(),history:res[3]});
@@ -1513,11 +1540,11 @@ function exportXlsx(){
 $('resetBtn').addEventListener('click',function(){$('resetAsk').hidden=false;$('resetBtn').hidden=true});
 $('resetNo').addEventListener('click',function(){$('resetAsk').hidden=true;$('resetBtn').hidden=false});
 $('resetYes').addEventListener('click',function(){
-  if(!API)return;var pin=$('adminPin').value.trim();if(!pin){toast('ใส่รหัส Admin ก่อน',true);$('adminPin').focus();return}
+  if(!API)return;
   $('resetYes').disabled=true;
-  apiPost({action:'reset',by:who.value.trim(),adminPin:pin}).then(function(res){
+  apiPost({action:'reset'}).then(function(res){
     if(res&&res.ok){draft={};persistDraft();toast('ล้างข้อมูลแล้ว ทุกที่นั่งกลับเป็นปกติ');load()}
-    else toast(res&&res.error==='admin_pin'?'รหัส Admin ไม่ถูกต้อง':'ล้างข้อมูลไม่สำเร็จ',true);
+    else toast(res&&res.error==='forbidden'?'ล้างข้อมูลทั้งหมดได้เฉพาะ Admin ของเว็บนี้':'ล้างข้อมูลไม่สำเร็จ',true);
   },function(){toast('ติดต่อ Google Sheet ไม่ได้',true)})
   .then(function(){$('resetYes').disabled=false;$('adminPin').value='';$('resetAsk').hidden=true;$('resetBtn').hidden=false});
 });
@@ -1528,19 +1555,16 @@ build();
 Object.keys(draft).forEach(function(id){if(!ITEMS[id])delete draft[id]});
 render();
 
-function showGate(err){var g=$('gate');g.hidden=false;$('gateErr').textContent=err||'';$('gateErr').hidden=!err;$('gateBtn').disabled=false;
-  $('gatePin').value='';setTimeout(function(){$('gatePin').focus()},50)}
-function hideGate(){$('gate').hidden=true}
-$('gateBtn').addEventListener('click',function(){var p=$('gatePin').value.trim();if(!p){$('gatePin').focus();return}
-  accessPin=p;$('gateBtn').disabled=true;load()});
-$('gatePin').addEventListener('keydown',function(e){if(e.key==='Enter'){e.preventDefault();$('gateBtn').click()}});
+function hideGate(){$('gate').hidden=true;$('app').hidden=false}
+$('gateBtn').addEventListener('click',function(){if(AUTH)location.href=AUTH.loginUrl().split('?')[0]});
 var loading=false;
 function load(){
   if(!API||loading)return Promise.resolve();loading=true;
   return apiGet().then(function(res){
-    if(res&&res.error==='pin'){showGate(accessPin?'รหัสไม่ถูกต้อง ลองอีกครั้ง':'');return}
+    if(res&&(res.error==='auth'||res.error==='no_web'||res.error==='web_closed'||res.error==='wrong_web'))return;
     if(!res||!res.ok)throw new Error(res&&res.message||'load');
     hideGate();
+    if(res.me){who.value=String(res.me.name||'');ROLE=String(res.me.role||ROLE);$('role').textContent=ROLE;if(!(ROLE==='Admin'||ROLE==='Editor')&&canWrite)viewer()}
     var s2={};Object.keys(res.seats||{}).forEach(function(id){if(ITEMS[id])s2[id]=res.seats[id]});
     saved=s2;lastSave=res.lastSave||null;resetEnabled=!!res.resetEnabled;pinRequired=!!res.pinRequired;$('foot').hidden=!resetEnabled;
     Object.keys(draft).forEach(function(id){if(!draftFields(id).length||draftDone(id))delete draft[id]});persistDraft();
@@ -1551,7 +1575,16 @@ function load(){
 }
 function start(){
   if(!API){offline();return}
-  load();
+  /* the login of ฝูง.602: none in this browser → the login page, and back here after it */
+  if(!AUTH||!AUTH.hasBackend){denied('ไม่พบระบบ Login กลาง (eadmin) หน้านี้จึงยังใช้งานไม่ได้');$('gateBtn').hidden=true;return}
+  if(!AUTH.session()){AUTH.toLogin();return}
+  /* the hour, a login from another device, signing out in another tab: watched by the login system's page code */
+  AUTH.watch(function(s,was){if(!s){AUTH.toLogin();return}if(was&&s.token!==was)location.reload()});
+  var g=$('gate');g.hidden=false;$('app').hidden=true;
+  var first=function(){return getPass().then(load,function(e){
+    if(e&&(e.code==='no_web'||e.code==='web_closed')){denied(e.message);return}
+    $('gateErr').textContent=(e&&e.message)||'ตรวจสิทธิ์ไม่สำเร็จ จะลองใหม่';setTimeout(first,10000)})};
+  first();
   setInterval(function(){if(!document.hidden&&!saving&&$('gate').hidden)load()},30000);
   document.addEventListener('visibilitychange',function(){if(!document.hidden&&!saving&&$('gate').hidden)load()});
 }
