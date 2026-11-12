@@ -718,8 +718,8 @@ function apiPost(body){body=Object.assign({},body,{pass:PASSV()});
 /* this account has no access to this web, or the web is closed (ข้อ 1.14.3.1) */
 function denied(msg){var g=$('gate');g.hidden=false;$('app').hidden=true;$('gateErr').textContent=msg||'บัญชีนี้ไม่มีสิทธิ์ใช้งานเว็บนี้ ให้ติดต่อ Admin';$('gateBtn').hidden=false}
 /* Viewer: looks only, no SAVE, no PREVIEW or export (ข้อ 1.3); the Apps Script refuses them too */
-function viewer(){setReadOnly('บัญชีนี้มีสิทธิ์ดูอย่างเดียว (Viewer) แก้ไข SAVE และส่งออกไฟล์ไม่ได้');['bSave','bClear','bPreview','bPdf','bPdf2','bXls'].forEach(function(id){if($(id))$(id).hidden=true})}
-function mayExport(){if(canWrite)return true;toast('บัญชีนี้มีสิทธิ์ดูอย่างเดียว (Viewer) ส่งออกไฟล์ไม่ได้',true);return false}
+function viewer(){setReadOnly('บัญชีนี้เป็น Viewer ดูและส่งออก PDF / Excel ได้ แก้ไขและ SAVE ไม่ได้');['bSave','bClear','bPreview'].forEach(function(id){if($(id))$(id).hidden=true})}
+function mayExport(){return true}// every role of this web may export PDF / Excel (Viewer too, user 12 Nov 2026)
 /* EXPORT TO PDF / EXCEL: one line in the tab ประวัติการส่งออก, with the account (written by the Apps Script) */
 function logExport(name){var k=/ALL PAGES/.test(name)?'EXPORT TO PDF ALL PAGES':/SUMMARY/.test(name)?'EXPORT PDF SUMMARY 4 PAGES':/\.xlsx$/.test(name)?'EXPORT TO EXCEL':'';
   if(k&&API)apiPost({action:'exported',kind:k,filename:name}).catch(function(){})}

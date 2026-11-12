@@ -1,5 +1,9 @@
 # CHANGELOG
 
+## 2026-11-12 · Viewer ส่งออกไฟล์ได้
+- Viewer กด EXPORT TO PDF ALL PAGES / EXPORT PDF SUMMARY 4 PAGES / EXPORT TO EXCEL ได้ (บันทึกในแท็บ "ประวัติการส่งออก" เหมือน Role อื่น) ยัง SAVE, CLEAR และ PREVIEW ไม่ได้
+- ต้องวาง apps-script/Code.gs ใหม่และ Deploy เวอร์ชันใหม่ (Manage deployments → ดินสอ → New version)
+
 ## 2026-11-12 · ใช้ระบบ Login กลาง ฝูง.602
 - เอารหัส WRITE_PIN / ADMIN_PIN และช่องพิมพ์ชื่อผู้ตรวจออก เข้าใช้งานผ่านหน้าเข้าสู่ระบบกลาง (รหัสเว็บ WEB4)
 - Admin / Editor แก้ไขและ SAVE ได้ · Viewer ดูอย่างเดียว · ล้างข้อมูลทั้งหมดเฉพาะ Admin ของเว็บนี้
