@@ -21,7 +21,7 @@
 - `AUTH`, `SESS()`, `getPass()`, `PASSV()`, `apiPost()`: ขอ "บัตรผ่าน" ของเว็บนี้จาก `App.enterWeb(CFG.webCode)` แล้วส่ง `pass` ไปกับ**ทุก**คำขอ **ห้ามส่ง session ของ Login ไป Apps Script ของเว็บนี้**
 - `denied()`, `viewer()`, `mayExport()`, `logExport()`, `#gate`, `#gateBtn`, ปุ่ม `#bOut` (ออกจากระบบทุกเว็บ)
 - `start()`: ไม่มีการ Login → `App.toLogin()` มีแล้ว → `App.watch()` (หมดเวลา 1 ชั่วโมง, Login ซ้อน, ออกจากระบบในแท็บอื่น) แล้วขอบัตรผ่าน
-- ช่อง `#inspector` อ่านอย่างเดียว ค่ามาจาก `load` → `me.name` (คอลัมน์ ชื่อ-สกุล ของระบบ Login)
+- ช่อง `#inspector` ซ่อนไว้ (ผู้ใช้สั่ง 12 พ.ย. ไม่แสดงช่องชื่อผู้ตรวจ) ค่ามาจาก `load` → `me.name` (คอลัมน์ ชื่อ-สกุล ของระบบ Login) ใช้ตอน SAVE และหัวรายงาน
 
 Apps Script `apps-script/server.js` (`Code.gs` สร้างจาก server.js + layout.js ด้วย `sh tools/build-code-gs.sh` ห้ามแก้ Code.gs ตรง ๆ)
 - `LOGIN = { LOGIN_URL, WEB_CODE, CHECK_SEC }` (`LOGIN_URL` จำใน Script Property ตอน `setup`; `WEB_CODE` ต้องตรงกับ `webCode` ใน `config.js`)
