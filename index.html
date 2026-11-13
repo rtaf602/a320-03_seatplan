@@ -38,7 +38,7 @@ body{background:var(--bg);color:var(--ink);font-family:var(--sans);font-size:15p
 button,input,textarea{font:inherit;color:inherit}
 :focus-visible{outline:3px solid var(--accent);outline-offset:2px}
 
-.bar{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
+.bar{position:sticky;top:var(--ops602-h,env(safe-area-inset-top,0px));z-index:5;background:var(--bg);border-bottom:1px solid var(--line);padding-block:12px;display:flex;flex-wrap:wrap;gap:10px 16px;align-items:center}
 .bar h1{font-size:20px;font-weight:700;margin:0;letter-spacing:.01em}
 .bar h1 small{display:block;font-size:12px;font-weight:500;color:var(--muted)}
 .who{margin-left:auto;display:flex;align-items:center;gap:8px;min-width:0}
@@ -1596,5 +1596,7 @@ start();
 })();
 </script>
 
+<!-- แถบ OPS 602 ด้านบน (ซ้าย: กลับหน้ารวม, ขวา: REFRESH) ไฟล์กลางของ repo app ใช้ร่วมกันทุกระบบ ห้ามลบ -->
+<script src="/app/back.js" defer></script>
 </body>
 </html>
